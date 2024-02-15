@@ -1,9 +1,9 @@
-import Link from 'next/link';
 import { SearchIcon } from './components/icons';
+import HeaderNav from './components/HeaderNav';
 
 export default function Header() {
   return (
-    <header className="h-14 lg:h-[60px] border-b bg-gray-100/40 dark:bg-gray-800">
+    <header className="h-14 lg:h-[60px] border-b bg-gray-100/40 dark:bg-gray-800 dark:border-gray-950">
       <div className="flex justify-between items-center h-full px-6">
         <div className="relative">
           <div className="absolute left-2 h-full flex items-center">
@@ -16,16 +16,12 @@ export default function Header() {
           />
         </div>
         <div className="flex items-center">
-          <nav className="mr-4">
-            <Link href="#" className="dark:text-gray-200">
-              Crear
-            </Link>
-          </nav>
+          <HeaderNav />
           <img
             alt="Avatar"
             className="rounded-full"
             height="32"
-            src="/placeholder.svg"
+            src="https://generated.vusercontent.net/placeholder.svg"
             style={{
               aspectRatio: '32/32',
               objectFit: 'cover',

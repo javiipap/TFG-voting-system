@@ -10,9 +10,11 @@ export default function RootLayout({
     <>
       <div className="grid grid-cols-[280px_1fr] h-screen min-h-screen">
         <Aside />
-        <div className="">
+        <div className="overflow-hidden">
           <Header />
-          <main className="">{children}</main>
+          <div className="flex h-[calc(100vh_-_3.5rem)] lg:h-[calc(100vh_-_60px)] w-full">
+            <main className="overflow-auto w-full">{children}</main>
+          </div>
         </div>
       </div>
     </>

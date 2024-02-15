@@ -1,34 +1,7 @@
 import Link from 'next/link';
 import React from 'react';
-import {
-  BellIcon,
-  Package2Icon,
-  PlusIcon,
-  StatsIcon,
-  UsersIcon,
-} from './components/icons';
-
-const Links: {
-  href: string;
-  Icon: (props: React.SVGProps<SVGSVGElement>) => JSX.Element;
-  label: string;
-}[] = [
-  {
-    href: '#',
-    Icon: StatsIcon,
-    label: 'Results',
-  },
-  {
-    href: '#',
-    Icon: UsersIcon,
-    label: 'Candidate',
-  },
-  {
-    href: '#',
-    Icon: UsersIcon,
-    label: 'Voters',
-  },
-];
+import { BellIcon, Package2Icon, PlusIcon } from './components/icons';
+import { AsideNav } from './components/AsideNav';
 
 export default function Aside() {
   return (
@@ -43,18 +16,7 @@ export default function Aside() {
         </div>
       </div>
       <div className="flex-1 border-b dark:border-gray-950">
-        <nav className="flex-1 overflow-auto px-4 text-sm font-medium">
-          {Links.map(({ href, Icon, label }, index) => (
-            <Link
-              className="flex items-center gap-3 rounded-lg bg-gray-100 px-3 py-2 text-gray-900 transition-all hover:text-gray-900 dark:bg-gray-800 dark:text-gray-50 dark:hover:text-gray-50"
-              href={href}
-              key={`aside_link-${index}`}
-            >
-              <Icon className="w-4 h-4" />
-              {label}
-            </Link>
-          ))}
-        </nav>
+        <AsideNav />
       </div>
       <div className="mx-8 py-2 dark:text-gray-100">
         <Link
