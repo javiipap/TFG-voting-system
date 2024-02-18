@@ -8,7 +8,7 @@ export default function Table({ children, ...props }: Props) {
 
 export function Row(props: { children: React.ReactNode }) {
   return (
-    <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted dark:border-gray-950">
+    <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted dark:border-gray-800">
       {props.children}
     </tr>
   );
@@ -36,6 +36,6 @@ export function TBody(props: { children: React.ReactNode }) {
 
 export function THead(props: { children: React.ReactNode }) {
   return (
-    <thead className="border-b dark:border-gray-950">{props.children}</thead>
+    <thead className="border-b dark:border-gray-800">{props.children}</thead>
   );
 }

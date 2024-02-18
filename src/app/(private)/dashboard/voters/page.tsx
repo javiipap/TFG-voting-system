@@ -1,3 +1,4 @@
+import Button from '@/components/Button';
 import Table, { Row, TBody, THead, Td, Th } from '@/components/Table';
 
 const voters = [
@@ -205,16 +206,14 @@ const voters = [
 
 export default function Voters() {
   return (
-    <div className="px-6 py-8 dark:bg-gray-700">
+    <div className="px-6 py-8">
       <div className="flex items-center mb-6">
         <h1 className="font-semibold text-lg md:text-2xl dark:text-gray-100">
           Voters
         </h1>
-        <button className="inline-flex items-center justify-center rounded-md text-sm font-medium disabled:pointer-events-none disabled:opacity-50 border border-input px-4 py-2 ml-auto h-8 w-[100px] md:w-auto bg-white hover:bg-gray-100 transition dark:bg-gray-800 dark:border-gray-950 dark:text-white dark:hover:bg-gray-900">
-          Add voter
-        </button>
+        <Button>Add voter</Button>
       </div>
-      <div className="border shadow-sm rounded-lg dark:border-gray-950 dark:bg-gray-800">
+      <div className="border shadow-sm rounded-lg dark:border-gray-800 dark:bg-black">
         <Table className="w-full table-auto caption-bottom text-sm dark:text-gray-100">
           <THead>
             <Row>
