@@ -23,7 +23,7 @@ export default function Aside() {
       <AsideNav />
       <div className="mx-8 py-2 dark:text-neutral-100">
         <Link
-          href="#"
+          href="/dashboard/create"
           className="group flex items-center justify-between px-3 py-3 mb-1 hover:bg-black dark:hover:bg-neutral-700 hover:text-white dark:hover:text-neutral-100 rounded-lg transition-all bg-neutral-100 dark:bg-black dark:text-neutral-100"
         >
           Create
