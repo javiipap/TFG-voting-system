@@ -25,7 +25,7 @@ export default function HeaderNav() {
         <Link
           key={`header_nav-${index}`}
           href={href}
-          className="dark:text-gray-200 px-2"
+          className="dark:text-neutral-200 px-2"
         >
           {label}
         </Link>

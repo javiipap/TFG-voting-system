@@ -1,5 +1,6 @@
 import Button from '@/components/Button';
 import Table, { Row, TBody, THead, Td, Th } from '@/components/Table';
+import Title from '../components/Title';
 
 const voters = [
   {
@@ -10,12 +11,12 @@ const voters = [
   {
     name: 'María García',
     pkey: '6b3d8e297c4b0d1e2f3a5b6c7d8e9f0a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p',
-    hasVoted: false,
+    hasVoted: true,
   },
   {
     name: 'Luis Rodríguez',
     pkey: '4eab7f98d7e33a27b6d5f8a9c7b4d5f8a9c7b4d5f8a9c7b4d5f8a9c7b4d5f8a',
-    hasVoted: false,
+    hasVoted: true,
   },
   {
     name: 'Ana Martínez',
@@ -25,7 +26,7 @@ const voters = [
   {
     name: 'Carlos López',
     pkey: '9d86b40b5a1d8e7c6b5a4d3c2b1a9e8d7f6g5h4i3j2k1l0m9n8o7p6q5r4s3t',
-    hasVoted: false,
+    hasVoted: true,
   },
   {
     name: 'Sofía Fernández',
@@ -206,15 +207,10 @@ const voters = [
 
 export default function Voters() {
   return (
-    <div className="px-6 py-8">
-      <div className="flex items-center mb-6">
-        <h1 className="font-semibold text-lg md:text-2xl dark:text-gray-100">
-          Voters
-        </h1>
-        <Button>Add voter</Button>
-      </div>
-      <div className="border shadow-sm rounded-lg dark:border-gray-800 dark:bg-black">
-        <Table className="w-full table-auto caption-bottom text-sm dark:text-gray-100">
+    <>
+      <Title component={<Button>Add voter</Button>}>Voters</Title>
+      <div className="border shadow-sm rounded-lg dark:border-neutral-800 dark:bg-black">
+        <Table className="w-full table-auto caption-bottom text-sm">
           <THead>
             <Row>
               <Th>#</Th>
@@ -230,7 +226,7 @@ export default function Voters() {
                 <Td>{index + 1}</Td>
                 <Td>{voter.name}</Td>
                 <Td>{voter.pkey}</Td>
-                <Td>{voter.hasVoted ? 'Voted' : 'Not voted'}</Td>
+                <Td>{voter.hasVoted ? '✅' : '❌'}</Td>
                 <Td>
                   <button className="hover:underline text-red-700">
                     Delete
@@ -241,6 +237,6 @@ export default function Voters() {
           </TBody>
         </Table>
       </div>
-    </div>
+    </>
   );
 }

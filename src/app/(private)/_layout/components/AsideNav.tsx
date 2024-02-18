@@ -29,15 +29,15 @@ const LINKS: {
 export function AsideNav() {
   const pathname = usePathname();
   const activeLink =
-    'bg-gray-200 dark:bg-gray-700 text-gray-950 dark:text-gray-50';
-  const hover = 'hover:text-gray-950 dark:hover:text-gray-50';
+    'bg-neutral-200 dark:bg-neutral-700 text-neutral-950 dark:text-neutral-50';
+  const hover = 'hover:text-neutral-950 dark:hover:text-neutral-50';
 
   return (
-    <nav className="flex-1 px-4 text-sm font-medium border-b dark:border-gray-800">
+    <nav className="flex-1 px-4 text-sm font-medium border-b dark:border-neutral-800">
       {LINKS.map(({ href, Icon, label }, index) => (
         <Link
-          className={`flex items-center gap-3 rounded-lg px-3 py-2 text-gray-600 transition-all ${hover} ${
-            pathname === href ? activeLink : 'dark:text-gray-300'
+          className={`flex items-center gap-3 rounded-lg px-3 py-2 text-neutral-600 transition-all ${hover} ${
+            pathname === href ? activeLink : 'dark:text-neutral-300'
           }`}
           href={href}
           key={`aside_link-${index}`}

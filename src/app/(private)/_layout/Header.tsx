@@ -3,7 +3,7 @@ import HeaderNav from './components/HeaderNav';
 
 export default function Header() {
   return (
-    <header className="h-14 lg:h-[60px] border-b bg-gray-100/40 dark:bg-black dark:border-gray-800">
+    <header className="h-14 lg:h-[60px] border-b bg-neutral-100/40 dark:bg-black dark:border-neutral-800">
       <div className="flex justify-end items-center h-full px-6">
         <HeaderNav />
         <img

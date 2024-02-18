@@ -13,7 +13,9 @@ export default function RootLayout({
         <div className="overflow-hidden">
           <Header />
           <div className="flex h-[calc(100vh_-_3.5rem)] lg:h-[calc(100vh_-_60px)] w-full dark:bg-black">
-            <main className="overflow-auto w-full">{children}</main>
+            <main className="overflow-auto w-full">
+              <div className="px-6 py-8">{children}</div>
+            </main>
           </div>
         </div>
       </div>
