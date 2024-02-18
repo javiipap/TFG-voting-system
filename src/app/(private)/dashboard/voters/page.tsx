@@ -227,7 +227,7 @@ export default function Voters() {
           </THead>
           <TBody>
             {voters.map((voter, index) => (
-              <Row>
+              <Row key={`voter-${index}`}>
                 <Td>{index + 1}</Td>
                 <Td>{voter.name}</Td>
                 <Td>{voter.pkey}</Td>

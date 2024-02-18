@@ -5,7 +5,7 @@ import { AsideNav } from './components/AsideNav';
 
 export default function Aside() {
   return (
-    <aside className="flex flex-col h-full gap-2 border-r dark:border-gray-950 bg-gray-100 dark:bg-gray-800">
+    <aside className="hidden lg:flex flex-col h-full gap-2 border-r dark:border-gray-950 bg-gray-100 dark:bg-gray-800">
       <div className="flex h-14 lg:h-[60px] items-center border-b dark:border-gray-950 px-6">
         <Link href="#" className="flex items-center gap-2 font-semibold">
           <Package2Icon className="w-6 h-6 dark:text-gray-300" />
@@ -15,9 +15,7 @@ export default function Aside() {
           <BellIcon className="h-4 w-4 dark:text-gray-100" />
         </div>
       </div>
-      <div className="flex-1 border-b dark:border-gray-950">
-        <AsideNav />
-      </div>
+      <AsideNav />
       <div className="mx-8 py-2 dark:text-gray-100">
         <Link
           href="#"
