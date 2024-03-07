@@ -1,5 +1,13 @@
-import Button from '@/components/Button';
-import Table, { Row, TBody, THead, Td, Th } from '@/components/Table';
+import { Button } from '@/components/ui/button';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+
 import Title from '../components/Title';
 
 const voters = [
@@ -210,31 +218,31 @@ export default function Voters() {
     <>
       <Title component={<Button>Add voter</Button>}>Voters</Title>
       <div className="border shadow-sm rounded-lg dark:border-neutral-800 dark:bg-black">
-        <Table className="w-full table-auto caption-bottom text-sm">
-          <THead>
-            <Row>
-              <Th>#</Th>
-              <Th>Name</Th>
-              <Th>Public Key</Th>
-              <Th>Status</Th>
-              <Th>Delete</Th>
-            </Row>
-          </THead>
-          <TBody>
+        <Table className="w-full">
+          <TableHeader>
+            <TableRow>
+              <TableHead>#</TableHead>
+              <TableHead>Name</TableHead>
+              <TableHead>Public Key</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Delete</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
             {voters.map((voter, index) => (
-              <Row key={`voter-${index}`}>
-                <Td>{index + 1}</Td>
-                <Td>{voter.name}</Td>
-                <Td>{voter.pkey}</Td>
-                <Td>{voter.hasVoted ? '✅' : '❌'}</Td>
-                <Td>
-                  <button className="hover:underline text-red-700">
+              <TableRow key={`voter-${index}`}>
+                <TableCell>{index + 1}</TableCell>
+                <TableCell>{voter.name}</TableCell>
+                <TableCell>{voter.pkey}</TableCell>
+                <TableCell>{voter.hasVoted ? '✅' : '❌'}</TableCell>
+                <TableCell>
+                  <Button variant="link" className="text-red-600">
                     Delete
-                  </button>
-                </Td>
-              </Row>
+                  </Button>
+                </TableCell>
+              </TableRow>
             ))}
-          </TBody>
+          </TableBody>
         </Table>
       </div>
     </>
