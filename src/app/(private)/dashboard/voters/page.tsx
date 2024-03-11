@@ -7,8 +7,10 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { Dialog, DialogTrigger } from '@/components/ui/dialog';
 
 import Title from '../components/Title';
+import AddVoter from './components/AddVoter';
 
 const voters = [
   {
@@ -215,8 +217,16 @@ const voters = [
 
 export default function Voters() {
   return (
-    <>
-      <Title component={<Button>Add voter</Button>}>Voters</Title>
+    <Dialog>
+      <Title
+        component={
+          <DialogTrigger asChild>
+            <Button>Add voter</Button>
+          </DialogTrigger>
+        }
+      >
+        Voters
+      </Title>
       <div className="border shadow-sm rounded-lg dark:border-neutral-800 dark:bg-black">
         <Table className="w-full">
           <TableHeader>
@@ -245,6 +255,7 @@ export default function Voters() {
           </TableBody>
         </Table>
       </div>
-    </>
+      <AddVoter />
+    </Dialog>
   );
 }
