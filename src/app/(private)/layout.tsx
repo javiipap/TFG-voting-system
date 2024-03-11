@@ -1,5 +1,16 @@
 import Aside from './_layout/Aside';
 import Header from './_layout/Header';
+import { Button } from '@/components/ui/button';
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+} from '@/components/ui/sheet';
+import SheetForm from './_layout/components/SheetForm';
 
 export default function RootLayout({
   children,
@@ -7,7 +18,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <>
+    <Sheet>
       <div className="grid lg:grid-cols-[280px_1fr] h-screen min-h-screen">
         <Aside />
         <div className="overflow-hidden">
@@ -19,6 +30,21 @@ export default function RootLayout({
           </div>
         </div>
       </div>
-    </>
+      <SheetContent>
+        <div className="w-full">
+          <SheetHeader>
+            <SheetTitle>Create a new election</SheetTitle>
+          </SheetHeader>
+          <div className="">
+            <SheetForm />
+          </div>
+        </div>
+        <SheetFooter>
+          <SheetClose asChild>
+            <Button>Create</Button>
+          </SheetClose>
+        </SheetFooter>
+      </SheetContent>
+    </Sheet>
   );
 }
