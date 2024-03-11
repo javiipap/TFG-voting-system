@@ -1,7 +1,10 @@
 import Link from 'next/link';
 import React from 'react';
-import { BellIcon, Package2Icon, PlusIcon } from './components/icons';
+import { BellIcon, Package2Icon } from './components/icons';
 import { AsideNav } from './components/AsideNav';
+import { SheetTrigger } from '@/components/ui/sheet';
+import Button from '@/components/Button';
+import { PlusIcon } from 'lucide-react';
 
 export default function Aside() {
   return (
@@ -21,14 +24,15 @@ export default function Aside() {
         </div>
       </div>
       <AsideNav />
-      <div className="mx-8 py-2 dark:text-neutral-100">
-        <Link
-          href="/dashboard/create"
-          className="group flex items-center justify-between px-3 py-3 mb-1 hover:bg-black dark:hover:bg-neutral-700 hover:text-white dark:hover:text-neutral-100 rounded-lg transition-all bg-neutral-100 dark:bg-black dark:text-neutral-100"
-        >
-          Create
-          <PlusIcon className="h-6 w-6 dark:fill-neutral-100 group-hover:fill-white transition-all" />
-        </Link>
+      <div className="flex justify-center items-center py-4">
+        <div>
+          <SheetTrigger asChild>
+            <Button>
+              <PlusIcon className="w-4 h-4 mr-2" />
+              Create election
+            </Button>
+          </SheetTrigger>
+        </div>
       </div>
     </aside>
   );
