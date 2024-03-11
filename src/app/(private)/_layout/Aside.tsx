@@ -3,7 +3,7 @@ import React from 'react';
 import { BellIcon, Package2Icon } from './components/icons';
 import { AsideNav } from './components/AsideNav';
 import { SheetTrigger } from '@/components/ui/sheet';
-import Button from '@/components/Button';
+import { Button } from '@/components/ui/button';
 import { PlusIcon } from 'lucide-react';
 
 export default function Aside() {
