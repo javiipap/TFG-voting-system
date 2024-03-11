@@ -16,7 +16,7 @@ export default function Page() {
     <>
       <Title>Results</Title>
       <div className="flex gap-8 h-[400px] mb-8"></div>
-      <div className="border shadow-sm rounded-lg dark:border-neutral-800 dark:bg-black">
+      <div className="border shadow-sm rounded-lg">
         <Table className="w-full">
           <TableHeader>
             <TableRow>

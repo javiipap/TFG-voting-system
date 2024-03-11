@@ -227,7 +227,7 @@ export default function Voters() {
       >
         Voters
       </Title>
-      <div className="border shadow-sm rounded-lg dark:border-neutral-800 dark:bg-black">
+      <div className="border shadow-sm rounded-lg">
         <Table className="w-full">
           <TableHeader>
             <TableRow>
@@ -246,7 +246,7 @@ export default function Voters() {
                 <TableCell>{voter.pkey}</TableCell>
                 <TableCell>{voter.hasVoted ? '✅' : '❌'}</TableCell>
                 <TableCell>
-                  <Button variant="link" className="text-red-600">
+                  <Button variant="link" className="text-red-600 px-0">
                     Delete
                   </Button>
                 </TableCell>
