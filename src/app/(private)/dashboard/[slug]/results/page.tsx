@@ -9,7 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import Title from '../components/Title';
+import Title from '../../components/Title';
 
 export default function Page() {
   return (

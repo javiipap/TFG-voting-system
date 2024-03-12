@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/table';
 import { Dialog, DialogTrigger } from '@/components/ui/dialog';
 
-import Title from '../components/Title';
+import Title from '../../components/Title';
 import AddVoter from './components/AddVoter';
 
 const voters = [
