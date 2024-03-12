@@ -1,6 +1,3 @@
-import * as schema from '@/db/schema';
-import { drizzle } from 'drizzle-orm/postgres-js';
-import postgres from 'postgres';
 import Link from 'next/link';
 import {
   Card,
@@ -11,17 +8,15 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
+import { getBallots } from '@/db/helpers';
+import Title from './components/Title';
 
 export default async function DashboardPage() {
-  const client = postgres('postgres://pi:password@192.168.1.10:5432/tfg');
-  const db = drizzle(client, { schema });
-
-  const ballots = await db.query.ballots.findMany();
+  const ballots = await getBallots();
 
   return (
     <main className="p-6">
-      <h1>Dashboard</h1>
-      <p>Elige la votación</p>
+      <Title>Dashboard</Title>
       <div className="flex gap-4">
         {ballots.map((ballot) => (
           <Card key={ballot.id} className="">
@@ -33,8 +28,16 @@ export default async function DashboardPage() {
             <CardContent>
               <p>{ballot.description}</p>
               <Separator className="my-2" />
-              <p>Start date: {ballot.startDate.toLocaleString()}</p>
-              <p>End date: {ballot.endDate.toLocaleString()}</p>
+              <CardDescription>
+                <p>
+                  Start date:{' '}
+                  {ballot.startDate.toLocaleString('es-ES').slice(0, -3)}
+                </p>
+                <p>
+                  End date:{' '}
+                  {ballot.endDate.toLocaleString('es-ES').slice(0, -3)}
+                </p>
+              </CardDescription>
             </CardContent>
           </Card>
         ))}

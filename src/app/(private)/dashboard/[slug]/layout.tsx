@@ -9,10 +9,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet';
-import * as schema from '@/db/schema';
-import { drizzle } from 'drizzle-orm/postgres-js';
-import postgres from 'postgres';
-import { eq } from 'drizzle-orm';
+import { getBallot } from '@/db/helpers';
 
 export default async function RootLayout({
   children,
@@ -21,12 +18,7 @@ export default async function RootLayout({
   children: React.ReactNode;
   params: { slug: string };
 }>) {
-  const client = postgres('postgres://pi:password@192.168.1.10:5432/tfg');
-  const db = drizzle(client, { schema });
-
-  const ballot = await db.query.ballots.findFirst({
-    where: eq(schema.ballots.slug, params.slug),
-  });
+  const ballot = await getBallot(params.slug);
 
   if (!ballot) {
     return <div>Not found</div>;
