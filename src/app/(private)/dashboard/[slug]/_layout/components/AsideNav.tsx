@@ -33,7 +33,7 @@ export function AsideNav() {
   const hover = 'hover:text-neutral-950 dark:hover:text-neutral-50';
 
   return (
-    <nav className="flex-1 px-4 text-sm font-medium border-b dark:border-neutral-800">
+    <nav className="flex-1 px-4 text-sm font-medium border-b dark:border-neutral-800 mt-2">
       {LINKS.map(({ href, Icon, label }, index) => (
         <Link
           className={`flex items-center gap-3 rounded-lg px-3 py-2 text-neutral-600 transition-all ${hover} ${
