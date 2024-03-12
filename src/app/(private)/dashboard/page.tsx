@@ -1,3 +1,3 @@
-export default function Dashboard() {
-  return <div className=""></div>;
+export default function () {
+  return <div className="">Elige la votación</div>;
 }

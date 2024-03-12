@@ -1,5 +1,5 @@
-import Aside from './_layout/Aside';
-import Header from './_layout/Header';
+import Aside from '../../_layout/Aside';
+import Header from '../../_layout/Header';
 import { Button } from '@/components/ui/button';
 import {
   Sheet,
@@ -9,7 +9,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet';
-import SheetForm from './_layout/components/SheetForm';
+import SheetForm from '../../_layout/components/SheetForm';
 
 export default function RootLayout({
   children,
