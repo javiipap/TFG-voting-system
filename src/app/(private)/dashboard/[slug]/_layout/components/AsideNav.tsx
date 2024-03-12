@@ -2,35 +2,36 @@
 
 import Link from 'next/link';
 import { StatsIcon, UsersIcon } from './icons';
-import { usePathname } from 'next/navigation';
-
-const LINKS: {
-  href: string;
-  Icon: (props: React.SVGProps<SVGSVGElement>) => JSX.Element;
-  label: string;
-}[] = [
-  {
-    href: '/dashboard/results',
-    Icon: StatsIcon,
-    label: 'Results',
-  },
-  {
-    href: '/dashboard/candidates',
-    Icon: UsersIcon,
-    label: 'Candidates',
-  },
-  {
-    href: '/dashboard/voters',
-    Icon: UsersIcon,
-    label: 'Voters',
-  },
-];
+import { useParams, usePathname } from 'next/navigation';
 
 export function AsideNav() {
   const pathname = usePathname();
+  const params = useParams();
   const activeLink =
     'bg-neutral-200 dark:bg-neutral-700 text-neutral-950 dark:text-neutral-50';
   const hover = 'hover:text-neutral-950 dark:hover:text-neutral-50';
+
+  const LINKS: {
+    href: string;
+    Icon: (props: React.SVGProps<SVGSVGElement>) => JSX.Element;
+    label: string;
+  }[] = [
+    {
+      href: `/dashboard/${params.slug}/results`,
+      Icon: StatsIcon,
+      label: 'Results',
+    },
+    {
+      href: `/dashboard/${params.slug}/candidates`,
+      Icon: UsersIcon,
+      label: 'Candidates',
+    },
+    {
+      href: `/dashboard/${params.slug}/voters`,
+      Icon: UsersIcon,
+      label: 'Voters',
+    },
+  ];
 
   return (
     <nav className="flex-1 px-4 text-sm font-medium border-b dark:border-neutral-800 mt-2">
