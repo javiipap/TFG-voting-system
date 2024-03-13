@@ -38,7 +38,7 @@ export const candidates = pgTable('candidates', {
 export const userGroups = pgTable('user_groups', {
   id: serial('id').primaryKey(),
   name: text('name').notNull(),
-  admin_id: serial('admin_id')
+  adminId: serial('admin_id')
     .references(() => admins.id)
     .notNull(),
 });
