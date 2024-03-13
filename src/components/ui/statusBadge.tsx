@@ -1,7 +1,7 @@
 const variants = {
-  pending: {
+  upcoming: {
     badge: 'text-blue-400 border-blue-400 bg-blue-100 hover:bg-blue-200',
-    label: 'Pending',
+    label: 'Upcoming',
     circle: 'bg-blue-400',
   },
   open: {

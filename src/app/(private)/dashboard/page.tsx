@@ -10,10 +10,23 @@ import {
 import { Separator } from '@/components/ui/separator';
 import { getBallots } from '@/db/helpers';
 import Title from './components/Title';
-import { StatusBadge } from '@/components/ui/statusBadge';
+import { StatusBadge, StatusBadgeProps } from '@/components/ui/statusBadge';
 
 export default async function DashboardPage() {
-  const ballots = await getBallots();
+  const rawBallots = await getBallots();
+
+  const currentDate = new Date();
+  const ballots = rawBallots.map((ballot) => ({
+    ...ballot,
+    startDate: ballot.startDate.toLocaleString('es-ES').slice(0, -3),
+    endDate: ballot.endDate.toLocaleString('es-ES').slice(0, -3),
+    status:
+      ballot.startDate > currentDate
+        ? 'upcoming'
+        : ballot.endDate < currentDate
+        ? 'closed'
+        : ('open' as StatusBadgeProps['variant']),
+  }));
 
   return (
     <main className="p-6">
@@ -26,20 +39,18 @@ export default async function DashboardPage() {
                 <CardTitle>{ballot.name}</CardTitle>
               </Link>
               <div className="">
-                <StatusBadge variant="pending" />
+                <StatusBadge variant={ballot.status} />
               </div>
             </CardHeader>
             <CardContent>
               <p>{ballot.description}</p>
               <Separator className="my-2" />
               <CardDescription>
-                <p>
-                  Start date:{' '}
-                  {ballot.startDate.toLocaleString('es-ES').slice(0, -3)}
+                <p suppressHydrationWarning={true}>
+                  Start date: {ballot.startDate}
                 </p>
-                <p>
-                  End date:{' '}
-                  {ballot.endDate.toLocaleString('es-ES').slice(0, -3)}
+                <p suppressHydrationWarning={true}>
+                  End date: {ballot.endDate}
                 </p>
               </CardDescription>
             </CardContent>

@@ -39,7 +39,7 @@ export default function Title({
               <PopoverClose key={`header_ballot_${ballot.id}`} asChild>
                 <Link
                   href={`/dashboard/${ballot.slug}`}
-                  className="text-sm py-2 px-2 rounded-md hover:bg-neutral-900"
+                  className="text-sm py-2 px-2 rounded-md hover:bg-primary/5"
                 >
                   {ballot.name}
                 </Link>
