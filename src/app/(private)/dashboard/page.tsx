@@ -10,6 +10,7 @@ import {
 import { Separator } from '@/components/ui/separator';
 import { getBallots } from '@/db/helpers';
 import Title from './components/Title';
+import { StatusBadge } from '@/components/ui/statusBadge';
 
 export default async function DashboardPage() {
   const ballots = await getBallots();
@@ -19,11 +20,14 @@ export default async function DashboardPage() {
       <Title>Dashboard</Title>
       <div className="flex gap-4">
         {ballots.map((ballot) => (
-          <Card key={ballot.id} className="">
+          <Card key={ballot.id} className="hover:shadow-md transition">
             <CardHeader>
               <Link href={`/dashboard/${ballot.slug}`}>
                 <CardTitle>{ballot.name}</CardTitle>
               </Link>
+              <div className="">
+                <StatusBadge variant="pending" />
+              </div>
             </CardHeader>
             <CardContent>
               <p>{ballot.description}</p>
