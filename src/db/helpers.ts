@@ -71,3 +71,15 @@ export const getVoters = async (slug: string) => {
       )
   );
 };
+
+export const getCandidates = async (slug: string) => {
+  return await execQuery((db) =>
+    db
+      .select()
+      .from(schema.ballots)
+      .innerJoin(
+        schema.candidates,
+        eq(schema.ballots.id, schema.candidates.ballotId)
+      )
+  );
+};
