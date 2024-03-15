@@ -83,3 +83,14 @@ export const getCandidates = async (slug: string) => {
       )
   );
 };
+
+export const createBallot = async (
+  ballot: typeof schema.ballots.$inferInsert
+) => {
+  return await execQuery((db) =>
+    db
+      .insert(schema.ballots)
+      .values(ballot)
+      .returning({ slug: schema.ballots.slug })
+  );
+};
