@@ -37,19 +37,10 @@ export default async function RootLayout({
         </div>
       </div>
       <SheetContent>
-        <div className="w-full">
-          <SheetHeader>
-            <SheetTitle>Create a new election</SheetTitle>
-          </SheetHeader>
-          <div className="">
-            <SheetForm />
-          </div>
-        </div>
-        <SheetFooter>
-          <SheetClose asChild>
-            <Button>Create</Button>
-          </SheetClose>
-        </SheetFooter>
+        <SheetHeader>
+          <SheetTitle>Create a new election</SheetTitle>
+        </SheetHeader>
+        <SheetForm />
       </SheetContent>
     </Sheet>
   );

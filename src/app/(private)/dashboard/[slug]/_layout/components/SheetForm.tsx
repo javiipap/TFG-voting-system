@@ -21,6 +21,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { useToast } from '@/components/ui/use-toast';
+import { SheetClose, SheetFooter } from '@/components/ui/sheet';
+import { Button } from '@/components/ui/button';
 
 enum AuthMethod {
   google = 'Google',
@@ -39,6 +42,8 @@ type Inputs = {
 
 export default function SheetForm() {
   const form = useForm<Inputs>();
+  const { toast } = useToast();
+
   const hours = [...new Array(24)].map((_, i) => {
     const time = (i + 8) % 12;
     const pm = (i + 8) % 24 >= 12;
@@ -46,9 +51,19 @@ export default function SheetForm() {
     return `${!time ? '12' : time}:00 ${pm ? 'pm' : 'am'}`;
   });
 
+  function onSubmit() {
+    toast({
+      title: 'Election created',
+      description: 'The election has been created successfully',
+    });
+  }
+
   return (
     <Form {...form}>
-      <div className="mt-4 [&>div]:mb-4">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="mt-4 [&>div]:mb-4"
+      >
         <FormField
           name="name"
           render={({ field }) => (
@@ -67,7 +82,7 @@ export default function SheetForm() {
             <FormItem>
               <FormLabel>Description</FormLabel>
               <FormControl>
-                <Textarea className="max-h-80" />
+                <Textarea className="max-h-80" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -78,22 +93,22 @@ export default function SheetForm() {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Authentication method</FormLabel>
-              <FormControl>
-                <Select>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select a method" />
                   </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      {Object.values(AuthMethod).map((method) => (
-                        <SelectItem key={method} value={method}>
-                          {method}
-                        </SelectItem>
-                      ))}
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-              </FormControl>
+                </FormControl>
+                <SelectContent>
+                  <SelectGroup>
+                    {Object.values(AuthMethod).map((method) => (
+                      <SelectItem key={method} value={method}>
+                        {method}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
               <FormDescription>
                 Users will use this method in order to participate.
               </FormDescription>
@@ -109,7 +124,6 @@ export default function SheetForm() {
               <FormControl>
                 <DatePickerWithRange />
               </FormControl>
-              {/* <FormDescription>This is your public display name.</FormDescription> */}
               <FormMessage />
             </FormItem>
           )}
@@ -120,22 +134,25 @@ export default function SheetForm() {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Start time</FormLabel>
-                <FormControl>
-                  <Select>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <FormControl>
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="Select a method" />
                     </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        {hours.map((val) => (
-                          <SelectItem key={`start-${val}`} value={val}>
-                            {val}
-                          </SelectItem>
-                        ))}
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                </FormControl>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectGroup>
+                      {hours.map((val) => (
+                        <SelectItem key={`start-${val}`} value={val}>
+                          {val}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
                 <FormMessage />
               </FormItem>
             )}
@@ -145,28 +162,36 @@ export default function SheetForm() {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>End time</FormLabel>
-                <FormControl>
-                  <Select>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <FormControl>
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="Select a method" />
                     </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        {hours.map((val) => (
-                          <SelectItem key={`end-${val}`} value={val}>
-                            {val}
-                          </SelectItem>
-                        ))}
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                </FormControl>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectGroup>
+                      {hours.map((val) => (
+                        <SelectItem key={`end-${val}`} value={val}>
+                          {val}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
                 <FormMessage />
               </FormItem>
             )}
           />
         </div>
-      </div>
+        <SheetFooter>
+          <SheetClose asChild>
+            <Button type="submit">Create</Button>
+          </SheetClose>
+        </SheetFooter>
+      </form>
     </Form>
   );
 }
