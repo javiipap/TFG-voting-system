@@ -11,7 +11,7 @@ const execQuery = async <T>(
     port: parseInt(process.env.DB_PORT ?? ''),
     db: process.env.DB_NAME,
     username: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
+    password: process.env.DB_PWD,
   });
   const db = drizzle(client, { schema });
 
@@ -98,5 +98,24 @@ export const createBallot = async (
       .insert(schema.ballots)
       .values(ballot)
       .returning({ slug: schema.ballots.slug })
+  );
+};
+
+export const isAdmin = async (email: string) => {
+  return (
+    (
+      await execQuery((db) =>
+        db
+          .select()
+          .from(schema.users)
+          .innerJoin(
+            schema.admins,
+            and(
+              eq(schema.users.id, schema.admins.userId),
+              eq(schema.users.email, email)
+            )
+          )
+      )
+    ).length > 0
   );
 };

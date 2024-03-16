@@ -11,7 +11,7 @@ export const users = pgTable('users', {
   id: serial('id').primaryKey(),
   name: text('name'),
   email: text('email').unique(),
-  emailVerified: timestamp('email_verified', { withTimezone: true }),
+  emailVerified: timestamp('emailVerified', { withTimezone: true }),
   image: text('image'),
 });
 
