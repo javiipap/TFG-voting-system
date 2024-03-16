@@ -1,14 +1,23 @@
-import { serial, text, timestamp, pgTable } from 'drizzle-orm/pg-core';
+import {
+  serial,
+  text,
+  timestamp,
+  pgTable,
+  bigint,
+  integer,
+} from 'drizzle-orm/pg-core';
 
 export const users = pgTable('users', {
   id: serial('id').primaryKey(),
-  name: text('name').notNull(),
-  email: text('email').unique().notNull(),
+  name: text('name'),
+  email: text('email').unique(),
+  emailVerified: timestamp('email_verified', { withTimezone: true }),
+  image: text('image'),
 });
 
 export const admins = pgTable('admins', {
   id: serial('id').primaryKey(),
-  userId: serial('user_id')
+  userId: integer('user_id')
     .references(() => users.id)
     .unique(),
 });
@@ -18,7 +27,7 @@ export const ballots = pgTable('ballots', {
   name: text('name').notNull(),
   description: text('description').notNull(),
   slug: text('slug').unique().notNull(),
-  adminId: serial('admin_id')
+  adminId: integer('admin_id')
     .references(() => admins.id)
     .notNull(),
   startDate: timestamp('start_date').notNull(),
@@ -30,7 +39,7 @@ export const candidates = pgTable('candidates', {
   name: text('name').notNull(),
   description: text('description'),
   img: text('img'),
-  ballotId: serial('ballot_id')
+  ballotId: integer('ballot_id')
     .references(() => ballots.id)
     .notNull(),
 });
@@ -38,7 +47,7 @@ export const candidates = pgTable('candidates', {
 export const userGroups = pgTable('user_groups', {
   id: serial('id').primaryKey(),
   name: text('name').notNull(),
-  adminId: serial('admin_id')
+  adminId: integer('admin_id')
     .references(() => admins.id)
     .notNull(),
 });
@@ -47,10 +56,10 @@ export const votes = pgTable(
   'votes',
   {
     id: serial('id').unique().notNull(),
-    userId: serial('user_id')
+    userId: integer('user_id')
       .references(() => users.id)
       .notNull(),
-    ballotId: serial('ballot_id')
+    ballotId: integer('ballot_id')
       .references(() => ballots.id)
       .notNull(),
     // blockId or transactionId
@@ -64,8 +73,8 @@ export const userGroupMemberships = pgTable(
   'user_group_memberships',
   {
     id: serial('id').unique().notNull(),
-    groupId: serial('group_id').notNull(),
-    userId: serial('user_id').notNull(),
+    groupId: integer('group_id').notNull(),
+    userId: integer('user_id').notNull(),
   },
   (table) => ({
     pk: [table.groupId, table.userId],
@@ -76,10 +85,10 @@ export const authorizedGroups = pgTable(
   'authorized_groups',
   {
     id: serial('id').unique().notNull(),
-    groupId: serial('group_id')
+    groupId: integer('group_id')
       .references(() => userGroups.id)
       .notNull(),
-    ballotId: serial('ballot_id')
+    ballotId: integer('ballot_id')
       .references(() => ballots.id)
       .notNull(),
   },
@@ -87,3 +96,37 @@ export const authorizedGroups = pgTable(
     pk: [table.groupId, table.ballotId],
   })
 );
+
+// ---------------------------NextAuth-----------------------------------------
+
+export const verificationToken = pgTable(
+  'verification_token',
+  {
+    identifier: text('identifier').notNull(),
+    expires: timestamp('expires', { withTimezone: true }).notNull(),
+    token: text('token').notNull(),
+  },
+  (table) => ({ pk: [table.identifier, table.token] })
+);
+
+export const accounts = pgTable('accounts', {
+  id: serial('id').primaryKey(),
+  userId: integer('userId').notNull(),
+  type: text('type').notNull(),
+  provider: text('provider').notNull(),
+  providerAccountId: text('providerAccountId').notNull(),
+  refresh_token: text('refresh_token'),
+  access_token: text('access_token'),
+  expires_at: bigint('expires_at', { mode: 'bigint' }),
+  id_token: text('id_token'),
+  scope: text('scope'),
+  session_state: text('session_state'),
+  token_type: text('token_type'),
+});
+
+export const sessions = pgTable('sessions', {
+  id: serial('id').primaryKey(),
+  userId: integer('userId').notNull(),
+  expires: timestamp('expires', { withTimezone: true }).notNull(),
+  sessionToken: text('sessionToken').notNull(),
+});

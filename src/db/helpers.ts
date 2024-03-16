@@ -6,7 +6,13 @@ import { and, eq } from 'drizzle-orm';
 const execQuery = async <T>(
   fn: (db: PostgresJsDatabase<typeof schema>) => Promise<T>
 ) => {
-  const client = postgres('postgres://pi:password@192.168.1.10:5432/tfg');
+  const client = postgres({
+    host: process.env.DB_HOST,
+    port: parseInt(process.env.DB_PORT ?? ''),
+    db: process.env.DB_NAME,
+    username: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+  });
   const db = drizzle(client, { schema });
 
   const result = await fn(db);
