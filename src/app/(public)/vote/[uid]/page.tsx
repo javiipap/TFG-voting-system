@@ -3,7 +3,7 @@ import { Vote } from 'lucide-react';
 
 export default function VotePage({ params }: { params: { uid: string } }) {
   return (
-    <div className="min-h-screen min-w-screen flex justify-center items-center">
+    <main className="min-h-screen min-w-screen flex justify-center items-center">
       <div className="max-w-[600px] text-center space-y-3">
         <h1 className="text-3xl font-bold tracking-tighter sm:text-5xl">
           Elecciones municipales
@@ -19,6 +19,6 @@ export default function VotePage({ params }: { params: { uid: string } }) {
           Vota
         </Button>
       </div>
-    </div>
+    </main>
   );
 }

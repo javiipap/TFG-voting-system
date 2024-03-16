@@ -5,7 +5,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
   const candidates = await getCandidates(params.slug);
 
   return (
-    <>
+    <main>
       <Title>Candidates</Title>
       <div className="">
         {candidates.map((candidate) => (
@@ -15,6 +15,6 @@ export default async function Page({ params }: { params: { slug: string } }) {
           </div>
         ))}
       </div>
-    </>
+    </main>
   );
 }

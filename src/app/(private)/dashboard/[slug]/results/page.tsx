@@ -13,7 +13,7 @@ import Title from '../../components/Title';
 
 export default function Page() {
   return (
-    <>
+    <main>
       <Title>Results</Title>
       <div className="flex gap-8 h-[400px] mb-8"></div>
       <div className="border shadow-sm rounded-lg">
@@ -59,6 +59,6 @@ export default function Page() {
           </TableBody>
         </Table>
       </div>
-    </>
+    </main>
   );
 }
