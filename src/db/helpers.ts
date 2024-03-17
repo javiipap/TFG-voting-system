@@ -3,9 +3,7 @@ import postgres from 'postgres';
 import * as schema from '@/db/schema';
 import { and, eq } from 'drizzle-orm';
 
-const execQuery = async <T>(
-  fn: (db: PostgresJsDatabase<typeof schema>) => Promise<T>
-) => {
+export const getConnection = () => {
   const client = postgres({
     host: process.env.DB_HOST,
     port: parseInt(process.env.DB_PORT ?? ''),
@@ -13,7 +11,16 @@ const execQuery = async <T>(
     username: process.env.DB_USER,
     password: process.env.DB_PWD,
   });
+
   const db = drizzle(client, { schema });
+
+  return { client, db };
+};
+
+const execQuery = async <T>(
+  fn: (db: PostgresJsDatabase<typeof schema>) => Promise<T>
+) => {
+  const { client, db } = getConnection();
 
   const result = await fn(db);
 

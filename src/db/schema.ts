@@ -117,7 +117,7 @@ export const accounts = pgTable('accounts', {
   providerAccountId: text('providerAccountId').notNull(),
   refresh_token: text('refresh_token'),
   access_token: text('access_token'),
-  expires_at: bigint('expires_at', { mode: 'bigint' }),
+  expires_at: bigint('expires_at', { mode: 'number' }),
   id_token: text('id_token'),
   scope: text('scope'),
   session_state: text('session_state'),
