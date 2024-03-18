@@ -24,7 +24,7 @@ const execQuery = async <T>(
 
   const result = await fn(db);
 
-  client.end();
+  await client.end();
 
   return result;
 };
@@ -124,5 +124,20 @@ export const isAdmin = async (email: string) => {
           )
       )
     ).length > 0
+  );
+};
+
+export const getAdmin = async (email: string) => {
+  return await execQuery((db) =>
+    db
+      .select()
+      .from(schema.users)
+      .innerJoin(
+        schema.admins,
+        and(
+          eq(schema.users.id, schema.admins.userId),
+          eq(schema.users.email, email)
+        )
+      )
   );
 };
