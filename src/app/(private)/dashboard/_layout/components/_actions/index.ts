@@ -2,6 +2,7 @@
 
 import { createBallot, getAdmin } from '@/db/helpers';
 import { auth } from '@/auth';
+import { revalidatePath } from 'next/cache';
 
 interface State {
   error: string | null;
@@ -54,6 +55,7 @@ export const submitElection = async (prevState: State, formData: FormData) => {
       adminId: admin[0].admins.id,
     });
 
+    revalidatePath('/dashboard');
     return {
       error: '',
       election: {

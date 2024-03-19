@@ -18,7 +18,7 @@ import React, { useEffect } from 'react';
 import { useFormStatus, useFormState } from 'react-dom';
 import { submitElection } from './_actions';
 import Link from 'next/link';
-import { FormField, Label } from './FormFields';
+import { FormField, Label } from '../../[slug]/_layout/components/FormFields';
 import { DateRange } from 'react-day-picker';
 import { addDays } from 'date-fns';
 

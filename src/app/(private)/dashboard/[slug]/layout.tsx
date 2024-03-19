@@ -1,14 +1,4 @@
 import Aside from './_layout/Aside';
-import SheetForm from './_layout/components/SheetForm';
-import { Button } from '@/components/ui/button';
-import {
-  Sheet,
-  SheetClose,
-  SheetContent,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-} from '@/components/ui/sheet';
 import { getBallot } from '@/db/helpers';
 
 export default async function RootLayout({
@@ -25,23 +15,15 @@ export default async function RootLayout({
   }
 
   return (
-    <Sheet>
-      <div className="grid lg:grid-cols-[280px_1fr]">
-        <Aside />
-        <div className="overflow-hidden">
-          <div className="flex h-[calc(100vh_-_3.5rem)] lg:h-[calc(100vh_-_60px)] w-full dark:bg-black">
-            <div className="overflow-auto w-full">
-              <div className="px-6 py-8">{children}</div>
-            </div>
+    <div className="grid lg:grid-cols-[280px_1fr]">
+      <Aside />
+      <div className="overflow-hidden">
+        <div className="flex h-[calc(100vh_-_3.5rem)] lg:h-[calc(100vh_-_60px)] w-full dark:bg-black">
+          <div className="overflow-auto w-full">
+            <div className="px-6 py-8">{children}</div>
           </div>
         </div>
       </div>
-      <SheetContent>
-        <SheetHeader>
-          <SheetTitle>Create a new election</SheetTitle>
-        </SheetHeader>
-        <SheetForm />
-      </SheetContent>
-    </Sheet>
+    </div>
   );
 }
