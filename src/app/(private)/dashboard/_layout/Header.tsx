@@ -1,9 +1,11 @@
+import { auth } from '@/auth';
 import HeaderNav from './components/HeaderNav';
 import Title from './components/Title';
 import { getBallots } from '@/db/helpers';
 
 export default async function Header() {
-  const ballots = await getBallots();
+  const session = await auth();
+  const ballots = await getBallots(session!.user.adminId!);
 
   return (
     <header className="h-14 lg:h-[60px] border-b bg-neutral-100 dark:bg-black dark:border-neutral-800 flex justify-between items-center">

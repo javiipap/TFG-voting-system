@@ -1,7 +1,7 @@
 import NextAuth from 'next-auth';
 import { authConfig } from './auth.config';
 import Google from 'next-auth/providers/google';
-import { getConnection, isAdmin } from './db/helpers';
+import { getAdmin, getConnection, isAdmin } from './db/helpers';
 import * as schema from './db/schema';
 import { eq } from 'drizzle-orm';
 
@@ -13,10 +13,12 @@ export const {
 } = NextAuth({
   ...authConfig,
   callbacks: {
-    async jwt({ token, account, profile }) {
-      if (account) {
-        if (profile?.email) {
-          token.role = (await isAdmin(profile?.email)) ? 'admin' : 'user';
+    async jwt({ token, account, profile, trigger }) {
+      if (account || trigger === 'update') {
+        if (profile?.email && (await isAdmin(profile.email))) {
+          token.role = 'admin';
+          const admin = await getAdmin(profile.email);
+          token.adminId = admin[0].admins.id;
         } else {
           token.role = 'user';
         }
@@ -26,6 +28,7 @@ export const {
     },
     async session({ session, token }) {
       session.user.role = token.role;
+      session.user.adminId = token.adminId;
 
       return session;
     },

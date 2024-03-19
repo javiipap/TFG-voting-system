@@ -37,8 +37,10 @@ export const getBallot = async (slug: string) => {
   );
 };
 
-export const getBallots = async () => {
-  return await execQuery((db) => db.query.ballots.findMany());
+export const getBallots = async (adminId: number) => {
+  return await execQuery((db) =>
+    db.query.ballots.findMany({ where: eq(schema.ballots.adminId, adminId) })
+  );
 };
 
 export const getVoters = async (slug: string) => {

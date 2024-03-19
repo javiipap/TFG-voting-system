@@ -1,9 +1,12 @@
 import { getBallots } from '@/db/helpers';
 import Title from './components/Title';
 import ElectionCard from './components/Election';
+import { auth } from '@/auth';
 
 export default async function DashboardPage() {
-  const ballots = await getBallots();
+  const session = await auth();
+
+  const ballots = await getBallots(session!.user.adminId!);
 
   return (
     <main className="p-6">
