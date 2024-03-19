@@ -5,16 +5,12 @@ const LINKS: {
   label: string;
 }[] = [
   {
-    href: '/dashboard/results',
-    label: 'Results',
+    href: '/dashboard',
+    label: 'Dashboard',
   },
   {
-    href: '/dashboard/candidates',
-    label: 'Candidates',
-  },
-  {
-    href: '/dashboard/voters',
-    label: 'Voters',
+    href: '/dashboard/groups',
+    label: 'Groups',
   },
 ];
 

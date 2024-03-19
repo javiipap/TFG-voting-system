@@ -19,8 +19,8 @@ interface Props extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onSelect'> {
 
 export function DatePickerWithRange({ className, selected, onSelect }: Props) {
   const [date, setDate] = React.useState<DateRange | undefined>({
-    from: new Date(2022, 0, 20),
-    to: addDays(new Date(2022, 0, 20), 20),
+    from: new Date(),
+    to: addDays(new Date(), 20),
   });
 
   return (
@@ -55,8 +55,8 @@ export function DatePickerWithRange({ className, selected, onSelect }: Props) {
             initialFocus
             mode="range"
             defaultMonth={date?.from}
-            selected={date}
-            onSelect={setDate}
+            selected={selected || date}
+            onSelect={onSelect || setDate}
             numberOfMonths={2}
           />
         </PopoverContent>

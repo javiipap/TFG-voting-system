@@ -1,15 +1,13 @@
-import { Button } from '@/components/ui/button';
 import {
   Table,
   TableBody,
-  TableCell,
   TableHead,
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Dialog, DialogTrigger } from '@/components/ui/dialog';
 import Title from '../../components/Title';
-import AddVoter from './components/AddVoter';
+import AddVoterDialog from './components/AddVoterDialog';
+import { Button } from '@/components/ui/button';
 
 export default async function Voters({
   children,
@@ -18,32 +16,30 @@ export default async function Voters({
 }) {
   return (
     <main>
-      <Dialog>
-        <Title
-          component={
-            <DialogTrigger asChild>
-              <Button>Add voter</Button>
-            </DialogTrigger>
-          }
-        >
-          Voters
-        </Title>
-        <div className="border shadow-sm rounded-lg">
-          <Table className="w-full">
-            <TableHeader>
-              <TableRow>
-                <TableHead>#</TableHead>
-                <TableHead>Name</TableHead>
-                <TableHead>Public Key</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Delete</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>{children}</TableBody>
-          </Table>
-        </div>
-        <AddVoter />
-      </Dialog>
+      <Title
+        component={
+          <div className="space-x-4">
+            <Button>Add group</Button>
+            <AddVoterDialog />
+          </div>
+        }
+      >
+        Voters
+      </Title>
+      <div className="border shadow-sm rounded-lg">
+        <Table className="w-full">
+          <TableHeader>
+            <TableRow>
+              <TableHead>#</TableHead>
+              <TableHead>Name</TableHead>
+              <TableHead>Public Key</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Delete</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>{children}</TableBody>
+        </Table>
+      </div>
     </main>
   );
 }

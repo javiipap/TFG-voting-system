@@ -21,11 +21,21 @@ export default async function DashboardPage() {
       >
         Dashboard
       </Title>
-      <div className="flex gap-4">
-        {ballots.map((ballot) => (
-          <ElectionCard key={ballot.id} {...ballot} />
-        ))}
-      </div>
+      {ballots.length > 0 ? (
+        <div className="flex gap-4">
+          {ballots.map((ballot) => (
+            <ElectionCard key={ballot.id} {...ballot} />
+          ))}
+        </div>
+      ) : (
+        <div className="flex justify-center items-center min-h-[60vh]">
+          <div className="">
+            <h2 className="text-2xl font-bold">
+              You still haven't created any election...
+            </h2>
+          </div>
+        </div>
+      )}
     </main>
   );
 }
