@@ -22,7 +22,7 @@ export default async function DashboardPage() {
         Dashboard
       </Title>
       {ballots.length > 0 ? (
-        <div className="flex gap-4">
+        <div className="grid grid-cols-4 gap-4">
           {ballots.map((ballot) => (
             <ElectionCard key={ballot.id} {...ballot} />
           ))}
