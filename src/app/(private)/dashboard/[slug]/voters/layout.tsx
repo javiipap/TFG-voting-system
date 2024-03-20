@@ -7,8 +7,6 @@ import {
 } from '@/components/ui/table';
 import Title from '../../components/Title';
 import AddVoterDialog from './components/AddVoterDialog';
-import { Button } from '@/components/ui/button';
-import Link from 'next/link';
 
 export default async function Voters({
   children,
@@ -17,27 +15,16 @@ export default async function Voters({
 }) {
   return (
     <main>
-      <Title
-        component={
-          <div className="space-x-4">
-            <Link href="/dashboard/groups/create">
-              <Button>Add group</Button>
-            </Link>
-            <AddVoterDialog />
-          </div>
-        }
-      >
-        Voters
-      </Title>
+      <Title component={<AddVoterDialog />}>Voters</Title>
       <div className="border shadow-sm rounded-lg">
         <Table className="w-full">
           <TableHeader>
             <TableRow>
               <TableHead>#</TableHead>
               <TableHead>Name</TableHead>
-              <TableHead>Public Key</TableHead>
+              <TableHead>Group</TableHead>
               <TableHead>Status</TableHead>
-              <TableHead>Delete</TableHead>
+              <TableHead>Action</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>{children}</TableBody>

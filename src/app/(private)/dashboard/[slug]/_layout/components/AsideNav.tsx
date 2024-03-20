@@ -31,6 +31,11 @@ export function AsideNav() {
       Icon: UsersIcon,
       label: 'Voters',
     },
+    {
+      href: `/dashboard/${params.slug}/groups`,
+      Icon: UsersIcon,
+      label: 'Authorized groups',
+    },
   ];
 
   return (

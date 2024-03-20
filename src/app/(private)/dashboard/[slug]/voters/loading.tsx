@@ -18,6 +18,9 @@ export default function LoadingVotes() {
           <TableCell>
             <Skeleton className="w-4 h-4" />
           </TableCell>
+          <TableCell>
+            <Skeleton className="w-4 h-4" />
+          </TableCell>
         </TableRow>
       ))}
     </>

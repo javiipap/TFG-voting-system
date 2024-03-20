@@ -4,6 +4,7 @@ import { auth } from '@/auth';
 import { getConnection } from '@/db/helpers';
 import * as schema from '@/db/schema';
 import { createSlug } from '@/lib/utils';
+import { eq } from 'drizzle-orm';
 import { redirect } from 'next/navigation';
 
 export async function submitGroup(formData: FormData) {
@@ -19,6 +20,21 @@ export async function submitGroup(formData: FormData) {
   const members = JSON.parse(rawMembers);
 
   const { db, client } = getConnection();
+
+  let slug = createSlug(name);
+  let i = 0;
+  while (true) {
+    const existingGroup = await db
+      .select()
+      .from(schema.userGroups)
+      .where(eq(schema.userGroups.slug, slug));
+
+    if (!existingGroup.length) {
+      break;
+    }
+
+    slug = `${slug.split('-')[0]}-${i}`;
+  }
 
   const groupId = await db
     .insert(schema.userGroups)

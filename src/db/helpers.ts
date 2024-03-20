@@ -178,3 +178,12 @@ export const getGroups = async (adminId: number) => {
     })
   );
 };
+
+export const linkGroupToElection = async (
+  electionId: number,
+  groupId: number
+) => {
+  return await execQuery((db) =>
+    db.insert(schema.authorizedGroups).values({ ballotId: electionId, groupId })
+  );
+};

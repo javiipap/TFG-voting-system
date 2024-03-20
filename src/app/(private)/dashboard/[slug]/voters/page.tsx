@@ -11,7 +11,7 @@ export default async function Voters({ params }: { params: { slug: string } }) {
         <TableRow key={`voter-${index}`}>
           <TableCell>{index + 1}</TableCell>
           <TableCell>{voter.name}</TableCell>
-          {/* <TableCell>{voter.pkey}</TableCell> */}
+          <TableCell>-</TableCell>
           <TableCell>{voter.hasVoted === null ? '❌' : '✅'}</TableCell>
           <TableCell>
             <Button variant="link" className="text-red-600 px-0">
