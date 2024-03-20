@@ -3,6 +3,7 @@
 import { createBallot, getAdmin } from '@/db/helpers';
 import { auth } from '@/auth';
 import { revalidatePath } from 'next/cache';
+import { createSlug } from '@/lib/utils';
 
 interface State {
   error: string | null;
@@ -11,10 +12,6 @@ interface State {
     slug: string;
   };
 }
-
-const createSlug = (name: string) => {
-  return name.toLowerCase().replace(/ /g, '-');
-};
 
 export const submitElection = async (prevState: State, formData: FormData) => {
   const session = await auth();

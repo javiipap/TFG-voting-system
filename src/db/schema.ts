@@ -11,6 +11,7 @@ export const users = pgTable('users', {
   id: serial('id').primaryKey(),
   name: text('name'),
   email: text('email').unique(),
+  dni: text('dni'),
   emailVerified: timestamp('emailVerified', { withTimezone: true }),
   image: text('image'),
 });
@@ -47,6 +48,8 @@ export const candidates = pgTable('candidates', {
 export const userGroups = pgTable('user_groups', {
   id: serial('id').primaryKey(),
   name: text('name').notNull(),
+  slug: text('slug').unique().notNull(),
+  description: text('description'),
   adminId: integer('admin_id')
     .references(() => admins.id)
     .notNull(),

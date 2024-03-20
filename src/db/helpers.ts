@@ -110,6 +110,33 @@ export const createBallot = async (
   );
 };
 
+export const createGroup = async (
+  group: typeof schema.userGroups.$inferInsert
+) => {
+  return await execQuery((db) =>
+    db
+      .insert(schema.userGroups)
+      .values(group)
+      .returning({ id: schema.userGroups.id })
+  );
+};
+
+export const addUsers = async (
+  members: (typeof schema.users.$inferInsert)[]
+) => {
+  return await execQuery((db) =>
+    db.insert(schema.users).values(members).returning({ id: schema.users.id })
+  );
+};
+
+export const linkMembers = async (userIds: number[], groupId: number) => {
+  return await execQuery((db) =>
+    db
+      .insert(schema.userGroupMemberships)
+      .values(userIds.map((userId) => ({ userId, groupId })))
+  );
+};
+
 export const isAdmin = async (email: string) => {
   return (
     (
@@ -141,5 +168,13 @@ export const getAdmin = async (email: string) => {
           eq(schema.users.email, email)
         )
       )
+  );
+};
+
+export const getGroups = async (adminId: number) => {
+  return await execQuery((db) =>
+    db.query.userGroups.findMany({
+      where: eq(schema.userGroups.adminId, adminId),
+    })
   );
 };

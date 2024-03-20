@@ -71,7 +71,7 @@ export default function SheetForm() {
   });
 
   return (
-    <form action={formAction} className="mt-4 [&>div]:mb-4" ref={formRef}>
+    <form action={formAction} className="mt-4" ref={formRef}>
       <FormField>
         <Label>Election name</Label>
         <Input name="name" required />

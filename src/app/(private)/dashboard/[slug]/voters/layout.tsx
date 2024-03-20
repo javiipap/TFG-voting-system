@@ -8,6 +8,7 @@ import {
 import Title from '../../components/Title';
 import AddVoterDialog from './components/AddVoterDialog';
 import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
 export default async function Voters({
   children,
@@ -19,7 +20,9 @@ export default async function Voters({
       <Title
         component={
           <div className="space-x-4">
-            <Button>Add group</Button>
+            <Link href="/dashboard/groups/create">
+              <Button>Add group</Button>
+            </Link>
             <AddVoterDialog />
           </div>
         }
