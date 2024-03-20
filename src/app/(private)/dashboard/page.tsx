@@ -31,7 +31,7 @@ export default async function DashboardPage() {
         <div className="flex justify-center items-center min-h-[60vh]">
           <div className="">
             <h2 className="text-2xl font-bold">
-              You still haven't created any election...
+              You still haven&apos;t created any election...
             </h2>
           </div>
         </div>
