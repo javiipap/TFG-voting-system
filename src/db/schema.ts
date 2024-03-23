@@ -19,7 +19,7 @@ export const users = pgTable('users', {
 export const admins = pgTable('admins', {
   id: serial('id').primaryKey(),
   userId: integer('user_id')
-    .references(() => users.id)
+    .references(() => users.id, { onDelete: 'cascade' })
     .unique(),
 });
 
@@ -29,7 +29,7 @@ export const ballots = pgTable('ballots', {
   description: text('description').notNull(),
   slug: text('slug').unique().notNull(),
   adminId: integer('admin_id')
-    .references(() => admins.id)
+    .references(() => admins.id, { onDelete: 'cascade' })
     .notNull(),
   startDate: timestamp('start_date').notNull(),
   endDate: timestamp('end_date').notNull(),
@@ -41,7 +41,7 @@ export const candidates = pgTable('candidates', {
   description: text('description'),
   img: text('img'),
   ballotId: integer('ballot_id')
-    .references(() => ballots.id)
+    .references(() => ballots.id, { onDelete: 'cascade' })
     .notNull(),
 });
 
@@ -51,7 +51,7 @@ export const userGroups = pgTable('user_groups', {
   slug: text('slug').unique().notNull(),
   description: text('description'),
   adminId: integer('admin_id')
-    .references(() => admins.id)
+    .references(() => admins.id, { onDelete: 'cascade' })
     .notNull(),
 });
 
@@ -60,10 +60,10 @@ export const votes = pgTable(
   {
     id: serial('id').unique().notNull(),
     userId: integer('user_id')
-      .references(() => users.id)
+      .references(() => users.id, { onDelete: 'cascade' })
       .notNull(),
     ballotId: integer('ballot_id')
-      .references(() => ballots.id)
+      .references(() => ballots.id, { onDelete: 'cascade' })
       .notNull(),
     // blockId or transactionId
   },
@@ -76,8 +76,12 @@ export const userGroupMemberships = pgTable(
   'user_group_memberships',
   {
     id: serial('id').unique().notNull(),
-    groupId: integer('group_id').notNull(),
-    userId: integer('user_id').notNull(),
+    groupId: integer('group_id')
+      .references(() => userGroups.id, { onDelete: 'cascade' })
+      .notNull(),
+    userId: integer('user_id')
+      .references(() => users.id, { onDelete: 'cascade' })
+      .notNull(),
   },
   (table) => ({
     pk: [table.groupId, table.userId],
@@ -89,10 +93,10 @@ export const authorizedGroups = pgTable(
   {
     id: serial('id').unique().notNull(),
     groupId: integer('group_id')
-      .references(() => userGroups.id)
+      .references(() => userGroups.id, { onDelete: 'cascade' })
       .notNull(),
     ballotId: integer('ballot_id')
-      .references(() => ballots.id)
+      .references(() => ballots.id, { onDelete: 'cascade' })
       .notNull(),
   },
   (table) => ({
@@ -114,7 +118,9 @@ export const verificationToken = pgTable(
 
 export const accounts = pgTable('accounts', {
   id: serial('id').primaryKey(),
-  userId: integer('userId').notNull(),
+  userId: integer('userId')
+    .references(() => users.id, { onDelete: 'cascade' })
+    .notNull(),
   type: text('type').notNull(),
   provider: text('provider').notNull(),
   providerAccountId: text('providerAccountId').notNull(),
@@ -129,7 +135,9 @@ export const accounts = pgTable('accounts', {
 
 export const sessions = pgTable('sessions', {
   id: serial('id').primaryKey(),
-  userId: integer('userId').notNull(),
+  userId: integer('userId')
+    .references(() => users.id, { onDelete: 'cascade' })
+    .notNull(),
   expires: timestamp('expires', { withTimezone: true }).notNull(),
   sessionToken: text('sessionToken').notNull(),
 });
