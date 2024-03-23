@@ -6,7 +6,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import Title from '../../components/Title';
-import AddVoterDialog from './components/AddVoterDialog';
+import AddVoterDialog from './_components/AddVoterDialog';
 
 export default async function Voters({
   children,

@@ -8,8 +8,8 @@ import {
   TableBody,
   TableCell,
   TableHeader,
-  TableRow,
 } from '@/components/ui/table';
+import Row from './_components/Row';
 
 export default async function Groups() {
   const session = await auth();
@@ -31,13 +31,11 @@ export default async function Groups() {
         <TableHeader>
           <TableCell>Name</TableCell>
           <TableCell>Description</TableCell>
+          <TableCell>Actions</TableCell>
         </TableHeader>
         <TableBody>
           {groups.map((group) => (
-            <TableRow key={group.id}>
-              <TableCell>{group.name}</TableCell>
-              <TableCell>{group.description}</TableCell>
-            </TableRow>
+            <Row {...group} key={`groups-${group.id}`} />
           ))}
         </TableBody>
       </Table>
