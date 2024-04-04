@@ -23,10 +23,7 @@ export default async function VotePage({
           {election.name}
         </h1>
         <p className="text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed dark:text-gray-400">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Vel iure eius
-          inventore saepe quaerat unde asperiores, distinctio, perspiciatis quae
-          error nihil quasi, enim laboriosam? Autem alias iste magnam
-          consequatur ullam.
+          {election.description}
         </p>
         <SelectCandidate candidates={candidates} session={session} />
       </div>

@@ -1,4 +1,6 @@
+import { Separator } from '@/components/ui/separator';
 import { getPublicElections } from '@/db/helpers';
+import Link from 'next/link';
 
 export default async function Home() {
   const elections = await getPublicElections();
@@ -15,9 +17,20 @@ export default async function Home() {
           </div>
         </div>
       </div>
-      <div className="">
+      <Separator />
+      <h2 className="text-center text-4xl font-bold my-5">Public elections</h2>
+      <div className="max-w-5xl mx-auto flex flex-col gap-4 mb-4">
         {elections.map((election) => (
-          <div>{JSON.stringify(election)}</div>
+          <div
+            key={`pub_election-${election.slug}`}
+            className="p-4 border rounded-md"
+          >
+            <Link href={`/vote/${election.slug}`} className="font-bold">
+              {election.name}
+            </Link>
+            <Separator className="my-2" />
+            <p>{election.description}</p>
+          </div>
         ))}
       </div>
     </main>
