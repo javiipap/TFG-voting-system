@@ -5,6 +5,7 @@ import {
   pgTable,
   bigint,
   integer,
+  boolean,
 } from 'drizzle-orm/pg-core';
 
 export const users = pgTable('users', {
@@ -23,7 +24,7 @@ export const admins = pgTable('admins', {
     .unique(),
 });
 
-export const ballots = pgTable('ballots', {
+export const elections = pgTable('elections', {
   id: serial('id').primaryKey(),
   name: text('name').notNull(),
   description: text('description').notNull(),
@@ -31,6 +32,7 @@ export const ballots = pgTable('ballots', {
   adminId: integer('admin_id')
     .references(() => admins.id, { onDelete: 'cascade' })
     .notNull(),
+  isPrivate: boolean('private').default(true),
   startDate: timestamp('start_date').notNull(),
   endDate: timestamp('end_date').notNull(),
 });
@@ -40,8 +42,8 @@ export const candidates = pgTable('candidates', {
   name: text('name').notNull(),
   description: text('description'),
   img: text('img'),
-  ballotId: integer('ballot_id')
-    .references(() => ballots.id, { onDelete: 'cascade' })
+  electionId: integer('election_id')
+    .references(() => elections.id, { onDelete: 'cascade' })
     .notNull(),
 });
 
@@ -62,13 +64,13 @@ export const votes = pgTable(
     userId: integer('user_id')
       .references(() => users.id, { onDelete: 'cascade' })
       .notNull(),
-    ballotId: integer('ballot_id')
-      .references(() => ballots.id, { onDelete: 'cascade' })
+    electionId: integer('election_id')
+      .references(() => elections.id, { onDelete: 'cascade' })
       .notNull(),
     // blockId or transactionId
   },
   (table) => ({
-    pk: [table.userId, table.ballotId],
+    pk: [table.userId, table.electionId],
   })
 );
 
@@ -95,12 +97,12 @@ export const authorizedGroups = pgTable(
     groupId: integer('group_id')
       .references(() => userGroups.id, { onDelete: 'cascade' })
       .notNull(),
-    ballotId: integer('ballot_id')
-      .references(() => ballots.id, { onDelete: 'cascade' })
+    electionId: integer('election_id')
+      .references(() => elections.id, { onDelete: 'cascade' })
       .notNull(),
   },
   (table) => ({
-    pk: [table.groupId, table.ballotId],
+    pk: [table.groupId, table.electionId],
   })
 );
 

@@ -29,7 +29,7 @@ export default function ElectionCard({
   startDate,
   endDate,
   description,
-}: typeof schema.ballots.$inferSelect) {
+}: typeof schema.elections.$inferSelect) {
   const hydrated = useHydration();
 
   const status =

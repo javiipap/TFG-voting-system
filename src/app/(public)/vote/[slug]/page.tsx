@@ -1,5 +1,5 @@
 import { auth } from '@/auth';
-import { getBallot, getCandidates } from '@/db/helpers';
+import { getElection, getCandidates } from '@/db/helpers';
 import SelectCandidate from './components/SelectCandidate';
 
 export default async function VotePage({
@@ -8,19 +8,19 @@ export default async function VotePage({
   params: { slug: string };
 }) {
   const session = await auth();
-  const ballot = await getBallot(params.slug);
+  const election = await getElection(params.slug);
 
   const candidates = await getCandidates(params.slug);
 
-  if (!ballot) {
-    return <div>Ballot not found</div>;
+  if (!election) {
+    return <div>Election not found</div>;
   }
 
   return (
     <main className="min-h-screen min-w-screen flex justify-center items-center">
       <div className="max-w-[600px] text-center space-y-3">
         <h1 className="text-3xl font-bold tracking-tighter sm:text-5xl">
-          {ballot.name}
+          {election.name}
         </h1>
         <p className="text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed dark:text-gray-400">
           Lorem ipsum dolor sit amet consectetur adipisicing elit. Vel iure eius

@@ -1,7 +1,7 @@
 import { PostgresJsDatabase, drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
 import * as schema from '@/db/schema';
-import { and, eq } from 'drizzle-orm';
+import { and, eq, isNull } from 'drizzle-orm';
 
 export const getConnection = () => {
   const client = postgres({
@@ -29,17 +29,19 @@ const execQuery = async <T>(
   return result;
 };
 
-export const getBallot = async (slug: string) => {
+export const getElection = async (slug: string) => {
   return await execQuery((db) =>
-    db.query.ballots.findFirst({
-      where: eq(schema.ballots.slug, slug),
+    db.query.elections.findFirst({
+      where: eq(schema.elections.slug, slug),
     })
   );
 };
 
-export const getBallots = async (adminId: number) => {
+export const getElections = async (adminId: number) => {
   return await execQuery((db) =>
-    db.query.ballots.findMany({ where: eq(schema.ballots.adminId, adminId) })
+    db.query.elections.findMany({
+      where: eq(schema.elections.adminId, adminId),
+    })
   );
 };
 
@@ -53,11 +55,11 @@ export const getVoters = async (slug: string) => {
         groupId: schema.userGroups.id,
         groupName: schema.userGroups.name,
       })
-      .from(schema.ballots)
-      .where(eq(schema.ballots.slug, slug))
+      .from(schema.elections)
+      .where(eq(schema.elections.slug, slug))
       .innerJoin(
         schema.authorizedGroups,
-        eq(schema.ballots.id, schema.authorizedGroups.ballotId)
+        eq(schema.elections.id, schema.authorizedGroups.electionId)
       )
       .innerJoin(
         schema.userGroups,
@@ -75,7 +77,7 @@ export const getVoters = async (slug: string) => {
         schema.votes,
         and(
           eq(schema.users.id, schema.votes.userId),
-          eq(schema.ballots.id, schema.votes.ballotId)
+          eq(schema.elections.id, schema.votes.electionId)
         )
       )
       .groupBy(
@@ -91,22 +93,22 @@ export const getCandidates = async (slug: string) => {
   return await execQuery((db) =>
     db
       .select()
-      .from(schema.ballots)
+      .from(schema.elections)
       .innerJoin(
         schema.candidates,
-        eq(schema.ballots.id, schema.candidates.ballotId)
+        eq(schema.elections.id, schema.candidates.electionId)
       )
   );
 };
 
-export const createBallot = async (
-  ballot: typeof schema.ballots.$inferInsert
+export const createElection = async (
+  election: typeof schema.elections.$inferInsert
 ) => {
-  return await execQuery((db) =>
+  return execQuery((db) =>
     db
-      .insert(schema.ballots)
-      .values(ballot)
-      .returning({ slug: schema.ballots.slug })
+      .insert(schema.elections)
+      .values(election)
+      .returning({ slug: schema.elections.slug })
   );
 };
 
@@ -184,6 +186,23 @@ export const linkGroupToElection = async (
   groupId: number
 ) => {
   return await execQuery((db) =>
-    db.insert(schema.authorizedGroups).values({ ballotId: electionId, groupId })
+    db
+      .insert(schema.authorizedGroups)
+      .values({ electionId: electionId, groupId })
+  );
+};
+
+export const deleteGroup = async (id: number) => {
+  return await execQuery((db) =>
+    db.delete(schema.userGroups).where(eq(schema.userGroups.id, id))
+  );
+};
+
+export const getPublicElections = async () => {
+  return await execQuery((db) =>
+    db
+      .select()
+      .from(schema.elections)
+      .where(eq(schema.elections.isPrivate, false))
   );
 };

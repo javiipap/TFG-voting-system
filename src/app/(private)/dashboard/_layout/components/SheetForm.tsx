@@ -21,6 +21,7 @@ import Link from 'next/link';
 import { FormField, Label } from '../../[slug]/_layout/components/FormFields';
 import { DateRange } from 'react-day-picker';
 import { addDays } from 'date-fns';
+import { Switch } from '@/components/ui/switch';
 
 export default function SheetForm() {
   const { toast } = useToast();
@@ -80,6 +81,7 @@ export default function SheetForm() {
         <Label>Description</Label>
         <Textarea name="description" className="max-h-80" required />
       </FormField>
+
       <FormField>
         <Label>Authentication method</Label>
         <Select name="auth" defaultValue="google">
@@ -143,6 +145,15 @@ export default function SheetForm() {
           </Select>
         </FormField>
       </div>
+      <FormField>
+        <div className="flex gap-4">
+          <Label>Private</Label>
+          <Switch name="isPrivate" defaultChecked />
+        </div>
+        <span className="text-sm text-muted-foreground">
+          If private only users explicitly authorized will be able to vote.
+        </span>
+      </FormField>
       <SheetFooter>
         <SheetClose asChild>
           <Button type="submit" disabled={pending}>

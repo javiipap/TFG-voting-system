@@ -1,6 +1,6 @@
 'use server';
 
-import { createBallot, getAdmin } from '@/db/helpers';
+import { createElection, getAdmin } from '@/db/helpers';
 import { auth } from '@/auth';
 import { revalidatePath } from 'next/cache';
 import { createSlug } from '@/lib/utils';
@@ -30,6 +30,7 @@ export const submitElection = async (prevState: State, formData: FormData) => {
     const name = formData.get('name') as string;
     const description = formData.get('description') as string;
     const authMethod = formData.get('auth') as string;
+    const isPrivate = !!formData.get('isPrivate');
     const timespan = formData.get('timespan') as string;
     const start = parseInt(formData.get('start') as string);
     const end = parseInt(formData.get('end') as string);
@@ -43,13 +44,14 @@ export const submitElection = async (prevState: State, formData: FormData) => {
 
     const admin = await getAdmin(session.user.email!);
 
-    const election = await createBallot({
+    const election = await createElection({
       name,
       slug: createSlug(name),
       description,
       startDate,
       endDate,
       adminId: admin[0].admins.id,
+      isPrivate,
     });
 
     revalidatePath('/dashboard');

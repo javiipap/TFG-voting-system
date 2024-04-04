@@ -1,4 +1,4 @@
-import { getBallots } from '@/db/helpers';
+import { getElections } from '@/db/helpers';
 import Title from './components/Title';
 import ElectionCard from './components/Election';
 import { auth } from '@/auth';
@@ -8,7 +8,7 @@ import { SheetTrigger } from '@/components/ui/sheet';
 export default async function DashboardPage() {
   const session = await auth();
 
-  const ballots = await getBallots(session!.user.adminId!);
+  const elections = await getElections(session!.user.adminId!);
 
   return (
     <main className="p-6">
@@ -21,10 +21,10 @@ export default async function DashboardPage() {
       >
         Dashboard
       </Title>
-      {ballots.length > 0 ? (
+      {elections.length > 0 ? (
         <div className="grid grid-cols-4 gap-4">
-          {ballots.map((ballot) => (
-            <ElectionCard key={ballot.id} {...ballot} />
+          {elections.map((election) => (
+            <ElectionCard key={election.id} {...election} />
           ))}
         </div>
       ) : (

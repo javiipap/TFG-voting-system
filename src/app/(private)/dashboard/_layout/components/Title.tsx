@@ -13,9 +13,9 @@ import * as schema from '@/db/schema';
 import { useParams } from 'next/navigation';
 
 export default function Title({
-  ballots,
+  elections,
 }: {
-  ballots: (typeof schema.ballots.$inferSelect)[];
+  elections: (typeof schema.elections.$inferSelect)[];
 }) {
   const params = useParams();
 
@@ -27,21 +27,21 @@ export default function Title({
             <Package2Icon className="w-6 h-6 mr-2" />
             <span className="font-semibold flex-1 text-left text-ellipsis">
               {params.slug
-                ? ballots.find((bl) => bl.slug === params.slug)?.name
-                : 'Select Ballot'}
+                ? elections.find((bl) => bl.slug === params.slug)?.name
+                : 'Select Election'}
             </span>
             <ChevronsUpDown className="h-4 w-4 justify-self-end" />
           </Button>
         </PopoverTrigger>
         <PopoverContent align="start" className="px-2">
           <div className="flex flex-col space-y-2">
-            {ballots.map((ballot) => (
-              <PopoverClose key={`header_ballot_${ballot.id}`} asChild>
+            {elections.map((election) => (
+              <PopoverClose key={`header_election_${election.id}`} asChild>
                 <Link
-                  href={`/dashboard/${ballot.slug}`}
+                  href={`/dashboard/${election.slug}`}
                   className="text-sm py-2 px-2 rounded-md hover:bg-primary/5"
                 >
-                  {ballot.name}
+                  {election.name}
                 </Link>
               </PopoverClose>
             ))}

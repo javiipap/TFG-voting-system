@@ -16,7 +16,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { auth } from '@/auth';
-import { getBallot, getConnection } from '@/db/helpers';
+import { getElection, getConnection } from '@/db/helpers';
 import * as schema from '@/db/schema';
 import { and, eq } from 'drizzle-orm';
 import { authorizeGroup } from './_actions';
@@ -30,7 +30,7 @@ export default async function AuthorizedGroupsLayout({
   const session = await auth();
   const { db, client } = getConnection();
 
-  const election = await getBallot(params.slug);
+  const election = await getElection(params.slug);
 
   if (!election) {
     redirect('/404');
@@ -44,7 +44,7 @@ export default async function AuthorizedGroupsLayout({
       schema.authorizedGroups,
       and(
         eq(schema.authorizedGroups.groupId, schema.userGroups.id),
-        eq(schema.authorizedGroups.ballotId, election.id)
+        eq(schema.authorizedGroups.electionId, election.id)
       )
     );
 

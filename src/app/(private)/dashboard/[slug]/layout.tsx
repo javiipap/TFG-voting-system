@@ -1,5 +1,5 @@
 import Aside from './_layout/Aside';
-import { getBallot } from '@/db/helpers';
+import { getElection } from '@/db/helpers';
 
 export default async function RootLayout({
   children,
@@ -8,9 +8,9 @@ export default async function RootLayout({
   children: React.ReactNode;
   params: { slug: string };
 }>) {
-  const ballot = await getBallot(params.slug);
+  const election = await getElection(params.slug);
 
-  if (!ballot) {
+  if (!election) {
     return <div>Not found</div>;
   }
 
