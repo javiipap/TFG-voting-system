@@ -27,18 +27,22 @@ export default async function Groups() {
       >
         Groups
       </Title>
-      <Table>
-        <TableHeader>
-          <TableCell>Name</TableCell>
-          <TableCell>Description</TableCell>
-          <TableCell>Actions</TableCell>
-        </TableHeader>
-        <TableBody>
-          {groups.map((group) => (
-            <Row {...group} key={`groups-${group.id}`} />
-          ))}
-        </TableBody>
-      </Table>
+      {groups.length > 0 ? (
+        <Table>
+          <TableHeader>
+            <TableCell>Name</TableCell>
+            <TableCell>Description</TableCell>
+            <TableCell>Actions</TableCell>
+          </TableHeader>
+          <TableBody>
+            {groups.map((group) => (
+              <Row {...group} key={`groups-${group.id}`} />
+            ))}
+          </TableBody>
+        </Table>
+      ) : (
+        <span>No groups...</span>
+      )}
     </main>
   );
 }

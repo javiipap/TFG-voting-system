@@ -76,34 +76,36 @@ export default async function AuthorizedGroupsLayout({
         <input type="hidden" name="electionSlug" value={election.slug} />
         <Button type="submit">Add</Button>
       </form>
-      <div className="border shadow-sm rounded-lg">
-        <Table className="w-full">
-          <TableHeader>
-            <TableRow>
-              <TableHead>#</TableHead>
-              <TableHead>Name</TableHead>
-              <TableHead>Description</TableHead>
-              <TableHead>Action</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {allGroups
-              .filter((group) => group.authorized_groups?.id)
-              .map(({ user_groups }) => (
-                <TableRow key={user_groups.id}>
-                  <TableCell>{user_groups.id}</TableCell>
-                  <TableCell>{user_groups.name}</TableCell>
-                  <TableCell>{user_groups.description}</TableCell>
-                  <TableCell>
-                    <Button variant="link" className="p-0 text-red-600">
-                      Delete
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-          </TableBody>
-        </Table>
-      </div>
+      {allGroups.length > 0 && (
+        <div className="border shadow-sm rounded-lg">
+          <Table className="w-full">
+            <TableHeader>
+              <TableRow>
+                <TableHead>#</TableHead>
+                <TableHead>Name</TableHead>
+                <TableHead>Description</TableHead>
+                <TableHead>Action</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {allGroups
+                .filter((group) => group.authorized_groups?.id)
+                .map(({ user_groups }) => (
+                  <TableRow key={user_groups.id}>
+                    <TableCell>{user_groups.id}</TableCell>
+                    <TableCell>{user_groups.name}</TableCell>
+                    <TableCell>{user_groups.description}</TableCell>
+                    <TableCell>
+                      <Button variant="link" className="p-0 text-red-600">
+                        Delete
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+            </TableBody>
+          </Table>
+        </div>
+      )}
     </PublicOverlay>
   );
 }
