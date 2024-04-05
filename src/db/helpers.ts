@@ -101,6 +101,14 @@ export const getCandidates = async (slug: string) => {
   );
 };
 
+export const addCandidate = async (
+  candidate: typeof schema.candidates.$inferInsert
+) => {
+  return await execQuery((db) =>
+    db.insert(schema.candidates).values(candidate)
+  );
+};
+
 export const createElection = async (
   election: typeof schema.elections.$inferInsert
 ) => {
