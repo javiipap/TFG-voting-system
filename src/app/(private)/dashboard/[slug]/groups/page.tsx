@@ -21,6 +21,7 @@ import * as schema from '@/db/schema';
 import { and, eq } from 'drizzle-orm';
 import { authorizeGroup } from './_actions';
 import { redirect } from 'next/navigation';
+import { PublicOverlay } from '../_components/PublicOverlay';
 
 export default async function AuthorizedGroupsLayout({
   params,
@@ -51,7 +52,7 @@ export default async function AuthorizedGroupsLayout({
   await client.end();
 
   return (
-    <main>
+    <PublicOverlay slug={params.slug} preFetchedElection={election}>
       <Title>Groups</Title>
       <form className="flex gap-4 w-1/2 mb-8" action={authorizeGroup}>
         <Select name="group" required>
@@ -103,6 +104,6 @@ export default async function AuthorizedGroupsLayout({
           </TableBody>
         </Table>
       </div>
-    </main>
+    </PublicOverlay>
   );
 }

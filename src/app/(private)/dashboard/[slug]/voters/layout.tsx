@@ -7,14 +7,17 @@ import {
 } from '@/components/ui/table';
 import Title from '../../components/Title';
 import AddVoterDialog from './_components/AddVoterDialog';
+import { PublicOverlay } from '../_components/PublicOverlay';
 
 export default async function Voters({
   children,
+  params,
 }: {
   children: React.ReactNode;
+  params: { slug: string };
 }) {
   return (
-    <main>
+    <PublicOverlay slug={params.slug}>
       <Title component={<AddVoterDialog />}>Voters</Title>
       <div className="border shadow-sm rounded-lg">
         <Table className="w-full">
@@ -30,6 +33,6 @@ export default async function Voters({
           <TableBody>{children}</TableBody>
         </Table>
       </div>
-    </main>
+    </PublicOverlay>
   );
 }
