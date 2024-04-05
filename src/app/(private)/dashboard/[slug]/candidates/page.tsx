@@ -19,39 +19,41 @@ export default async function Page({ params }: { params: { slug: string } }) {
     <main>
       <Title>Candidates</Title>
       <AddCandidate slug={params.slug} />
-      <div className="mt-8">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead></TableHead>
-              <TableHead>Name</TableHead>
-              <TableHead>Description</TableHead>
-              <TableHead>Action</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {candidates.map((candidate) => (
-              <TableRow key={candidate.candidates.id}>
-                <TableCell>
-                  <Avatar>
-                    <AvatarFallback>
-                      {candidate.candidates.name.slice(0, 2).toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
-                </TableCell>
-                <TableCell>{candidate.candidates.name}</TableCell>
-                <TableCell>{candidate.candidates.description}</TableCell>
-                <TableCell>
-                  <DeleteCandidate
-                    id={candidate.candidates.id}
-                    slug={params.slug}
-                  />
-                </TableCell>
+      {candidates.length > 0 && (
+        <div className="mt-8">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead></TableHead>
+                <TableHead>Name</TableHead>
+                <TableHead>Description</TableHead>
+                <TableHead>Action</TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </div>
+            </TableHeader>
+            <TableBody>
+              {candidates.map((candidate) => (
+                <TableRow key={candidate.candidates.id}>
+                  <TableCell>
+                    <Avatar>
+                      <AvatarFallback>
+                        {candidate.candidates.name.slice(0, 2).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                  </TableCell>
+                  <TableCell>{candidate.candidates.name}</TableCell>
+                  <TableCell>{candidate.candidates.description}</TableCell>
+                  <TableCell>
+                    <DeleteCandidate
+                      id={candidate.candidates.id}
+                      slug={params.slug}
+                    />
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      )}
     </main>
   );
 }

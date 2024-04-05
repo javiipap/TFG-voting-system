@@ -47,7 +47,9 @@ export default function AddCandidate({ slug }: { slug: string }) {
           />
         )}
         <input type="hidden" name="slug" value={slug} />
-        <Button type="submit">Create</Button>
+        <div className="py-4">
+          <Button type="submit">Create</Button>
+        </div>
       </form>
     </div>
   );
