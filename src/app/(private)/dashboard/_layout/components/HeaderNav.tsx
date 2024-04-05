@@ -6,7 +6,7 @@ const LINKS: {
 }[] = [
   {
     href: '/dashboard',
-    label: 'Dashboard',
+    label: 'Elections',
   },
   {
     href: '/dashboard/groups',
