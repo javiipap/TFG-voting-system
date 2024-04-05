@@ -109,6 +109,12 @@ export const addCandidate = async (
   );
 };
 
+export const deleteCandidate = async (id: number) => {
+  return await execQuery((db) =>
+    db.delete(schema.candidates).where(eq(schema.candidates.id, id))
+  );
+};
+
 export const createElection = async (
   election: typeof schema.elections.$inferInsert
 ) => {

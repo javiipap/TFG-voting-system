@@ -1,6 +1,6 @@
 'use server';
 
-import { addCandidate, getElection } from '@/db/helpers';
+import { addCandidate, deleteCandidate, getElection } from '@/db/helpers';
 import { revalidatePath } from 'next/cache';
 
 export const submitCandidate = async (formData: FormData) => {
@@ -17,6 +17,12 @@ export const submitCandidate = async (formData: FormData) => {
     description,
     // img,
   });
+
+  revalidatePath(`/dashboard/${slug}/candidates`, 'page');
+};
+
+export const submitDeleteCandidate = async (slug: string, id: number) => {
+  await deleteCandidate(id);
 
   revalidatePath(`/dashboard/${slug}/candidates`, 'page');
 };
