@@ -14,7 +14,7 @@ mod tests {
 
     use super::*;
 
-    pub fn tally(pub_key_bytes: Vec<u8>, votes: Vec<String>, options_count: usize) -> String {
+    fn tally(pub_key_bytes: Vec<u8>, votes: Vec<String>, options_count: usize) -> String {
         let receiver = PublicKey::<Ristretto>::from_bytes(&pub_key_bytes).unwrap();
         let params = ChoiceParams::single(receiver, options_count);
         let mut result =

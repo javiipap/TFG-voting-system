@@ -22,6 +22,8 @@ pub fn encrypt_vote(pub_key_bytes: Vec<u8>, choice: usize, options_count: usize)
     let params = ChoiceParams::single(receiver, options_count);
     let ballot = EncryptedChoice::single(&params, choice, rng);
 
+    println!("{}", serde_json::to_string_pretty(&ballot).unwrap());
+
     serde_json::to_string(&ballot).unwrap()
 }
 
