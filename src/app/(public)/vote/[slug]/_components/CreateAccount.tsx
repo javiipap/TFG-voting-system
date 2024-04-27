@@ -2,8 +2,14 @@
 
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
-import { createAccount } from '../_lib';
+import { createAccount, requestEther } from '../_lib';
 import { Copy } from 'lucide-react';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 type Account =
   | {
@@ -13,6 +19,7 @@ type Account =
       isSet: true;
       addr: string;
       sk: string;
+      ticket: string;
     };
 
 export default function CreateAccount() {
@@ -21,12 +28,18 @@ export default function CreateAccount() {
   });
 
   const onSubmit = async () => {
-    if (!account.isSet) {
-      setAccount({
-        isSet: true,
-        ...(await createAccount()),
-      });
+    if (account.isSet) {
+      return;
     }
+
+    const pair = await createAccount();
+    const ticket = await requestEther(pair.addr);
+
+    setAccount({
+      isSet: true,
+      ...pair,
+      ticket: Buffer.from(ticket.blind_msg).toString('hex'),
+    });
   };
 
   return (
@@ -34,36 +47,39 @@ export default function CreateAccount() {
       {!account.isSet && <Button onClick={onSubmit}>Iniciar votación</Button>}
       {account.isSet && (
         <div className="w-[400px] space-y-2">
-          <div className="flex gap-2 items-center">
-            <p className="border rounded-md truncate py-2 px-4">
-              <span>Address: </span>
-              0x{account.addr}
-            </p>
-            <div
-              className="border rounded self-stretch flex items-center px-1 cursor-pointer"
-              onClick={() => {
-                navigator.clipboard.writeText(`0x${account.addr}`);
-              }}
-            >
-              <Copy className="w-5" />
-            </div>
-          </div>
-          <div className="flex gap-2 items-center">
-            <p className="border rounded-md truncate py-2 px-4">
-              <span>Secret: </span>
-              0x{account.sk}
-            </p>
-            <div
-              className="border rounded self-stretch flex items-center px-1 cursor-pointer"
-              onClick={() => {
-                navigator.clipboard.writeText(`0x${account.sk}`);
-              }}
-            >
-              <Copy className="w-5" />
-            </div>
-          </div>
+          <AddrViewer title="Address" value={account.addr} />
+          <AddrViewer title="Secret" value={account.sk} />
+          <AddrViewer title="Ticket" value={account.ticket} />
         </div>
       )}
     </>
+  );
+}
+
+function AddrViewer({ title, value }: { title: string; value: string }) {
+  return (
+    <div className="flex gap-2 items-center">
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <p className="border rounded-md truncate py-2 px-4">
+              <span>{title}: </span>
+              0x{value}
+            </p>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>0x{value}</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+      <div
+        className="border rounded self-stretch flex items-center px-1 cursor-pointer"
+        onClick={() => {
+          navigator.clipboard.writeText(`0x${value}`);
+        }}
+      >
+        <Copy className="w-5" />
+      </div>
+    </div>
   );
 }

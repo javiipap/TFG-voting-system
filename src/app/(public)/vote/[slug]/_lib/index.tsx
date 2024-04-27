@@ -12,6 +12,7 @@
 
 import { privateKeyVerify, publicKeyCreate } from 'secp256k1';
 import { keccak256 } from 'ethers';
+import * as blindSignatures from 'blind_signatures';
 
 const privateToAddress = (pk: Uint8Array) => {
   const pub = publicKeyCreate(pk, false).slice(1);
@@ -34,10 +35,23 @@ export const createAccount = () =>
     });
   });
 
+// TODO: Subir y usar certificados
 export function storeEncryptedSecretKey(sk: string) {}
 
-export function requestEther(sk: string) {
-  return '';
+export async function requestEther(addr: string) {
+  await blindSignatures.default();
+  return blindSignatures.create_request(
+    `-----BEGIN PUBLIC KEY-----
+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAshdGLT4mwZ0oWquN2ytz
+0cCWKofeyi994FtXu2xP0Tg3IIvkPUJRNc8jZrNhGnATQ4CJYBlcXxs+G2l3U/7v
+O7G8G+Hno5HwBTt/j0GVrpkIAXilvOxENzpYrzS4XvdNjyZtNoTXsZEEhMf7fyWp
+1xd9A5+7f3cM+KSKM/FuWwQimdmikFrAYp9P855We8FmBdvBAgnMbQeEXOL0EYCe
+OJpoea1OfOU2q4XQLL81YqmbypNWH7eecG3yc5GlnOs0mAGO2UPlzPGGs4XkRiZL
+vypVTUNkIlN05xC/G2KGnvZlXKfrtJk36YjrKL9gkVcXFOfTxwGNFwJiiokLTRJh
+aQIDAQAB
+-----END PUBLIC KEY-----`,
+    addr
+  );
 }
 
 export function encryptSelection(selection: number, total: number) {
