@@ -35,6 +35,8 @@ export const elections = pgTable('elections', {
   isPrivate: boolean('private').default(true),
   startDate: timestamp('start_date').notNull(),
   endDate: timestamp('end_date').notNull(),
+  secretKey: text('secret_key').notNull().unique(),
+  publicKey: text('public_key').notNull().unique(),
 });
 
 export const candidates = pgTable('candidates', {
@@ -67,7 +69,7 @@ export const votes = pgTable(
     electionId: integer('election_id')
       .references(() => elections.id, { onDelete: 'cascade' })
       .notNull(),
-    // blockId or transactionId
+    encryptedEthSecret: text('encrypted_eth_secret'),
   },
   (table) => ({
     pk: [table.userId, table.electionId],
@@ -105,6 +107,14 @@ export const authorizedGroups = pgTable(
     pk: [table.groupId, table.electionId],
   })
 );
+
+export const issuedTickets = pgTable('issued_tickets', {
+  id: serial('id').primaryKey(),
+  addr: text('addr').unique().notNull(),
+  electionId: integer('election_id').references(() => elections.id, {
+    onDelete: 'cascade',
+  }),
+});
 
 // ---------------------------NextAuth-----------------------------------------
 

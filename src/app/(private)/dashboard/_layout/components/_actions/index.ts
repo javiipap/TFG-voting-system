@@ -4,6 +4,7 @@ import { createElection, getAdmin } from '@/db/helpers';
 import { auth } from '@/auth';
 import { revalidatePath } from 'next/cache';
 import { createSlug } from '@/lib/utils';
+import { generateRsaKeypair } from 'blind_signatures_server';
 
 interface State {
   error: string | null;
@@ -44,6 +45,8 @@ export const submitElection = async (prevState: State, formData: FormData) => {
 
     const admin = await getAdmin(session.user.email!);
 
+    const keypair = generateRsaKeypair();
+
     const election = await createElection({
       name,
       slug: createSlug(name),
@@ -52,6 +55,8 @@ export const submitElection = async (prevState: State, formData: FormData) => {
       endDate,
       adminId: admin[0].admins.id,
       isPrivate,
+      secretKey: keypair.secret,
+      publicKey: keypair.public,
     });
 
     revalidatePath('/dashboard');

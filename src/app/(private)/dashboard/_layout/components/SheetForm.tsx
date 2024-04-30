@@ -155,11 +155,9 @@ export default function SheetForm() {
         </span>
       </FormField>
       <SheetFooter>
-        <SheetClose asChild>
-          <Button type="submit" disabled={pending}>
-            Create
-          </Button>
-        </SheetClose>
+        <Button type="submit" disabled={pending}>
+          Create
+        </Button>
       </SheetFooter>
     </form>
   );

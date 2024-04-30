@@ -1,4 +1,4 @@
-export function generateRsaKeypair(): Object;
+export function generateRsaKeypair(): { secret: string; public: string };
 
 export function sign(secretKeyPem: string, blindMsg: string): string;
 

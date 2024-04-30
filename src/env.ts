@@ -14,10 +14,6 @@ export const env = createEnv({
     ETH_ACCOUNT: z.string(),
     ETH_PRIV: z.string(),
   },
-  client: {
-    NEXT_PUBLIC_RSA_PUBLIC: z.string(),
-  },
-  experimental__runtimeEnv: {
-    NEXT_PUBLIC_RSA_PUBLIC: process.env.NEXT_PUBLIC_RSA_PUBLIC,
-  },
+  client: {},
+  experimental__runtimeEnv: {},
 });

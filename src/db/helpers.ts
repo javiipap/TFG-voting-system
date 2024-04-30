@@ -17,7 +17,7 @@ export const getConnection = () => {
   return { client, db };
 };
 
-const execQuery = async <T>(
+export const execQuery = async <T>(
   fn: (db: PostgresJsDatabase<typeof schema>) => Promise<T>
 ) => {
   const { client, db } = getConnection();
@@ -218,5 +218,13 @@ export const getPublicElections = async () => {
       .select()
       .from(schema.elections)
       .where(eq(schema.elections.isPrivate, false))
+  );
+};
+
+export const storeTicket = async (
+  ticket: typeof schema.issuedTickets.$inferInsert
+) => {
+  return await execQuery((db) =>
+    db.insert(schema.issuedTickets).values(ticket)
   );
 };
