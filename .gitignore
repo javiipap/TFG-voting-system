@@ -46,3 +46,5 @@ drizzle
 .env
 
 target
+**/node_modules
+*.node

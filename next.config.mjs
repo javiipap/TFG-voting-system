@@ -1,3 +1,5 @@
+import os from 'os';
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: 'standalone',
@@ -6,6 +8,18 @@ const nextConfig = {
     // Fixes `Error occurred prerendering page "/"`
     config.experiments.asyncWebAssembly = true;
     config.experiments.syncWebAssembly = true;
+    config.module.rules.push({
+      test: /\.node$/,
+      use: [
+        {
+          loader: 'nextjs-node-loader',
+          options: {
+            flags: os.constants.dlopen.RTLD_NOW,
+            outputPath: config.output.path,
+          },
+        },
+      ],
+    });
 
     return config;
   },
