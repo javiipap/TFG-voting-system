@@ -48,3 +48,4 @@ drizzle
 target
 **/node_modules
 *.node
+/src/lib/pkg/*

@@ -2,7 +2,8 @@
 
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
-import { createAccount, requestEther } from '../_lib';
+import { createAccount } from '../_lib';
+import { requestEther } from '../_lib/requestEther';
 import { Copy } from 'lucide-react';
 import {
   Tooltip,
@@ -10,6 +11,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { Textarea } from '@/components/ui/textarea';
 
 type Account =
   | {
@@ -22,7 +24,7 @@ type Account =
       ticket: string;
     };
 
-export default function CreateAccount() {
+export default function CreateAccount({ electionId }: { electionId: number }) {
   const [account, setAccount] = useState<Account>({
     isSet: false,
   });
@@ -33,23 +35,23 @@ export default function CreateAccount() {
     }
 
     const pair = await createAccount();
-    const ticket = await requestEther(pair.addr);
+    const ticket = await requestEther(pair.addr, electionId);
 
     setAccount({
       isSet: true,
+      ticket,
       ...pair,
-      ticket: Buffer.from(ticket.blind_msg).toString('hex'),
     });
   };
 
   return (
     <>
-      {!account.isSet && <Button onClick={onSubmit}>Iniciar votación</Button>}
+      {!account.isSet && <Button onClick={onSubmit}>Pasos previos</Button>}
       {account.isSet && (
         <div className="w-[400px] space-y-2">
           <AddrViewer title="Address" value={account.addr} />
           <AddrViewer title="Secret" value={account.sk} />
-          <AddrViewer title="Ticket" value={account.ticket} />
+          <Textarea defaultValue={account.ticket} readOnly />
         </div>
       )}
     </>

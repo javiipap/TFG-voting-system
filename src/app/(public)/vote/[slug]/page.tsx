@@ -1,6 +1,7 @@
 import { auth } from '@/auth';
 import { getElection, getCandidates } from '@/db/helpers';
 import CreateAccount from './_components/CreateAccount';
+import CreateVote from './_components/CreateVote';
 
 export default async function VotePage({
   params,
@@ -25,7 +26,8 @@ export default async function VotePage({
         <p className="text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed dark:text-gray-400">
           {election.description}
         </p>
-        <CreateAccount />
+        <CreateAccount electionId={election.id} />
+        <CreateVote />
       </div>
     </main>
   );
