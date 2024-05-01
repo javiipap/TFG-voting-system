@@ -25,7 +25,7 @@ This project aims to design and implement a secure voting system using blockchai
 1. Clone the repository to your local machine.
 2. Navigate to the project directory.
 3. Run `npm install` to install dependencies.
-4. Follow additional setup instructions provided in the `README.md` file within the project directory.
+4. Install compiled dependencies (client_blind_signatures, server_blind_signatures, ballots) from [github](https://github.com/javiipap/TFG-deps.git). These must be stored in `src/lib/pkg/<package_name>`
 
 ## Usage
 
