@@ -6,6 +6,7 @@ import {
   bigint,
   integer,
   boolean,
+  primaryKey,
 } from 'drizzle-orm/pg-core';
 
 export const users = pgTable('users', {
@@ -72,7 +73,7 @@ export const votes = pgTable(
     encryptedEthSecret: text('encrypted_eth_secret'),
   },
   (table) => ({
-    pk: [table.userId, table.electionId],
+    pk: primaryKey({ columns: [table.userId, table.electionId] }),
   })
 );
 
@@ -88,7 +89,7 @@ export const userGroupMemberships = pgTable(
       .notNull(),
   },
   (table) => ({
-    pk: [table.groupId, table.userId],
+    pk: primaryKey({ columns: [table.groupId, table.userId] }),
   })
 );
 
@@ -104,7 +105,7 @@ export const authorizedGroups = pgTable(
       .notNull(),
   },
   (table) => ({
-    pk: [table.groupId, table.electionId],
+    pk: primaryKey({ columns: [table.groupId, table.electionId] }),
   })
 );
 
@@ -125,7 +126,7 @@ export const verificationToken = pgTable(
     expires: timestamp('expires', { withTimezone: true }).notNull(),
     token: text('token').notNull(),
   },
-  (table) => ({ pk: [table.identifier, table.token] })
+  (table) => ({ pk: primaryKey({ columns: [table.identifier, table.token] }) })
 );
 
 export const accounts = pgTable('accounts', {
