@@ -1,10 +1,12 @@
 'use server';
 
-import { createElection, getAdmin } from '@/db/helpers';
+import { createElection, execQuery, getAdmin } from '@/db/helpers';
 import { auth } from '@/auth';
 import { revalidatePath } from 'next/cache';
 import { createSlug } from '@/lib/utils';
 import { generateRsaKeypair } from 'blind_signatures_server';
+import * as schema from '@/db/schema';
+import { eq } from 'drizzle-orm';
 
 interface State {
   error: string | null;
@@ -30,7 +32,6 @@ export const submitElection = async (prevState: State, formData: FormData) => {
   try {
     const name = formData.get('name') as string;
     const description = formData.get('description') as string;
-    const authMethod = formData.get('auth') as string;
     const isPrivate = !!formData.get('isPrivate');
     const timespan = formData.get('timespan') as string;
     const start = parseInt(formData.get('start') as string);
@@ -76,4 +77,13 @@ export const submitElection = async (prevState: State, formData: FormData) => {
       },
     };
   }
+};
+
+export const submitPublicKey = async (slug: string, publicKey: string) => {
+  await execQuery((db) =>
+    db
+      .update(schema.elections)
+      .set({ masterPublicKey: publicKey })
+      .where(eq(schema.elections.slug, slug))
+  );
 };

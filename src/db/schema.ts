@@ -38,6 +38,8 @@ export const elections = pgTable('elections', {
   endDate: timestamp('end_date').notNull(),
   secretKey: text('secret_key').notNull().unique(),
   publicKey: text('public_key').notNull().unique(),
+  masterPublicKey: text('master_public_key'),
+  contractAddr: text('contract_addr'),
 });
 
 export const candidates = pgTable('candidates', {

@@ -14,16 +14,19 @@ import {
 import { useToast } from '@/components/ui/use-toast';
 import { SheetClose, SheetFooter } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useFormStatus, useFormState } from 'react-dom';
-import { submitElection } from './_actions';
+import { submitElection, submitPublicKey } from './_actions';
 import Link from 'next/link';
 import { FormField, Label } from '../../[slug]/_layout/components/FormFields';
 import { DateRange } from 'react-day-picker';
 import { addDays } from 'date-fns';
 import { Switch } from '@/components/ui/switch';
+import init, { generate_elgamal_keypair } from 'ballots_client';
 
 export default function SheetForm() {
+  const [keyPair, setKeyPair] =
+    useState<ReturnType<typeof generate_elgamal_keypair>>();
   const { toast } = useToast();
 
   const formRef = React.useRef<HTMLFormElement>(null);
@@ -47,6 +50,13 @@ export default function SheetForm() {
     };
   });
 
+  const generatePubKey = async (slug: string) => {
+    await init();
+    const _keyPair = generate_elgamal_keypair();
+    submitPublicKey(slug, Buffer.from(_keyPair.public).toString('base64'));
+    setKeyPair(_keyPair);
+  };
+
   useEffect(() => {
     if (formState.error) {
       toast({ title: 'Error creating election', description: formState.error });
@@ -63,6 +73,7 @@ export default function SheetForm() {
           </p>
         ),
       });
+      generatePubKey(formState.election.slug);
     }
   }, [formState]);
 
@@ -80,25 +91,6 @@ export default function SheetForm() {
       <FormField>
         <Label>Description</Label>
         <Textarea name="description" className="max-h-80" required />
-      </FormField>
-
-      <FormField>
-        <Label>Authentication method</Label>
-        <Select name="auth" defaultValue="google">
-          <SelectTrigger className="w-full">
-            <SelectValue placeholder="Select a method" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              <SelectItem value="google">Google</SelectItem>
-              <SelectItem value="fnmt">FNMT certificate</SelectItem>
-              <SelectItem value="any">Any</SelectItem>
-            </SelectGroup>
-          </SelectContent>
-        </Select>
-        <span className="text-sm text-muted-foreground">
-          Users will use this method in order to participate.
-        </span>
       </FormField>
       <FormField>
         <Label>Time span</Label>
@@ -159,6 +151,23 @@ export default function SheetForm() {
           Create
         </Button>
       </SheetFooter>
+      {!!keyPair ? (
+        <>
+          <Textarea
+            readOnly
+            defaultValue={Buffer.from(keyPair.public).toString('base64')}
+          />
+          <Textarea
+            readOnly
+            defaultValue={Buffer.from(keyPair.secret).toString('base64')}
+          />
+          <SheetClose asChild>
+            <Button>Download</Button>
+          </SheetClose>
+        </>
+      ) : (
+        ''
+      )}
     </form>
   );
 }
