@@ -17,7 +17,7 @@ export async function getContractInfo() {
   };
 }
 
-export async function deployContract() {
+export async function deployContract(candidateCount: number, id: string) {
   const web3 = new Web3(env.NEXT_PUBLIC_ETH_HOST);
 
   const { abi, byteCode } = await getContractInfo();
@@ -27,7 +27,7 @@ export async function deployContract() {
   const encodedABI = contract
     .deploy({
       data: byteCode,
-      arguments: ['5', 'prueba'],
+      arguments: [candidateCount, id],
     })
     .encodeABI();
 

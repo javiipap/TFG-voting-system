@@ -1,0 +1,30 @@
+import { getContractInfo } from '@/background/deployContract';
+import { env } from '@/env';
+import { Web3 } from 'web3';
+import { encryptVote } from 'ballots_server';
+
+export async function calculateGas(
+  publicKey: Buffer,
+  candidateCount: number,
+  contractAddr: string,
+  clientAddr: string
+) {
+  const web3 = new Web3(env.NEXT_PUBLIC_ETH_HOST);
+
+  const { abi } = await getContractInfo();
+
+  var mySmartContract = new web3.eth.Contract(abi, contractAddr);
+
+  const ballot = encryptVote(publicKey, 0, candidateCount);
+
+  const resGasMethod = await mySmartContract.methods
+    .vote(ballot)
+    .estimateGas({ from: clientAddr });
+
+  const latestBlock: any = await web3.eth.getBlock('latest');
+  const blockGas = latestBlock.gasLimit;
+
+  const finalGas = blockGas * resGasMethod;
+
+  return finalGas;
+}
