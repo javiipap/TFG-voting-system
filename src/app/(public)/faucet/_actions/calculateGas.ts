@@ -17,14 +17,15 @@ export async function calculateGas(
 
   const ballot = encryptVote(publicKey, 0, candidateCount);
 
-  const resGasMethod = await mySmartContract.methods
+  const gas = await mySmartContract.methods
     .vote(ballot)
     .estimateGas({ from: clientAddr });
 
-  const latestBlock: any = await web3.eth.getBlock('latest');
-  const blockGas = latestBlock.gasLimit;
+  const gasPrice = BigInt(
+    Math.ceil(Number(await web3.eth.getGasPrice()) * 1.4)
+  );
 
-  const finalGas = blockGas * resGasMethod;
+  const finalGas = gasPrice * gas;
 
   return finalGas;
 }
