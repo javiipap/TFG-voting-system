@@ -4,11 +4,11 @@ import { readFileSync } from 'fs';
 
 export async function getContractInfo() {
   const abi = JSON.parse(
-    readFileSync(process.cwd() + '/src/contracts/bin/abi.json').toString()
+    readFileSync(process.cwd() + '/public/contracts/bin/abi.json').toString()
   );
 
   const byteCode = readFileSync(
-    process.cwd() + '/src/contracts/bin/bytecode'
+    process.cwd() + '/public/contracts/bin/bytecode'
   ).toString();
 
   return {
