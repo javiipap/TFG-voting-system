@@ -4,23 +4,22 @@ import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Vote } from 'lucide-react';
-import { getCandidates } from '@/db/helpers';
-import { Session } from 'next-auth';
+import { candidates as Candidates } from '@/db/schema';
 import { useState } from 'react';
 
 export default function SelectCandidate({
   candidates,
-  session,
+  onChange,
 }: {
-  candidates: Awaited<ReturnType<typeof getCandidates>>;
-  session: Session | null;
+  candidates: (typeof Candidates.$inferSelect)[];
+  onChange: (selected: number) => void;
 }) {
   const [selected, setSelected] = useState<number | null>(null);
 
   return (
     <div className="">
       <div className="flex gap-4">
-        {candidates.map(({ candidates }, i) => (
+        {candidates.map((candidate, i) => (
           <Card
             key={`candidate-${i}`}
             className={`hover:bg-foreground/5 transition-all cursor-pointer ${
@@ -35,31 +34,25 @@ export default function SelectCandidate({
             >
               <CardHeader className="flex-row items-center gap-4">
                 <Avatar>
-                  <AvatarImage
-                    src={candidates.img || ''}
-                    alt={candidates.name}
-                  />
-                  <AvatarFallback>{candidates.name[0]}</AvatarFallback>
+                  <AvatarImage src={candidate.img || ''} alt={candidate.name} />
+                  <AvatarFallback>{candidate.name[0]}</AvatarFallback>
                 </Avatar>
-                <CardTitle className="text-left">{candidates.name}</CardTitle>
+                <CardTitle className="text-left">{candidate.name}</CardTitle>
               </CardHeader>
             </button>
           </Card>
         ))}
       </div>
-      {!!session && (
-        <form className="pt-4">
-          <input
-            type="hidden"
-            name="candidate"
-            value={selected ? candidates[selected].candidates.id : undefined}
-          />
-          <Button className="px-8">
-            <Vote className="mr-2" />
-            Vota
-          </Button>
-        </form>
-      )}
+      <div className="pt-4">
+        <Button
+          className="px-8"
+          onClick={() => onChange(selected!)}
+          disabled={typeof selected !== 'number'}
+        >
+          <Vote className="mr-2" />
+          Vota
+        </Button>
+      </div>
     </div>
   );
 }

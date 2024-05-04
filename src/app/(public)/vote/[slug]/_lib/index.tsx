@@ -10,35 +10,18 @@
  *
  */
 
-import { privateKeyVerify, publicKeyCreate } from 'secp256k1';
-import { keccak256 } from 'ethers';
+import { Web3 } from 'web3';
+import { env } from '@/env';
 
-const privateToAddress = (pk: Uint8Array) => {
-  const pub = publicKeyCreate(pk, false).slice(1);
-  console.log(pub);
-  return keccak256(Buffer.from(pub)).slice(-20).toString();
+export const createAccount = () => {
+  const web3 = new Web3(env.NEXT_PUBLIC_ETH_HOST);
+  const account = web3.eth.accounts.create();
+
+  return {
+    addr: account.address,
+    sk: account.privateKey,
+  };
 };
-
-export const createAccount = () =>
-  new Promise<{ addr: string; sk: string }>((resolve) => {
-    let sk: Uint8Array;
-
-    do {
-      sk = new Uint8Array(32);
-      window.crypto.getRandomValues(sk);
-    } while (!privateKeyVerify(sk));
-
-    resolve({
-      addr: privateToAddress(sk).toString(),
-      sk: Buffer.from(sk).toString('hex'),
-    });
-  });
 
 // TODO: Subir y usar certificados
 export function storeEncryptedSecretKey(sk: string) {}
-
-export function encryptSelection(selection: number, total: number) {
-  return '';
-}
-
-export function executeContract(ballot: string, address: string, sk: string) {}
