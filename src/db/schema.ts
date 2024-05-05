@@ -117,6 +117,10 @@ export const issuedTickets = pgTable('issued_tickets', {
   electionId: integer('election_id').references(() => elections.id, {
     onDelete: 'cascade',
   }),
+  revoked: boolean('revoked').default(false),
+  revokedBy: integer('revoked_by').references(() => users.id, {
+    onDelete: 'set null',
+  }),
 });
 
 // ---------------------------NextAuth-----------------------------------------
