@@ -7,6 +7,7 @@ import * as schema from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { sendWei } from './sendWei';
 import { calculateGas } from './calculateGas';
+import { grantPermissions } from './grantPermissions';
 
 export async function submitRequest(formData: FormData) {
   const rawTicket = formData.get('ticket') as string;
@@ -70,6 +71,8 @@ export async function submitRequest(formData: FormData) {
       )
   );
 
+  // Añadir dirección a la lista granted
+  await grantPermissions(ticket.addr, election.contractAddr);
   // Calcular gas
   const wei = await calculateGas(
     Buffer.from(election.masterPublicKey!, 'base64'),
