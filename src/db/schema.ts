@@ -12,10 +12,11 @@ import {
 export const users = pgTable('users', {
   id: serial('id').primaryKey(),
   name: text('name'),
-  email: text('email').unique(),
+  email: text('email'),
   dni: text('dni'),
   emailVerified: timestamp('emailVerified', { withTimezone: true }),
   image: text('image'),
+  cert: text('cert').unique(),
 });
 
 export const admins = pgTable('admins', {
@@ -134,23 +135,6 @@ export const verificationToken = pgTable(
   },
   (table) => ({ pk: primaryKey({ columns: [table.identifier, table.token] }) })
 );
-
-export const accounts = pgTable('accounts', {
-  id: serial('id').primaryKey(),
-  userId: integer('userId')
-    .references(() => users.id, { onDelete: 'cascade' })
-    .notNull(),
-  type: text('type').notNull(),
-  provider: text('provider').notNull(),
-  providerAccountId: text('providerAccountId').notNull(),
-  refresh_token: text('refresh_token'),
-  access_token: text('access_token'),
-  expires_at: bigint('expires_at', { mode: 'number' }),
-  id_token: text('id_token'),
-  scope: text('scope'),
-  session_state: text('session_state'),
-  token_type: text('token_type'),
-});
 
 export const sessions = pgTable('sessions', {
   id: serial('id').primaryKey(),
