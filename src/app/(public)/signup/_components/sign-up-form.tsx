@@ -28,13 +28,12 @@ export default function SignUpForm() {
     const req = await fetch(env.NEXT_PUBLIC_AUTH_PROXY);
 
     if (!req.ok) {
-      // TODO
-      alert('El certificado es inválido');
+      form.setValue('cert', '');
       return;
     }
     const { cert } = await req.json();
 
-    form.setValue('cert', cert);
+    form.setValue('cert', decodeURIComponent(cert));
   };
 
   useEffect(() => {
@@ -92,9 +91,8 @@ export default function SignUpForm() {
           control={form.control}
           name="cert"
           render={({ field }) => (
-            <FormItem className="hidden">
-              <FormLabel>Certificado</FormLabel>
-              <FormControl>
+            <FormItem>
+              <FormControl className="hidden">
                 <Input {...field} />
               </FormControl>
               <FormMessage />

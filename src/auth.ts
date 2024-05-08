@@ -1,7 +1,7 @@
 import NextAuth from 'next-auth';
 import { authConfig } from './auth.config';
-import Google from 'next-auth/providers/google';
-import { getAdmin, getConnection, isAdmin } from './db/helpers';
+import CredentialsProvider from 'next-auth/providers/credentials';
+import { execQuery, getAdmin, isAdmin } from './db/helpers';
 import * as schema from './db/schema';
 import { eq } from 'drizzle-orm';
 
@@ -17,8 +17,8 @@ export const {
       if (account || trigger === 'update') {
         if (profile?.email && (await isAdmin(profile.email))) {
           token.role = 'admin';
-          const admin = await getAdmin(profile.email);
-          token.adminId = admin[0].admins.id;
+          const admin = (await getAdmin(profile.email))!;
+          token.adminId = admin.adminId;
         } else {
           token.role = 'user';
         }
@@ -32,61 +32,29 @@ export const {
 
       return session;
     },
-    async signIn({ user, account, profile }) {
-      if (!account) return false;
-
-      if (!user.email) {
-        // redirect?
-        return false;
-      }
-
-      const { client, db } = getConnection();
-      const existingUser = await db.query.users.findFirst({
-        where: eq(schema.users.email, user.email),
-      });
-
-      if (existingUser) {
-        const registeredProfiles = await db.query.accounts.findMany({
-          where: eq(schema.accounts.userId, existingUser.id),
-        });
-
-        const isProfileRegistered = registeredProfiles.some(
-          (p) => p.providerAccountId === account.id
-        );
-
-        if (!isProfileRegistered) {
-          await db.insert(schema.accounts).values({
-            ...account,
-            userId: existingUser.id,
-          });
-        }
-
-        await client.end();
-        return true;
-      }
-
-      const newUser = await db
-        .insert(schema.users)
-        .values({
-          email: user.email,
-          name: user.name,
-          image: user.image,
-        })
-        .returning({ id: schema.users.id });
-
-      await db.insert(schema.accounts).values({
-        ...account,
-        userId: newUser[0].id,
-      });
-
-      await client.end();
-      return true;
-    },
   },
   providers: [
-    Google({
-      clientId: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    CredentialsProvider({
+      name: 'cert',
+      credentials: {
+        cert: {},
+      },
+      async authorize({ cert }) {
+        const user = await execQuery((db) =>
+          db.query.users.findFirst({
+            where: eq(schema.users.cert, cert as string),
+          })
+        );
+
+        if (!user) {
+          return null;
+        }
+
+        return {
+          name: user.name,
+          email: user.email,
+        };
+      },
     }),
   ],
 });

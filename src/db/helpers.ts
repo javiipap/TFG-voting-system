@@ -173,8 +173,8 @@ export const isAdmin = async (email: string) => {
 };
 
 export const getAdmin = async (email: string) => {
-  return await execQuery((db) =>
-    db
+  return await execQuery(async (db) => {
+    const result = await db
       .select()
       .from(schema.users)
       .innerJoin(
@@ -183,8 +183,17 @@ export const getAdmin = async (email: string) => {
           eq(schema.users.id, schema.admins.userId),
           eq(schema.users.email, email)
         )
-      )
-  );
+      );
+
+    if (result.length < 1) {
+      return null;
+    }
+
+    return {
+      ...result[0].users,
+      adminId: result[0].admins.id,
+    };
+  });
 };
 
 export const getGroups = async (adminId: number) => {

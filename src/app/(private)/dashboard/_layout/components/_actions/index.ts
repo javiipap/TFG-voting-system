@@ -44,7 +44,7 @@ export const submitElection = async (prevState: State, formData: FormData) => {
     startDate.setHours(start);
     endDate.setHours(end);
 
-    const admin = await getAdmin(session.user.email!);
+    const admin = (await getAdmin(session.user.email!))!;
 
     const keypair = generateRsaKeypair();
 
@@ -54,7 +54,7 @@ export const submitElection = async (prevState: State, formData: FormData) => {
       description,
       startDate,
       endDate,
-      adminId: admin[0].admins.id,
+      adminId: admin.adminId,
       isPrivate,
       secretKey: keypair.secret,
       publicKey: keypair.public,
