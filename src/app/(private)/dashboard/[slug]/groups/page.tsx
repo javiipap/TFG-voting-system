@@ -15,7 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { auth } from '@/auth';
+import { auth } from '@/lib/auth';
 import { getElection, getConnection } from '@/db/helpers';
 import * as schema from '@/db/schema';
 import { and, eq } from 'drizzle-orm';

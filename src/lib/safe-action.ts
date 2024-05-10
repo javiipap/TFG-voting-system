@@ -1,4 +1,4 @@
-import { auth } from '@/auth';
+import { auth } from '@/lib/auth';
 import { DEFAULT_SERVER_ERROR, createSafeActionClient } from 'next-safe-action';
 
 export const unauthenticatedAction = createSafeActionClient({

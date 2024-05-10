@@ -1,12 +1,12 @@
 'use server';
 
 import { execQuery, storeTicket } from '@/db/helpers';
-import { verify } from 'blind_signatures_server';
+import { verify } from 'server_utilities';
 import { Ticket } from '@/tfg-types';
 import * as schema from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { sendWei } from './sendWei';
-import { calculateGas } from './calculateGas';
+import { calculateGas } from '@/app/(public)/faucet/_actions/calculateGas';
 import { grantPermissions } from './grantPermissions';
 
 export async function submitRequest(formData: FormData) {

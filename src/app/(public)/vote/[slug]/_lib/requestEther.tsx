@@ -1,4 +1,4 @@
-import load_wasm, { unblind, create_request } from 'blind_signatures_client';
+import load_wasm, { unblind, create_request } from 'client_utilities';
 import { Ticket } from '@/tfg-types';
 
 export async function requestEther(addr: string, electionId: number) {

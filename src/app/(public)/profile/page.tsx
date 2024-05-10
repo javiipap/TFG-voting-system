@@ -1,4 +1,4 @@
-import { auth } from '@/auth';
+import { auth } from '@/lib/auth';
 import { Button } from '@/components/ui/button';
 import { redirect } from 'next/navigation';
 import { promoteAdmin } from './_actions';

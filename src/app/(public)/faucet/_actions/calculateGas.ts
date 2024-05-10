@@ -1,7 +1,7 @@
 import { getContractInfo } from '@/background/deployContract';
 import { env } from '@/env';
 import { Web3 } from 'web3';
-import { encryptVote } from 'ballots_server';
+import { encryptVote } from 'server_utilities';
 
 export async function calculateGas(
   publicKey: Buffer,

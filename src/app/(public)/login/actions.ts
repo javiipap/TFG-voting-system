@@ -1,6 +1,6 @@
 'use server';
 
-import { signIn } from '@/auth';
+import { signIn } from '@/lib/auth';
 import { unauthenticatedAction } from '@/lib/safe-action';
 import { schema } from './validation';
 

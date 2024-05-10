@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button';
 import Title from '../components/Title';
 import Link from 'next/link';
-import { auth } from '@/auth';
+import { auth } from '@/lib/auth';
 import { getGroups } from '@/db/helpers';
 import {
   Table,

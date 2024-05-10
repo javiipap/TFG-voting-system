@@ -1,27 +1,26 @@
 import NextAuth from 'next-auth';
-import { authConfig } from './auth.config';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import { execQuery, getAdmin, isAdmin } from './db/helpers';
-import * as schema from './db/schema';
+import { execQuery, getAdminId, isAdmin } from '../db/helpers';
+import * as schema from '../db/schema';
 import { eq } from 'drizzle-orm';
 
 export const {
+  handlers: { GET, POST },
   auth,
   signIn,
   signOut,
-  handlers: { GET, POST },
 } = NextAuth({
-  ...authConfig,
+  secret: process.env.AUTH_SECRET,
+  pages: {
+    signIn: '/login',
+  },
   callbacks: {
-    async jwt({ token, account, profile, trigger }) {
-      if (account || trigger === 'update') {
-        if (profile?.email && (await isAdmin(profile.email))) {
-          token.role = 'admin';
-          const admin = (await getAdmin(profile.email))!;
-          token.adminId = admin.adminId;
-        } else {
-          token.role = 'user';
-        }
+    async jwt({ token, user }) {
+      if (user) {
+        const userEmail = token.email as string;
+        token.role = (await isAdmin(userEmail)) ? 'admin' : 'user';
+        const adminId = await getAdminId(userEmail);
+        token.adminId = adminId;
       }
 
       return token;

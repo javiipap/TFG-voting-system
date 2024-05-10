@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation';
 import Header from './_layout/Header';
-import { auth } from '@/auth';
+import { auth } from '@/lib/auth';
 import {
   Sheet,
   SheetContent,

@@ -1,10 +1,10 @@
 'use server';
 
 import { createElection, execQuery, getAdmin } from '@/db/helpers';
-import { auth } from '@/auth';
+import { auth } from '@/lib/auth';
 import { revalidatePath } from 'next/cache';
 import { createSlug } from '@/lib/utils';
-import { generateRsaKeypair } from 'blind_signatures_server';
+import { generateRsaKeypair } from 'server_utilities';
 import * as schema from '@/db/schema';
 import { eq } from 'drizzle-orm';
 

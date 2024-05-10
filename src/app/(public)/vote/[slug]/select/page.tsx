@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 import { ChangeEvent, useContext, useState } from 'react';
 import { submitVote } from '../_lib/submitVote';
 import { Context } from '../context';
-import init, { encrypt_vote } from 'ballots_client';
+import init, { encrypt_vote } from 'client_utilities';
 import SelectCandidate from '../_components/SelectCandidate';
 
 export default function SelectVotePage() {

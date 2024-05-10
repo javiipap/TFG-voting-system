@@ -1,8 +1,8 @@
-import { auth } from '@/auth';
+import { auth } from '@/lib/auth';
 import { execQuery } from '@/db/helpers';
 import * as schema from '@/db/schema';
 import { and, eq } from 'drizzle-orm';
-import { sign } from 'blind_signatures_server';
+import { sign } from 'server_utilities';
 
 export async function POST(request: Request) {
   const body = await request.json();

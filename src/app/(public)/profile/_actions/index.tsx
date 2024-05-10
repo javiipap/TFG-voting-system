@@ -3,7 +3,7 @@
 import { getConnection } from '@/db/helpers';
 import * as schema from '@/db/schema';
 import { eq } from 'drizzle-orm';
-import { auth } from '@/auth';
+import { auth } from '@/lib/auth';
 
 export async function promoteAdmin(formData: FormData) {
   const session = await auth();

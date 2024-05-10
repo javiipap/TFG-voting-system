@@ -1,4 +1,4 @@
-import { auth } from '@/auth';
+import { auth } from '@/lib/auth';
 import HeaderNav from './components/HeaderNav';
 import Title from './components/Title';
 import { getElections } from '@/db/helpers';

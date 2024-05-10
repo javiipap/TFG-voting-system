@@ -22,7 +22,7 @@ import { FormField, Label } from '../../[slug]/_layout/components/FormFields';
 import { DateRange } from 'react-day-picker';
 import { addDays } from 'date-fns';
 import { Switch } from '@/components/ui/switch';
-import init, { generate_elgamal_keypair } from 'ballots_client';
+import init, { generate_elgamal_keypair } from 'client_utilities';
 
 export default function SheetForm() {
   const [keyPair, setKeyPair] =

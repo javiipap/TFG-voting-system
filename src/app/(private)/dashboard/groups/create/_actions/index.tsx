@@ -1,6 +1,6 @@
 'use server';
 
-import { auth } from '@/auth';
+import { auth } from '@/lib/auth';
 import { getConnection } from '@/db/helpers';
 import * as schema from '@/db/schema';
 import { createSlug } from '@/lib/utils';
