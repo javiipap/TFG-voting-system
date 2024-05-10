@@ -17,6 +17,7 @@ export const users = pgTable('users', {
   emailVerified: timestamp('emailVerified', { withTimezone: true }),
   image: text('image'),
   cert: text('cert').unique(),
+  publicKey: text('public_key'),
 });
 
 export const admins = pgTable('admins', {
@@ -73,7 +74,8 @@ export const votes = pgTable(
     electionId: integer('election_id')
       .references(() => elections.id, { onDelete: 'cascade' })
       .notNull(),
-    encryptedEthSecret: text('encrypted_eth_secret'),
+    encryptedEthSecret: text('encrypted_eth_secret').notNull(),
+    signedEthSecret: text('signed_eth_secret').notNull(),
   },
   (table) => ({
     pk: primaryKey({ columns: [table.userId, table.electionId] }),

@@ -8,7 +8,9 @@ import init, { encrypt_vote } from 'client_utilities';
 import SelectCandidate from '../_components/SelectCandidate';
 
 export default function SelectVotePage() {
-  const { masterPublicKey, contractAddr, candidates } = useContext(Context);
+  const { masterPublicKey, contractAddr, candidates } = useContext(
+    Context
+  ) as Context;
 
   const [inputState, setInputState] = useState({ addr: '', secret: '' });
   const [blockInfo, setBlockInfo] =
@@ -25,14 +27,14 @@ export default function SelectVotePage() {
 
     await init();
     const ballot = encrypt_vote(
-      Buffer.from(masterPublicKey!, 'base64'),
+      Buffer.from(masterPublicKey, 'base64'),
       selected,
-      candidates?.length!
+      candidates.length
     );
 
     const response = await submitVote(
       ballot,
-      contractAddr!,
+      contractAddr,
       inputState.addr,
       inputState.secret
     );
@@ -51,7 +53,7 @@ export default function SelectVotePage() {
             <span>{blockInfo.blockNumber.toString()}</span>
           </div>
         )}
-        <SelectCandidate onChange={onSubmit} candidates={candidates!} />
+        <SelectCandidate onChange={onSubmit} candidates={candidates} />
       </div>
     </main>
   );

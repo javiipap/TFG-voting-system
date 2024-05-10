@@ -9,6 +9,9 @@ export default function Links() {
 
   return (
     <div className="space-x-2">
+      <Link href={`${pathname}/delete`}>
+        <Button>Eliminar voto previo</Button>
+      </Link>
       <Link href={`${pathname}/previous`}>
         <Button variant="secondary">Pasos previos</Button>
       </Link>

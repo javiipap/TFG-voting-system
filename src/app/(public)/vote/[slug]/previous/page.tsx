@@ -23,7 +23,7 @@ type Account =
 
 export default function PreviousStepsPage() {
   const pathname = usePathname();
-  const { electionId } = useContext(Context);
+  const { electionId } = useContext(Context) as Context;
 
   const [account, setAccount] = useState<Account>({
     isSet: false,
@@ -35,7 +35,7 @@ export default function PreviousStepsPage() {
     }
 
     const pair = createAccount();
-    requestEther(pair.addr, electionId!)
+    requestEther(pair.addr, electionId)
       .then((ticket) => setAccount((acc) => ({ ...acc, ticket })))
       .catch((err) => {
         // TODO
