@@ -1,8 +1,30 @@
-import NextAuth from 'next-auth';
+import NextAuth, { DefaultSession } from 'next-auth';
+import { JWT } from 'next-auth/jwt';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { execQuery, getAdminId, isAdmin } from '../db/helpers';
 import * as schema from '../db/schema';
 import { eq } from 'drizzle-orm';
+
+type Role = 'admin' | 'user';
+
+export type User = {
+  id: number;
+  role: Role;
+  adminId: number;
+} & DefaultSession['user'];
+
+declare module 'next-auth' {
+  interface Session extends DefaultSession {
+    user: User;
+  }
+}
+
+declare module 'next-auth/jwt' {
+  interface JWT {
+    role: Role;
+    adminId: number | undefined | null;
+  }
+}
 
 export const {
   handlers: { GET, POST },
@@ -26,8 +48,8 @@ export const {
       return token;
     },
     async session({ session, token }) {
-      session.user.role = token.role;
-      session.user.adminId = token.adminId;
+      session.user.role = token.role as Role;
+      session.user.adminId = token.adminId as number;
 
       return session;
     },
