@@ -115,17 +115,6 @@ export const deleteCandidate = async (id: number) => {
   );
 };
 
-export const createElection = async (
-  election: typeof schema.elections.$inferInsert
-) => {
-  return execQuery((db) =>
-    db
-      .insert(schema.elections)
-      .values(election)
-      .returning({ slug: schema.elections.slug })
-  );
-};
-
 export const createGroup = async (
   group: typeof schema.userGroups.$inferInsert
 ) => {

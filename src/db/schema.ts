@@ -11,13 +11,13 @@ import {
 
 export const users = pgTable('users', {
   id: serial('id').primaryKey(),
-  name: text('name'),
-  email: text('email'),
-  dni: text('dni'),
+  name: text('name').notNull(),
+  email: text('email').notNull(),
+  dni: text('dni').unique(),
   emailVerified: timestamp('emailVerified', { withTimezone: true }),
   image: text('image'),
   cert: text('cert').unique(),
-  publicKey: text('public_key'),
+  publicKey: text('public_key').notNull(),
 });
 
 export const admins = pgTable('admins', {
@@ -40,7 +40,7 @@ export const elections = pgTable('elections', {
   endDate: timestamp('end_date').notNull(),
   secretKey: text('secret_key').notNull().unique(),
   publicKey: text('public_key').notNull().unique(),
-  masterPublicKey: text('master_public_key'),
+  masterPublicKey: text('master_public_key').notNull(),
   contractAddr: text('contract_addr'),
 });
 

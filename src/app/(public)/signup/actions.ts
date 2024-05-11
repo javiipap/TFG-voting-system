@@ -6,6 +6,7 @@ import { users } from '@/db/schema';
 import { ActionError, unauthenticatedAction } from '@/lib/safe-action';
 import { schema } from './validation';
 import { redirect } from 'next/navigation';
+import crypto from 'crypto';
 
 export const signUpAction = unauthenticatedAction(
   schema,
@@ -19,12 +20,19 @@ export const signUpAction = unauthenticatedAction(
         ),
       })
     );
+
     if (existingUser) {
       // TODO: Afinar un fisco
       throw new ActionError('User already exists on database');
     }
+
+    const publicKey = crypto
+      .createPublicKey(cert)
+      .export({ type: 'pkcs1', format: 'pem' })
+      .toString();
+
     await execQuery((db) =>
-      db.insert(users).values({ name, email, dni, cert })
+      db.insert(users).values({ name, email, dni, cert, publicKey })
     );
 
     redirect('/login');
