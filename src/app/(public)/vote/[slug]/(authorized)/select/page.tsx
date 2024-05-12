@@ -2,10 +2,10 @@
 
 import { Input } from '@/components/ui/input';
 import { ChangeEvent, useContext, useState } from 'react';
-import { submitVote } from '../_lib/submitVote';
-import { Context } from '../context';
+import { submitVote } from '@/app/(public)/vote/[slug]/(authorized)/select/_lib/submit-vote';
+import { Context } from '@/app/(public)/vote/[slug]/context';
 import init, { encrypt_vote } from 'client_utilities';
-import SelectCandidate from '../_components/SelectCandidate';
+import SelectCandidate from '@/app/(public)/vote/[slug]/(authorized)/select/_components/select-candidate';
 
 export default function SelectVotePage() {
   const { masterPublicKey, contractAddr, candidates } = useContext(
