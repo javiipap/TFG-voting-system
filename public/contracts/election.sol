@@ -11,10 +11,12 @@ contract Election {
     mapping(address => Vote) public votes_;
     address[] public votes_address_;
     address[] public deleted_votes_address_;
-    uint64 candidates_count_;
-    string id_;
+    uint256 candidates_count_;
+    string public id_;
     address owner_;
-    bool ended_ = false;
+    bool public ended_ = false;
+    bytes public result_;
+    string public public_key_;
 
     modifier _ownerOnly() {
         require(msg.sender == owner_, "Only the owner can execute this method");
@@ -26,17 +28,18 @@ contract Election {
         _;
     }
 
-    constructor(uint64 candidates_count, string memory id) {
+    constructor(uint64 candidates_count, string memory id, string memory public_key) {
         owner_ = msg.sender;
         candidates_count_ = candidates_count;
         id_ = id;
+        public_key_ = public_key;
     }
 
     function grant(address addr) external _notEndend _ownerOnly {
         votes_[addr].granted = true;
     }
 
-    function vote(string calldata ballot) external _notEndend returns (uint) {
+    function vote(string calldata ballot) external _notEndend {
         // Ya se ha emitido un voto con esta cuenta
         require(abi.encodePacked(votes_[msg.sender].ballot).length <= 0, "This account has already been used to vote");
         // Ya se ha emitido un voto con esta cuenta que ha sido borrado
@@ -46,11 +49,9 @@ contract Election {
 
         votes_[msg.sender].ballot = ballot;
         votes_address_.push(msg.sender);
-
-        return block.number;
     }
 
-    function revoke(address voter) external _ownerOnly _notEndend returns (uint) {
+    function revoke(address voter) external _ownerOnly _notEndend {
         bool deleted = false;
 
         for (uint i = 0; i < votes_address_.length; i++) {
@@ -69,54 +70,75 @@ contract Election {
         }
 
         require(deleted == true, "Vote didn't exist");
-
-        return block.number;
     }
 
-    function tally() external _ownerOnly _notEndend returns (string memory result) {
-        string memory acc;
+    function tally() external _ownerOnly _notEndend returns (string memory) {
+        uint256 result_size = (129 * candidates_count_) + 1;
+        bytes memory result = new bytes(result_size);
+
+        uint256 ballot_size = bytes(votes_[votes_address_[0]].ballot).length;
+        
+        bytes memory sum_input = new bytes(ballot_size + result_size + 64);
+        uint256 sum_input_size = sum_input.length + 32;
+
+        bytes memory public_key = bytes(public_key_);
+        uint256 public_key_size = public_key.length + 32;
+ 
+        bytes memory verify_input = new bytes(public_key_size + ballot_size + 64);
+        uint256 verify_input_size = verify_input.length + 32;
+
+        uint256 candidates_count = candidates_count_;
+
+        // Crear input pk + n_candidatos + voto
+        for (uint j = 32; j < public_key_size + 32; j += 32) {
+            assembly {
+                mstore(add(verify_input, j), mload(add(public_key, sub(j, 32))))
+            }
+        }
+
+        assembly {
+            mstore(add(verify_input, add(public_key_size, 32)), candidates_count)
+        }
+
         for (uint i = 0; i < votes_address_.length; i++) {
             string memory ballot = votes_[votes_address_[i]].ballot;
 
-            uint vote_size = bytes(ballot).length;
-            uint result_size = bytes(result).length;
-            uint total_size = vote_size + result_size;
-
-            assembly { mstore(acc, total_size) }
-
-            // Copiar voto
-            for (uint j = 0; j < vote_size; i++) {
+            // Añadir voto a verify_input
+            for (uint j = public_key_size + 64; j < public_key_size + ballot_size + 96; j += 32) {
                 assembly {
-                    mstore(add(acc, j), mload(add(ballot, j)))
+                    mstore(add(verify_input, j), mload(add(ballot, sub(j, add(public_key_size, 64)))))
                 }
             }
 
-            // Copiar acc
-            for (uint j = 0; j < bytes(result).length; i++) {
+            // Crear sum_input voto + result
+            for (uint j = 32; j < ballot_size + 64; j += 32) {
                 assembly {
-                    mstore(add(add(acc, j), vote_size), mload(add(result, j)))
+                    mstore(add(sum_input, j), mload(add(ballot, sub(j, 32))))
                 }
             }
+            for (uint j = 64 + ballot_size; j < result_size + ballot_size + 96; j += 32) {
+                assembly {
+                    mstore(add(sum_input, j), mload(add(result, sub(j, add(64, ballot_size)))))
+                }
+            }
+
+            uint[1] memory verified;
 
             assembly {
-                let input_size := mload(ballot)
-                let input := add(ballot, 0x20)
-
-                if iszero(staticcall(not(0), 0x1, ballot, input_size, 0x40, 0x00)) {
+                if iszero(staticcall(not(0), 0xc, verify_input, verify_input_size, verified, 32)) {
                     revert(0, 0)
                 }
 
-                let output_size := input_size
-                let acc_size := mload(acc)
-                input_size := add(input_size, acc_size)
-
-
-                if iszero(staticcall(not(0), 0x2, acc, input_size, result, output_size)) {
-                    revert(0, 0)
+                if eq(mload(verified), 1) {
+                    if iszero(staticcall(not(0), 0xb, sum_input, sum_input_size, add(result, 32), result_size)) {
+                        revert(0, 0)
+                    }
                 }
             }
         }
 
-        ended_ = true;
+        // ended_ = true;
+        result_ = result;
+        return string(result);
     }
 }

@@ -10,6 +10,11 @@
         "internalType": "string",
         "name": "id",
         "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "public_key",
+        "type": "string"
       }
     ],
     "stateMutability": "nonpayable",
@@ -35,6 +40,19 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "ended_",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "address",
@@ -48,6 +66,45 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "id_",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "public_key_",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "result_",
+    "outputs": [
+      {
+        "internalType": "bytes",
+        "name": "",
+        "type": "bytes"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "address",
@@ -56,13 +113,7 @@
       }
     ],
     "name": "revoke",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
+    "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
   },
@@ -72,7 +123,7 @@
     "outputs": [
       {
         "internalType": "string",
-        "name": "result",
+        "name": "",
         "type": "string"
       }
     ],
@@ -88,13 +139,7 @@
       }
     ],
     "name": "vote",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
+    "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
   },
