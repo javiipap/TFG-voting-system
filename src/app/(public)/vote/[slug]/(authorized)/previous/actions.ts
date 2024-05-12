@@ -25,7 +25,7 @@ export const requestSignatureAction = authenticatedAction(
     }
 
     if (election.isPrivate) {
-      const isAuthorized = isAuthorizedTovote(user.id, election.id);
+      const isAuthorized = isAuthorizedTovote(user.userId, election.id);
 
       if (!isAuthorized) {
         throw new ActionError('');
@@ -35,7 +35,7 @@ export const requestSignatureAction = authenticatedAction(
     // Crear papeleta en la base de datos
     await execQuery((db) =>
       db.insert(votes).values({
-        userId: user.id,
+        userId: user.userId,
         electionId: election.id,
         encryptedEthSecret,
         recoveryEthSecret,

@@ -60,7 +60,11 @@ export default function PreviousStepsPage() {
         <div className="w-[400px] space-y-2">
           <AddrViewer title="Address" value={state.addr} />
           <AddrViewer title="Secret" value={state.sk} />
-          <Textarea defaultValue={state.ticket} readOnly />
+          <Textarea
+            className="font-mono"
+            defaultValue={state.ticket}
+            readOnly
+          />
           <div className="">
             <Link href={`${pathname.replace('previous', 'select')}`}>
               <Button>Continue</Button>

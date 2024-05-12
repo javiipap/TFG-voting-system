@@ -12,20 +12,20 @@ export function AddrViewer({ title, value }: { title: string; value: string }) {
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>
-            <p className="border rounded-md truncate py-2 px-4">
+            <p className="border rounded-md truncate py-2 px-4 font-mono">
               <span>{title}: </span>
-              0x{value}
+              {value}
             </p>
           </TooltipTrigger>
           <TooltipContent>
-            <p>0x{value}</p>
+            <p className="font-mono">{value}</p>
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
       <div
         className="border rounded self-stretch flex items-center px-1 cursor-pointer"
         onClick={() => {
-          navigator.clipboard.writeText(`0x${value}`);
+          navigator.clipboard.writeText(`${value}`);
         }}
       >
         <Copy className="w-5" />

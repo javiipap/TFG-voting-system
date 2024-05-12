@@ -7,7 +7,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet';
-import SheetForm from './_layout/components/SheetForm';
+import SheetForm from './_layout/components/sheet-form';
 
 export default async function RootLayout({
   children,

@@ -8,9 +8,10 @@ import { eq } from 'drizzle-orm';
 type Role = 'admin' | 'user';
 
 export type User = {
-  id: number;
+  userId: number;
   role: Role;
   adminId: number;
+  pk: string;
 } & DefaultSession['user'];
 
 declare module 'next-auth' {
@@ -21,8 +22,10 @@ declare module 'next-auth' {
 
 declare module 'next-auth/jwt' {
   interface JWT {
+    userId: number;
     role: Role;
     adminId: number | undefined | null;
+    pk: string;
   }
 }
 
@@ -43,6 +46,8 @@ export const {
         token.role = (await isAdmin(userEmail)) ? 'admin' : 'user';
         const adminId = await getAdminId(userEmail);
         token.adminId = adminId;
+        token.pk = user.pk;
+        token.userId = user.userId;
       }
 
       return token;
@@ -50,6 +55,8 @@ export const {
     async session({ session, token }) {
       session.user.role = token.role as Role;
       session.user.adminId = token.adminId as number;
+      session.user.pk = token.pk as string;
+      session.user.userId = token.userId as number;
 
       return session;
     },
@@ -72,8 +79,10 @@ export const {
         }
 
         return {
+          userId: user.id,
           name: user.name,
           email: user.email,
+          pk: user.publicKey,
         };
       },
     }),

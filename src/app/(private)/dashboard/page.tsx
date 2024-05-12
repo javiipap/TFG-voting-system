@@ -1,7 +1,7 @@
 import { getElections } from '@/db/helpers';
 import Title from './components/Title';
 import ElectionCard from './components/Election';
-import { auth } from '@/auth';
+import { auth } from '@/lib/auth';
 import { Button } from '@/components/ui/button';
 import { SheetTrigger } from '@/components/ui/sheet';
 

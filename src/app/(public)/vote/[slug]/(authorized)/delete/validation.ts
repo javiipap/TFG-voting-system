@@ -1,7 +1,6 @@
 import { z } from 'zod';
 
 export const schema = z.object({
-  address: z.string().length(42),
-  token: z.string().length(24),
+  sk: z.string().length(66),
   electionId: z.number(),
 });

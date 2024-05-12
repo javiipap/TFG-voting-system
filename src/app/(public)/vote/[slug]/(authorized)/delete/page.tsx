@@ -1,8 +1,8 @@
 'use client';
 
 import { Context } from '@/app/(public)/vote/[slug]/context';
-import { requestDeleteAction } from '@/app/(public)/vote/[slug]/delete/actions';
-import { schema } from '@/app/(public)/vote/[slug]/delete/validation';
+import { requestDeleteAction } from '@/app/(public)/vote/[slug]/(authorized)/delete/actions';
+import { schema } from '@/app/(public)/vote/[slug]/(authorized)/delete/validation';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -17,15 +17,33 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useContext } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { useAction } from 'next-safe-action/hooks';
+import { useToast } from '@/components/ui/use-toast';
 
 export default function DeleteVote() {
   const { electionId } = useContext(Context) as Context;
+  const { toast } = useToast();
   const form = useForm<z.infer<typeof schema>>({
     defaultValues: {
-      address: '',
-      token: '',
+      electionId,
     },
     resolver: zodResolver(schema),
+  });
+
+  const { execute } = useAction(requestDeleteAction, {
+    onSuccess: () => {
+      toast({
+        title: 'Success',
+        description: 'Your vote has been deleted successfully',
+      });
+    },
+    onError: (err) => {
+      console.log(err.serverError);
+      toast({
+        title: 'Error',
+        description: err.serverError || 'Unexpected server error',
+      });
+    },
   });
 
   return (
@@ -33,16 +51,16 @@ export default function DeleteVote() {
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(async (values) => {
-            requestDeleteAction({ ...values, electionId });
+            execute(values);
           })}
           className="w-[400px] space-y-2"
         >
           <FormField
             control={form.control}
-            name="address"
+            name="sk"
             render={({ field }) => (
               <FormItem>
-                <Label>Dirección eth</Label>
+                <Label>Clave secreta eth</Label>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
@@ -50,19 +68,7 @@ export default function DeleteVote() {
               </FormItem>
             )}
           />
-          <FormField
-            control={form.control}
-            name="token"
-            render={({ field }) => (
-              <FormItem>
-                <Label>Token de verificación</Label>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          {}
           <Button type="submit" className="float-right">
             Solicitar
           </Button>

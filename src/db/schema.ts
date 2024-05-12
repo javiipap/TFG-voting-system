@@ -75,7 +75,7 @@ export const votes = pgTable(
       .references(() => elections.id, { onDelete: 'cascade' })
       .notNull(),
     encryptedEthSecret: text('encrypted_eth_secret').notNull(),
-    signedEthSecret: text('signed_eth_secret').notNull(),
+    recoveryEthSecret: text('recovery_eth_secret').notNull(),
   },
   (table) => ({
     pk: primaryKey({ columns: [table.userId, table.electionId] }),
