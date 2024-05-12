@@ -4,5 +4,7 @@ import { eq } from 'drizzle-orm';
 
 export const getCandidates = (id: number) =>
   execQuery((db) =>
-    db.query.candidates.findMany({ where: eq(schema.candidates.id, id) })
+    db.query.candidates.findMany({
+      where: eq(schema.candidates.electionId, id),
+    })
   );

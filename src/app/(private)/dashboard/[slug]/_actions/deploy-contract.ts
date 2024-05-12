@@ -20,6 +20,10 @@ export const deployContractAction = authenticatedAction(
       throw new ActionError("User isn't authorized to edit this election");
     }
 
+    if (candidateCount < 1) {
+      throw new ActionError('There must be at least one candidate.');
+    }
+
     await deployContract(candidateCount, id, masterPublicKey);
   }
 );

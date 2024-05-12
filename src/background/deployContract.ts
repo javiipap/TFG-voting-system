@@ -1,6 +1,9 @@
 import { env } from '@/env';
 import Web3 from 'web3';
 import { readFileSync } from 'fs';
+import { execQuery } from '@/db/helpers';
+import { elections } from '@/db/schema';
+import { eq } from 'drizzle-orm';
 
 export async function getContractInfo() {
   const abi = JSON.parse(
@@ -19,7 +22,7 @@ export async function getContractInfo() {
 
 export async function deployContract(
   candidateCount: number,
-  id: string,
+  id: number,
   masterPublicKey: string
 ) {
   const web3 = new Web3(env.NEXT_PUBLIC_ETH_HOST);
@@ -31,7 +34,7 @@ export async function deployContract(
   const encodedABI = contract
     .deploy({
       data: byteCode,
-      arguments: [candidateCount, id, masterPublicKey],
+      arguments: [candidateCount, id.toString(), masterPublicKey],
     })
     .encodeABI();
 
@@ -57,5 +60,10 @@ export async function deployContract(
     signed.rawTransaction
   );
 
-  return receipient.contractAddress;
+  await execQuery((db) =>
+    db
+      .update(elections)
+      .set({ contractAddr: receipient.contractAddress })
+      .where(eq(elections.id, id))
+  );
 }
