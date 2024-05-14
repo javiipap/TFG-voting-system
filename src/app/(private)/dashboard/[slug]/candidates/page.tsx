@@ -1,6 +1,7 @@
-import { getCandidates } from '@/db/helpers';
-import Title from '../../components/Title';
-import AddCandidate from './_components/AddCandidate';
+'use client';
+
+import Title from '@/app/(private)/dashboard/components/Title';
+import AddCandidate from '@/app/(private)/dashboard/[slug]/candidates/_components/add-candidate';
 import {
   Table,
   TableBody,
@@ -10,15 +11,17 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import DeleteCandidate from './_components/DeleteCandidate';
+import RemoveCandidate from '@/app/(private)/dashboard/[slug]/candidates/_components/remove-candidate';
+import { useContext } from 'react';
+import { Context } from '@/app/(private)/dashboard/[slug]/context';
 
-export default async function Page({ params }: { params: { slug: string } }) {
-  const candidates = await getCandidates(params.slug);
+export default async function Page() {
+  const { candidates } = useContext(Context) as Context;
 
   return (
     <main>
       <Title>Candidates</Title>
-      <AddCandidate slug={params.slug} />
+      <AddCandidate />
       {candidates.length > 0 && (
         <div className="mt-8">
           <Table>
@@ -31,22 +34,19 @@ export default async function Page({ params }: { params: { slug: string } }) {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {candidates.map((candidate) => (
-                <TableRow key={candidate.candidates.id}>
+              {candidates.map(({ id, name, description }) => (
+                <TableRow key={id}>
                   <TableCell>
                     <Avatar>
                       <AvatarFallback>
-                        {candidate.candidates.name.slice(0, 2).toUpperCase()}
+                        {name.slice(0, 2).toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
                   </TableCell>
-                  <TableCell>{candidate.candidates.name}</TableCell>
-                  <TableCell>{candidate.candidates.description}</TableCell>
+                  <TableCell>{name}</TableCell>
+                  <TableCell>{description}</TableCell>
                   <TableCell>
-                    <DeleteCandidate
-                      id={candidate.candidates.id}
-                      slug={params.slug}
-                    />
+                    <RemoveCandidate id={id} name={name} />
                   </TableCell>
                 </TableRow>
               ))}

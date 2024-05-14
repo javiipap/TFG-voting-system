@@ -5,9 +5,9 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import Title from '../../components/Title';
-import AddVoterDialog from './_components/AddVoterDialog';
-import { PublicOverlay } from '../_components/PublicOverlay';
+import Title from '@/app/(private)/dashboard/components/Title';
+import AddVoterDialog from '@/app/(private)/dashboard/[slug]/voters/_components/AddVoterDialog';
+import { PublicOverlay } from '@/app/(private)/dashboard/[slug]/_components/public-overlay';
 
 export default async function Voters({
   children,

@@ -5,7 +5,7 @@ import { revalidatePath } from 'next/cache';
 import * as schema from '@/db/schema';
 import { eq } from 'drizzle-orm';
 
-export async function submitMakeItPrivate(slug: string) {
+export async function makeItPrivateAction(slug: string) {
   const { db, client } = getConnection();
   await db
     .update(schema.elections)

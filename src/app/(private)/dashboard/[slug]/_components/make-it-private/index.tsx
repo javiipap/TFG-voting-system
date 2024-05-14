@@ -5,14 +5,13 @@ import {
   AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
-  AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
-import { submitMakeItPrivate } from '../_actions';
+import { makeItPrivateAction } from '@/app/(private)/dashboard/[slug]/_components/make-it-private/actions';
 
 export default function MakeItPrivate({ slug }: { slug: string }) {
   return (
@@ -27,7 +26,7 @@ export default function MakeItPrivate({ slug }: { slug: string }) {
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
           <AlertDialogAction
-            onClick={async () => await submitMakeItPrivate(slug)}
+            onClick={async () => await makeItPrivateAction(slug)}
           >
             Continue
           </AlertDialogAction>

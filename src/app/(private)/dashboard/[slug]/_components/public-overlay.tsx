@@ -1,6 +1,6 @@
 import { getElection } from '@/db/helpers';
 import * as schema from '@/db/schema';
-import MakeItPrivate from './MakeItPrivate';
+import MakeItPrivate from '@/app/(private)/dashboard/[slug]/_components/make-it-private';
 
 export async function PublicOverlay({
   slug,

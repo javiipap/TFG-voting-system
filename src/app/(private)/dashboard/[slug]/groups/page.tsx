@@ -6,7 +6,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import Title from '../../components/Title';
+import Title from '@/app/(private)/dashboard/components/Title';
 import { Button } from '@/components/ui/button';
 import {
   Select,
@@ -19,9 +19,9 @@ import { auth } from '@/lib/auth';
 import { getElection, getConnection } from '@/db/helpers';
 import * as schema from '@/db/schema';
 import { and, eq } from 'drizzle-orm';
-import { authorizeGroup } from './_actions';
+import { authorizeGroup } from './actions';
 import { redirect } from 'next/navigation';
-import { PublicOverlay } from '../_components/PublicOverlay';
+import { PublicOverlay } from '@/app/(private)/dashboard/[slug]/_components/public-overlay';
 
 export default async function AuthorizedGroupsLayout({
   params,

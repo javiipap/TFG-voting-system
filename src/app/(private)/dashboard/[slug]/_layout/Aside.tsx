@@ -1,14 +1,14 @@
 'use client';
 
 import React, { useContext } from 'react';
-import { AsideNav } from './components/AsideNav';
+import { AsideNav } from '@/app/(private)/dashboard/[slug]/_layout/components/AsideNav';
 import { SheetTrigger } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { PlusIcon } from 'lucide-react';
 import { useAction } from 'next-safe-action/hooks';
-import { deployContractAction } from '../_actions/deploy-contract';
+import { deployContractAction } from '@/app/(private)/dashboard/[slug]/_layout/actions';
 import { useToast } from '@/components/ui/use-toast';
-import { Context } from '../context';
+import { Context } from '@/app/(private)/dashboard/[slug]/context';
 
 export default function Aside() {
   const { id, masterPublicKey, candidates } = useContext(Context) as Context;

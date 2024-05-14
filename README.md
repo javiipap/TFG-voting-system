@@ -1,6 +1,6 @@
 **TFG (Final Degree Project) - Blockchain-Based Voting System**
 
-## Overview
+## E3Vote - Web interface
 
 This project aims to design and implement a secure voting system using blockchain technology and homomorphic encryption. The system ensures transparency, anonymity, and integrity of the voting process by leveraging blockchain's decentralized nature and homomorphic encryption's ability to perform computations on encrypted data.
 
@@ -24,12 +24,13 @@ This project aims to design and implement a secure voting system using blockchai
 
 1. Clone the repository to your local machine.
 2. Navigate to the project directory.
-3. Run `npm install` to install dependencies.
-4. Install compiled dependencies (client_blind_signatures, server_blind_signatures, ballots) from [github](https://github.com/javiipap/TFG-deps.git). These must be stored in `src/lib/pkg/<package_name>`
+3. Run `npm run install` to install dependencies.
+4. Install compiled dependencies (client_utilities, server_utilities) from [github](https://github.com/javiipap/TFG-deps.git). These must be stored in `src/lib/pkg/<package_name>`
+5. Build the project using `npm run build`.
 
 ## Usage
 
-1. Start the application by running `npm start`.
+1. Start the application by running `npm run start`.
 2. Access the application through the provided URL.
 3. Users can register, cast their votes, and view election results securely.
 
@@ -65,4 +66,4 @@ This project is licensed under the [MIT License](LICENSE).
 
 ## Acknowledgements
 
-Special thanks to my tutors Cándido Caballero Gil and Jezabel Molina-Gil for their contributions and support to this project.
+Special thanks to my tutors Cándido Caballero Gil and Jezabel Molina Gil for their contributions and support to this project.

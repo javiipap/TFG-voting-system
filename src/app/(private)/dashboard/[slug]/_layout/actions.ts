@@ -1,7 +1,7 @@
 'use server';
 
 import { ActionError, authenticatedAction } from '@/lib/safe-action';
-import { schema } from '../_layout/validation';
+import { schema } from '@/app/(private)/dashboard/[slug]/_layout/validation';
 import { deployContract } from '@/background/deployContract';
 import { elections } from '@/db/schema';
 import { execQuery } from '@/db/helpers';
