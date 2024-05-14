@@ -7,16 +7,18 @@ import { eq } from 'drizzle-orm';
 
 type Role = 'admin' | 'user';
 
-export type User = {
-  userId: number;
-  role: Role;
-  adminId: number;
-  pk: string;
-} & DefaultSession['user'];
-
 declare module 'next-auth' {
   interface Session extends DefaultSession {
-    user: User;
+    user: User & {
+      role: Role;
+      adminId: number;
+    };
+  }
+
+  interface User {
+    pk: string;
+    userId: number;
+    email?: string | null;
   }
 }
 
