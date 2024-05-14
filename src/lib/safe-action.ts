@@ -1,4 +1,4 @@
-import { canEditElection } from '@/data-access/election';
+import { canEditElection, getElection } from '@/data-access/election';
 import { auth } from '@/lib/auth';
 import { DEFAULT_SERVER_ERROR, createSafeActionClient } from 'next-safe-action';
 
@@ -43,6 +43,12 @@ export const authenticatedElectionAction = createSafeActionClient({
 
     if (!canEdit) {
       throw new ActionError('User cannot edit this election');
+    }
+
+    const election = (await getElection(electionId))!;
+
+    if (election.startDate < new Date()) {
+      throw new ActionError('Election has already started');
     }
 
     return { user: session.user };

@@ -11,7 +11,9 @@ import { useToast } from '@/components/ui/use-toast';
 import { Context } from '@/app/(private)/dashboard/[slug]/context';
 
 export default function Aside() {
-  const { id, masterPublicKey, candidates } = useContext(Context) as Context;
+  const { id, masterPublicKey, candidates, startDate } = useContext(
+    Context
+  ) as Context;
   const { toast } = useToast();
   const { execute, status } = useAction(deployContractAction, {
     onSuccess: () => {
@@ -31,15 +33,23 @@ export default function Aside() {
     <aside className="hidden lg:flex flex-col h-full gap-2 border-r dark:border-neutral-800 bg-neutral-100 dark:bg-black">
       <AsideNav />
       <div className="flex justify-center items-stretch flex-col py-4 space-y-2 px-4">
-        <Button
-          variant={'secondary'}
-          disabled={status === 'executing'}
-          onClick={() =>
-            execute({ id, masterPublicKey, candidateCount: candidates.length })
-          }
-        >
-          Deploy
-        </Button>
+        {startDate >= new Date() ? (
+          <Button
+            variant={'secondary'}
+            disabled={status === 'executing'}
+            onClick={() =>
+              execute({
+                id,
+                masterPublicKey,
+                candidateCount: candidates.length,
+              })
+            }
+          >
+            Deploy
+          </Button>
+        ) : (
+          ''
+        )}
         <SheetTrigger asChild>
           <Button>
             <PlusIcon className="w-4 h-4 mr-2" />

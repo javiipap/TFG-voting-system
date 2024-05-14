@@ -1,4 +1,4 @@
-import Aside from './_layout/Aside';
+import Aside from './_layout/aside';
 import { getElection } from '@/db/helpers';
 import { getCandidates } from '@/data-access/candidates';
 import ContextProvider from './context';

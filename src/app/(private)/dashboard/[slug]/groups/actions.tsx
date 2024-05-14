@@ -1,14 +1,15 @@
 'use server';
 
+import { schema } from '@/app/(private)/dashboard/[slug]/groups/validations';
 import { linkGroupToElection } from '@/db/helpers';
+import { authenticatedElectionAction } from '@/lib/safe-action';
 import { revalidatePath } from 'next/cache';
 
-export async function authorizeGroup(formData: FormData) {
-  const electionSlug = formData.get('electionSlug') as string;
-  const electionId = parseInt(formData.get('electionId') as string);
-  const groupId = parseInt(formData.get('group') as string);
+export const authorizeGroupAction = authenticatedElectionAction(
+  schema,
+  async ({ slug, electionId, groupId }) => {
+    await linkGroupToElection(electionId, parseInt(groupId));
 
-  await linkGroupToElection(electionId, groupId);
-
-  revalidatePath(`/dashboard/${electionSlug}/groups`);
-}
+    revalidatePath(`/dashboard/${slug}/groups`);
+  }
+);

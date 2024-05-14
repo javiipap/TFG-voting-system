@@ -45,50 +45,6 @@ export const getElections = async (adminId: number) => {
   );
 };
 
-export const getVoters = async (slug: string) => {
-  return await execQuery((db) =>
-    db
-      .selectDistinctOn([schema.users.id], {
-        id: schema.users.id,
-        name: schema.users.name,
-        hasVoted: schema.votes.id,
-        groupId: schema.userGroups.id,
-        groupName: schema.userGroups.name,
-      })
-      .from(schema.elections)
-      .where(eq(schema.elections.slug, slug))
-      .innerJoin(
-        schema.authorizedGroups,
-        eq(schema.elections.id, schema.authorizedGroups.electionId)
-      )
-      .innerJoin(
-        schema.userGroups,
-        eq(schema.authorizedGroups.groupId, schema.userGroups.id)
-      )
-      .innerJoin(
-        schema.userGroupMemberships,
-        eq(schema.userGroups.id, schema.userGroupMemberships.groupId)
-      )
-      .innerJoin(
-        schema.users,
-        eq(schema.userGroupMemberships.userId, schema.users.id)
-      )
-      .leftJoin(
-        schema.votes,
-        and(
-          eq(schema.users.id, schema.votes.userId),
-          eq(schema.elections.id, schema.votes.electionId)
-        )
-      )
-      .groupBy(
-        schema.votes.id,
-        schema.users.id,
-        schema.userGroups.id,
-        schema.userGroups.name
-      )
-  );
-};
-
 export const getCandidates = async (slug: string) => {
   return await execQuery((db) =>
     db

@@ -14,7 +14,7 @@ export default function DeleteCandidate({
   id: number;
   name: string;
 }) {
-  const { id: electionId, slug } = useContext(Context) as Context;
+  const { id: electionId, slug, startDate } = useContext(Context) as Context;
   const { toast } = useToast();
   const { execute, status } = useAction(removeCandidateAction, {
     onSuccess: () => {
@@ -33,7 +33,7 @@ export default function DeleteCandidate({
     <Button
       variant="link"
       className="px-0 text-red-500"
-      disabled={status === 'executing'}
+      disabled={status === 'executing' || startDate < new Date()}
       onClick={() => execute({ id, slug, electionId })}
     >
       Delete

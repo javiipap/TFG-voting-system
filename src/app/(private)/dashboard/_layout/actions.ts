@@ -16,8 +16,8 @@ export const submitElectionAction = authenticatedAction(
   ) => {
     const startDate = new Date(from);
     const endDate = new Date(to);
-    startDate.setHours(parseInt(start));
-    endDate.setHours(parseInt(end));
+    startDate.setHours(parseInt(start), 0, 0, 0);
+    endDate.setHours(parseInt(end), 0, 0, 0);
 
     const keypair = generateRsaKeypair();
 

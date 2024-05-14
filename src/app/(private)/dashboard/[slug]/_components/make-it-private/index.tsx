@@ -12,8 +12,12 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import { makeItPrivateAction } from '@/app/(private)/dashboard/[slug]/_components/make-it-private/actions';
+import { useContext } from 'react';
+import { Context } from '@/app/(private)/dashboard/[slug]/context';
 
-export default function MakeItPrivate({ slug }: { slug: string }) {
+export default function MakeItPrivate() {
+  const { slug } = useContext(Context) as Context;
+
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>

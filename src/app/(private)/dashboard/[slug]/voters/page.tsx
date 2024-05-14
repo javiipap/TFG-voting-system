@@ -1,17 +1,18 @@
 import { Button } from '@/components/ui/button';
 import { TableCell, TableRow } from '@/components/ui/table';
 
-import { getVoters } from '@/db/helpers';
+import { getVoters } from '@/data-access/election';
 
 export default async function Voters({ params }: { params: { slug: string } }) {
   const voters = await getVoters(params.slug);
+
   return (
     <>
       {voters.map((voter, index) => (
         <TableRow key={`voter-${index}`}>
           <TableCell>{index + 1}</TableCell>
           <TableCell>{voter.name}</TableCell>
-          <TableCell>-</TableCell>
+          <TableCell>{voter.groupName ?? '-'}</TableCell>
           <TableCell>{voter.hasVoted === null ? '❌' : '✅'}</TableCell>
           <TableCell>
             <Button variant="link" className="text-red-600 px-0">

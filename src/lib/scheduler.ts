@@ -27,9 +27,8 @@ const handlers = {
 
 const executeJob = async (job: Job, force = false) => {
   const now = new Date();
-  const DELTA = 5 * 60 * 1000;
 
-  if (Math.abs(job.executionDate.getTime() - now.getTime()) > DELTA && !force) {
+  if (job.executionDate.getTime() < now.getTime() && !force) {
     return;
   }
 
@@ -68,7 +67,7 @@ const job = CronJob.from({
     );
   },
   timeZone: 'utc',
-  runOnInit: true,
+  runOnInit: false,
 });
 
 export function init() {

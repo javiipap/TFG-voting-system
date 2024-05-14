@@ -57,10 +57,17 @@ export async function handler({ electionId }: { electionId: number }) {
     signed.rawTransaction
   );
 
+  const DELTA = 5 * 60 * 1000;
+
+  const startDate =
+    Math.abs(new Date().getTime() - election.startDate.getTime()) <= DELTA
+      ? election.startDate
+      : new Date();
+
   await execQuery((db) =>
     db
       .update(elections)
-      .set({ contractAddr: receipient.contractAddress })
+      .set({ contractAddr: receipient.contractAddress, startDate })
       .where(eq(elections.id, electionId))
   );
 }

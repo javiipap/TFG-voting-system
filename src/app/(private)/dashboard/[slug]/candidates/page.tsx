@@ -15,14 +15,14 @@ import RemoveCandidate from '@/app/(private)/dashboard/[slug]/candidates/_compon
 import { useContext } from 'react';
 import { Context } from '@/app/(private)/dashboard/[slug]/context';
 
-export default async function Page() {
-  const { candidates } = useContext(Context) as Context;
+export default function Page() {
+  const { candidates, startDate } = useContext(Context) as Context;
 
   return (
     <main>
       <Title>Candidates</Title>
-      <AddCandidate />
-      {candidates.length > 0 && (
+      {startDate > new Date() && <AddCandidate />}
+      {candidates.length > 0 ? (
         <div className="mt-8">
           <Table>
             <TableHeader>
@@ -53,6 +53,8 @@ export default async function Page() {
             </TableBody>
           </Table>
         </div>
+      ) : (
+        <p>No hay candidatos presentados</p>
       )}
     </main>
   );

@@ -1,3 +1,6 @@
+'use client';
+
+import { Context } from '@/app/(private)/dashboard/[slug]/context';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -10,8 +13,15 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useContext } from 'react';
 
 export default function AddVoterDialog() {
+  const { startDate } = useContext(Context) as Context;
+
+  if (startDate < new Date()) {
+    return <></>;
+  }
+
   return (
     <Dialog>
       <DialogTrigger asChild>
