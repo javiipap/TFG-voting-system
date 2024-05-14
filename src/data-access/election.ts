@@ -9,7 +9,7 @@ export const createElection = async (
     const result = await db
       .insert(schema.elections)
       .values(election)
-      .returning({ slug: schema.elections.slug });
+      .returning({ slug: schema.elections.slug, id: schema.elections.id });
 
     return result[0];
   });
@@ -27,3 +27,8 @@ export const canEditElection = async (adminId: number, electionId: number) => {
 
   return !!result;
 };
+
+export const getElection = async (slug: string) =>
+  execQuery((db) =>
+    db.query.elections.findFirst({ where: eq(schema.elections.slug, slug) })
+  );

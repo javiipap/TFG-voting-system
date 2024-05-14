@@ -2,10 +2,11 @@
 
 import { ActionError, authenticatedAction } from '@/lib/safe-action';
 import { schema } from '@/app/(private)/dashboard/[slug]/_layout/validation';
-import { deployContract } from '@/background/deployContract';
 import { elections } from '@/db/schema';
 import { execQuery } from '@/db/helpers';
 import { and, eq } from 'drizzle-orm';
+import { forceExecution } from '@/lib/scheduler';
+import { createReference } from '@/jobs/deploy-contract';
 
 export const deployContractAction = authenticatedAction(
   schema,
@@ -24,6 +25,6 @@ export const deployContractAction = authenticatedAction(
       throw new ActionError('There must be at least one candidate.');
     }
 
-    await deployContract(candidateCount, id, masterPublicKey);
+    await forceExecution(createReference({ electionId: id }));
   }
 );

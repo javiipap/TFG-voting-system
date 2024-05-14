@@ -1,12 +1,14 @@
+import { sql } from 'drizzle-orm';
 import {
   serial,
   text,
   timestamp,
   pgTable,
-  bigint,
   integer,
   boolean,
   primaryKey,
+  pgEnum,
+  json,
 } from 'drizzle-orm/pg-core';
 
 export const users = pgTable('users', {
@@ -42,6 +44,7 @@ export const elections = pgTable('elections', {
   publicKey: text('public_key').notNull().unique(),
   masterPublicKey: text('master_public_key').notNull(),
   contractAddr: text('contract_addr'),
+  encryptedResult: text('encrypted_result'),
 });
 
 export const candidates = pgTable('candidates', {
@@ -52,6 +55,7 @@ export const candidates = pgTable('candidates', {
   electionId: integer('election_id')
     .references(() => elections.id, { onDelete: 'cascade' })
     .notNull(),
+  votes: integer('votes').default(0),
 });
 
 export const userGroups = pgTable('user_groups', {
@@ -124,6 +128,23 @@ export const issuedTickets = pgTable('issued_tickets', {
   revokedBy: integer('revoked_by').references(() => users.id, {
     onDelete: 'set null',
   }),
+});
+
+const jobStatus = ['idle', 'executing', 'success', 'error'] as const;
+
+export type JobStatus = (typeof jobStatus)[number];
+
+export const jobStatusEnum = pgEnum('job_status', jobStatus);
+
+export const jobs = pgTable('jobs', {
+  id: serial('id').primaryKey(),
+  reference: text('reference').notNull().unique(),
+  handler: text('handler').notNull(),
+  arguments: json('arguments').default(sql`'{}'::json`),
+  errorMsg: text('error_msg'),
+  iat: timestamp('iat', { withTimezone: true }).defaultNow(),
+  executionDate: timestamp('execution_date', { withTimezone: true }).notNull(),
+  status: jobStatusEnum('status').default('idle'),
 });
 
 // ---------------------------NextAuth-----------------------------------------

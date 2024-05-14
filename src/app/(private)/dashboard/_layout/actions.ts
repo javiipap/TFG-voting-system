@@ -6,6 +6,7 @@ import { generateRsaKeypair } from 'server_utilities';
 import { authenticatedAction } from '@/lib/safe-action';
 import { schema } from '@/app/(private)/dashboard/_layout/validation';
 import { createElection } from '@/data-access/election';
+import { schedule } from '@/lib/scheduler';
 
 export const submitElectionAction = authenticatedAction(
   schema,
@@ -32,6 +33,11 @@ export const submitElectionAction = authenticatedAction(
       publicKey: keypair.public,
       masterPublicKey,
     });
+
+    // schedule contract creation
+    await schedule('deploy_contract', { electionId: election.id }, startDate);
+    // schedule election tally
+    await schedule('tally', { electionId: election.id }, endDate);
 
     revalidatePath('/dashboard');
     return { name, slug: election.slug };

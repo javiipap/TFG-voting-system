@@ -1,0 +1,14 @@
+'use server';
+
+import { getElection } from '@/data-access/election';
+import { createReference } from '@/jobs/tally';
+import { forceExecution } from '@/lib/scheduler';
+
+export async function forceTally(slug: string) {
+  const election = await getElection(slug);
+  if (!election) return;
+
+  const reference = createReference({ electionId: election.id });
+
+  await forceExecution(reference);
+}

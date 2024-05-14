@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Table,
   TableBody,
@@ -9,13 +9,23 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import Title from '../../components/Title';
+import Title from '@/app/(private)/dashboard/components/Title';
+import { Button } from '@/components/ui/button';
+import { forceTally } from '@/app/(private)/dashboard/[slug]/results/actions';
 
-export default function Page() {
+export default function Page({ params }: { params: { slug: string } }) {
+  const [result, setResult] = useState<string>();
+  const onClick = async () => {
+    await forceTally(params.slug);
+  };
+
   return (
     <main>
       <Title>Results</Title>
-      <div className="flex gap-8 h-[400px] mb-8"></div>
+      <div className="flex gap-8 h-[400px] mb-8">
+        <Button onClick={onClick}>Retrieve results</Button>
+        {!!result && <p>result</p>}
+      </div>
       <div className="border shadow-sm rounded-lg">
         <Table className="w-full">
           <TableHeader>
@@ -30,31 +40,6 @@ export default function Page() {
               <TableCell>1</TableCell>
               <TableCell>Jan</TableCell>
               <TableCell>111</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>2</TableCell>
-              <TableCell>Feb</TableCell>
-              <TableCell>157</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>3</TableCell>
-              <TableCell>Mar</TableCell>
-              <TableCell>129</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>4</TableCell>
-              <TableCell>Apr</TableCell>
-              <TableCell>150</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>5</TableCell>
-              <TableCell>May</TableCell>
-              <TableCell>119</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>6</TableCell>
-              <TableCell>Jun</TableCell>
-              <TableCell>72</TableCell>
             </TableRow>
           </TableBody>
         </Table>
