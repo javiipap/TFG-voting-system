@@ -4,8 +4,8 @@ import * as tally from '@/jobs/tally';
 import {
   Job,
   addJob,
+  getIdleJobs,
   getJobByReference,
-  getJobs,
   setJobStatus,
 } from '@/data-access/jobs';
 
@@ -27,12 +27,9 @@ const handlers = {
 
 const executeJob = async (job: Job, force = false) => {
   const now = new Date();
-  const DELTA = 300;
+  const DELTA = 5 * 60 * 1000;
 
-  if (
-    Math.abs(job.executionDate.getSeconds() - now.getSeconds()) > DELTA &&
-    !force
-  ) {
+  if (Math.abs(job.executionDate.getTime() - now.getTime()) > DELTA && !force) {
     return;
   }
 
@@ -42,17 +39,16 @@ const executeJob = async (job: Job, force = false) => {
   console.log(`[SCHEDULER]: Running job ${job.id}`);
 
   await handlers[handler].handler(JSON.parse(job.arguments as any));
+
+  setJobStatus(job.id, 'success');
+  console.log(`[SCHEDULER]: Successfully ran ${job.id}`);
 };
 
 const updateJobStatus = async (
   result: PromiseSettledResult<void>,
   jobId: number
 ) => {
-  if (result.status === 'fulfilled') {
-    console.log(`[SCHEDULER]: Successfully ran ${jobId}`);
-
-    setJobStatus(jobId, 'success');
-  } else {
+  if (result.status === 'rejected') {
     console.log(`[SCHEDULER]: Error running ${jobId}: ${result.reason}`);
     setJobStatus(jobId, 'error', result.reason);
   }
@@ -61,7 +57,7 @@ const updateJobStatus = async (
 const job = CronJob.from({
   cronTime: '*/5 * * * *',
   onTick: async () => {
-    const jobs = await getJobs();
+    const jobs = await getIdleJobs();
 
     console.log(`[SCHEDULER]: There are ${jobs.length} idle jobs`);
 

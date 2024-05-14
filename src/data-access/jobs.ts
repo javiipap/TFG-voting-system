@@ -1,6 +1,6 @@
 import { execQuery } from '@/db/helpers';
 import * as schema from '@/db/schema';
-import { eq } from 'drizzle-orm';
+import { eq, or } from 'drizzle-orm';
 
 export type Job = typeof schema.jobs.$inferSelect;
 
@@ -37,8 +37,17 @@ export async function addJob(
 }
 
 export async function getJobs() {
+  return await execQuery((db) => db.query.jobs.findMany());
+}
+
+export async function getIdleJobs() {
   return await execQuery((db) =>
-    db.query.jobs.findMany({ where: eq(schema.jobs.status, 'idle') })
+    db.query.jobs.findMany({
+      where: or(
+        eq(schema.jobs.status, 'idle'),
+        eq(schema.jobs.status, 'error')
+      ),
+    })
   );
 }
 
