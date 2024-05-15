@@ -26,6 +26,7 @@ type Account =
   | {
       isSet: true;
       error: string;
+      alreadyVoted?: boolean;
     };
 
 let hasRan = false;
@@ -60,10 +61,12 @@ export default function PreviousStepsPage() {
   useEffect(() => {
     generateCredentials().catch((err) => {
       if (err instanceof Error) {
-        toast({ title: err.message });
-        setState({ isSet: true, error: err.message });
+        if (err.message === 'already-voted') {
+          setState({ isSet: true, error: err.message, alreadyVoted: true });
+        } else {
+          setState({ isSet: true, error: err.message });
+        }
       } else {
-        toast({ title: 'Unexpected error, try again later' });
         setState({ isSet: true, error: 'Unexpected error, try again later' });
       }
     });
@@ -71,8 +74,10 @@ export default function PreviousStepsPage() {
 
   return (
     <main className="flex justify-center">
-      {state.isSet ? (
-        typeof state.error === 'undefined' ? (
+      {!state.isSet && <p>Loading...</p>}
+
+      {state.isSet && typeof state.error === 'undefined' && (
+        <>
           <div className="w-[400px] space-y-2">
             <AddrViewer title="Address" value={state.addr} />
             <AddrViewer title="Secret" value={state.sk} />
@@ -87,13 +92,22 @@ export default function PreviousStepsPage() {
               </Link>
             </div>
           </div>
-        ) : (
-          <div className="bg-red-800 p-4 rounded-sm">
-            <p>Error: {state.error}</p>
-          </div>
-        )
-      ) : (
-        <p>Loading...</p>
+        </>
+      )}
+
+      {state.isSet && state.error && state.alreadyVoted && (
+        <div className="flex flex-col space-y-2 items-center">
+          <p>Parece que ya has iniciado el proceso de voto</p>
+          <Link href={pathname.replace('previous', 'recover')}>
+            <Button>Recuperar credenciales</Button>
+          </Link>
+        </div>
+      )}
+
+      {state.isSet && state.error && !state.alreadyVoted && (
+        <div className="bg-red-800 p-4 rounded-sm">
+          <p>Error: {state.error}</p>
+        </div>
       )}
     </main>
   );

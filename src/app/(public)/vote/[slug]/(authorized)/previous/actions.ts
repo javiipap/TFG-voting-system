@@ -43,7 +43,7 @@ export const requestSignatureAction = authenticatedAction(
         })
       );
     } catch {
-      throw new ActionError('User has already voted');
+      throw new ActionError('already-voted');
     }
 
     // Firmar petición
