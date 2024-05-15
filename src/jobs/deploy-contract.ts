@@ -18,6 +18,10 @@ export async function handler({ electionId }: { electionId: number }) {
 
   const candidates = await getCandidates(electionId);
 
+  if (candidates.length < 1) {
+    throw new Error(`Election ${electionId} has no candidates`);
+  }
+
   const web3 = new Web3(env.NEXT_PUBLIC_ETH_HOST);
 
   const { abi, byteCode } = await getContractInfo();

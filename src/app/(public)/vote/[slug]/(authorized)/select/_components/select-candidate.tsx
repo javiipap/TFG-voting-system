@@ -6,6 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Vote } from 'lucide-react';
 import { candidates as Candidates } from '@/db/schema';
 import { useState } from 'react';
+import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 
 export default function SelectCandidate({
   candidates,
@@ -18,31 +19,37 @@ export default function SelectCandidate({
 
   return (
     <div className="">
-      <div className="flex gap-4">
-        {candidates.map((candidate, i) => (
-          <Card
-            key={`candidate-${i}`}
-            className={`hover:bg-foreground/5 transition-all cursor-pointer ${
-              selected === i ? 'bg-foreground/10' : ''
-            }`}
-          >
-            <button
-              onClick={(e) => {
-                e.preventDefault();
-                setSelected(i);
-              }}
+      <ScrollArea className="whitespace-nowrap">
+        <div className="flex space-x-4 items-center justify-center pb-4 w-max">
+          {candidates.map((candidate, i) => (
+            <Card
+              key={`candidate-${i}`}
+              className={`hover:bg-foreground/5 transition-all cursor-pointer shrink-0 ${
+                selected === i ? 'bg-foreground/10' : ''
+              }`}
             >
-              <CardHeader className="flex-row items-center gap-4">
-                <Avatar>
-                  <AvatarImage src={candidate.img || ''} alt={candidate.name} />
-                  <AvatarFallback>{candidate.name[0]}</AvatarFallback>
-                </Avatar>
-                <CardTitle className="text-left">{candidate.name}</CardTitle>
-              </CardHeader>
-            </button>
-          </Card>
-        ))}
-      </div>
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  setSelected(i);
+                }}
+              >
+                <CardHeader className="flex-row items-center gap-4">
+                  <Avatar>
+                    <AvatarImage
+                      src={candidate.img || ''}
+                      alt={candidate.name}
+                    />
+                    <AvatarFallback>{candidate.name[0]}</AvatarFallback>
+                  </Avatar>
+                  <CardTitle className="text-left">{candidate.name}</CardTitle>
+                </CardHeader>
+              </button>
+            </Card>
+          ))}
+        </div>
+        <ScrollBar orientation="horizontal" />
+      </ScrollArea>
       <div className="pt-4">
         <Button
           className="px-8"

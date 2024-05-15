@@ -6,8 +6,12 @@ import { submitVote } from '@/app/(public)/vote/[slug]/(authorized)/select/_lib/
 import { Context } from '@/app/(public)/vote/[slug]/context';
 import init, { encrypt_vote } from 'client_utilities';
 import SelectCandidate from '@/app/(public)/vote/[slug]/(authorized)/select/_components/select-candidate';
+import { Label } from '@/components/ui/label';
+import { Separator } from '@/components/ui/separator';
+import { useToast } from '@/components/ui/use-toast';
 
 export default function SelectVotePage() {
+  const { toast } = useToast();
   const { masterPublicKey, contractAddr, candidates } = useContext(
     Context
   ) as Context;
@@ -21,7 +25,7 @@ export default function SelectVotePage() {
 
   const onSubmit = async (selected: number) => {
     if (!inputState.addr || !inputState.secret) {
-      // TODO
+      toast({ title: 'Debes introducir tu dirección y clave privada' });
       return;
     }
 
@@ -45,15 +49,56 @@ export default function SelectVotePage() {
   return (
     <main className="flex justify-center">
       <div className="w-[800px]">
-        <Input name="addr" value={inputState.addr} onChange={onChange} />
-        <Input name="secret" value={inputState.secret} onChange={onChange} />
-        {!!blockInfo?.blockHash && (
-          <div>
-            <span>{blockInfo.blockHash}</span>
-            <span>{blockInfo.blockNumber.toString()}</span>
+        <div className="mb-2 space-y-1">
+          <Label>Dirección eth</Label>
+          <Input name="addr" value={inputState.addr} onChange={onChange} />
+        </div>
+        <div className="space-y-1">
+          <Label>Clave secreta</Label>
+          <Input
+            name="secret"
+            value={inputState.secret}
+            onChange={onChange}
+            autoComplete="off"
+          />
+        </div>
+        {!!blockInfo?.blockHash ? (
+          <div className="bg-blue-500/60 my-4 rounded-md p-4">
+            <h2 className="text-2xl text-center">
+              Información de la transacción
+            </h2>
+            <Separator className="my-2 bg-foreground/20" />
+            <div className="">
+              <p className="font-bold">
+                Hash del bloque:{' '}
+                <span className="font-mono font-medium">
+                  {blockInfo.blockHash}
+                </span>
+              </p>
+            </div>
+            <div className="">
+              <p className="font-bold">
+                Número de bloque:{' '}
+                <span className="font-mono font-medium">
+                  {blockInfo.blockNumber.toString()}
+                </span>
+              </p>
+            </div>
           </div>
+        ) : (
+          <>
+            <div className="my-4 flex items-center justify-center gap-2">
+              <div className="flex relative flex-1">
+                <Separator className="my-4" />
+              </div>
+              <h2 className="text-center text-2xl font-bold">Candidatos</h2>
+              <div className="flex relative flex-1">
+                <Separator className="my-4" />
+              </div>
+            </div>
+            <SelectCandidate onChange={onSubmit} candidates={candidates} />
+          </>
         )}
-        <SelectCandidate onChange={onSubmit} candidates={candidates} />
       </div>
     </main>
   );

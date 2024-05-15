@@ -13,7 +13,8 @@ export default async function VoteLayout({
   if (!election) {
     return <div>Election not found</div>;
   }
-  // Validar usuario
+
+  // TODO: Validar usuario
 
   const candidates = (await getCandidates(params.slug)).map(
     ({ candidates }) => candidates
