@@ -6,7 +6,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import Title from '@/app/(private)/dashboard/_components/Title';
+import Title from '@/app/(private)/dashboard/_components/title';
 import { Button } from '@/components/ui/button';
 import { auth } from '@/lib/auth';
 import GroupForm from './group-form';

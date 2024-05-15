@@ -1,4 +1,4 @@
-import { getContractInfo } from '@/background/deployContract';
+import { getContractInfo } from '@/lib/get-contract-info';
 import { env } from '@/env';
 import { Web3 } from 'web3';
 import { encryptVote } from 'server_utilities';

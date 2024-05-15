@@ -5,7 +5,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import Title from '@/app/(private)/dashboard/_components/Title';
+import Title from '@/app/(private)/dashboard/_components/title';
 import AddVoterDialog from '@/app/(private)/dashboard/[slug]/voters/add-voter-dialog';
 
 export default async function Voters({

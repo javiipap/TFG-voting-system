@@ -25,8 +25,8 @@ declare module 'next-auth' {
 declare module 'next-auth/jwt' {
   interface JWT {
     userId: number;
-    role: Role;
-    adminId: number | undefined | null;
+    role?: Role;
+    adminId?: number | null;
     pk: string;
   }
 }
@@ -76,7 +76,7 @@ export const {
           })
         );
 
-        if (!user) {
+        if (!user || !user.publicKey || !user.cert) {
           return null;
         }
 

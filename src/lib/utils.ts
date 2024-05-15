@@ -20,3 +20,9 @@ export const createSlug = (name: string) => {
     .replace(/\s+/g, '-')
     .replace(/-+/g, '-');
 };
+
+export const downloadFile = (content: string) => {
+  const url = window.URL.createObjectURL(
+    new Blob([content], { type: 'text/plain' })
+  );
+};
