@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import Title from '../components/Title';
+import Title from '@/app/(private)/dashboard/_components/title';
 import Link from 'next/link';
 import { auth } from '@/lib/auth';
 import { getGroups } from '@/db/helpers';
@@ -8,8 +8,10 @@ import {
   TableBody,
   TableCell,
   TableHeader,
+  TableRow,
 } from '@/components/ui/table';
-import Row from './_components/Row';
+import { Edit2 } from 'lucide-react';
+import DeleteGroup from '@/app/(private)/dashboard/groups/_components/delete-group';
 
 export default async function Groups() {
   const session = await auth();
@@ -35,8 +37,19 @@ export default async function Groups() {
             <TableCell>Actions</TableCell>
           </TableHeader>
           <TableBody>
-            {groups.map((group) => (
-              <Row {...group} key={`groups-${group.id}`} />
+            {groups.map(({ id, name, description, slug }) => (
+              <TableRow key={`groups-${id}`}>
+                <TableCell>{name}</TableCell>
+                <TableCell>{description}</TableCell>
+                <TableCell className="flex items-center">
+                  <Link href={`/dashboard/groups/edit/${slug}`}>
+                    <div className="bg-primary p-2 rounded">
+                      <Edit2 className="h-3 w-3 text-secondary" />
+                    </div>
+                  </Link>
+                  <DeleteGroup id={id} />
+                </TableCell>
+              </TableRow>
             ))}
           </TableBody>
         </Table>

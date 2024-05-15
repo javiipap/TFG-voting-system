@@ -1,6 +1,6 @@
 'use client';
 
-import Title from '@/app/(private)/dashboard/components/Title';
+import Title from '@/app/(private)/dashboard/_components/Title';
 import AddCandidate from '@/app/(private)/dashboard/[slug]/candidates/_components/add-candidate';
 import {
   Table,

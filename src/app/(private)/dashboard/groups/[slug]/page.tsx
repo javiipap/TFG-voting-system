@@ -3,7 +3,7 @@
 import { Input } from '@/components/ui/input';
 import { FormField, Label } from '../../[slug]/_layout/components/FormFields';
 import { Textarea } from '@/components/ui/textarea';
-import Title from '../../components/Title';
+import Title from '../../_components/title';
 import {
   Table,
   TableBody,
@@ -15,7 +15,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { MouseEvent, MouseEventHandler, useRef, useState } from 'react';
 import { UserPlus } from 'lucide-react';
-import { updateGroup } from './_actions';
+import { updateGroup } from '@/app/(private)/dashboard/groups/[slug]/actions';
 
 interface Member {
   name: string;

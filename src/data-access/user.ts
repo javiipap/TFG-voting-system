@@ -30,3 +30,17 @@ export const isAuthorizedTovote = (userId: number, electionId: number) =>
       )
       .groupBy(schema.users.id)
   );
+
+export const getUser = () => {};
+
+export const insertIfNotExist = async (members: { email: string }[]) =>
+  execQuery((db) =>
+    db
+      .insert(schema.users)
+      .values(members)
+      .onConflictDoUpdate({
+        target: [schema.users.email],
+        set: { emailVerified: new Date() },
+      })
+      .returning({ id: schema.users.id })
+  );

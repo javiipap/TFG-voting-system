@@ -9,7 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import Title from '@/app/(private)/dashboard/components/Title';
+import Title from '@/app/(private)/dashboard/_components/title';
 import { Button } from '@/components/ui/button';
 import { forceTally } from '@/app/(private)/dashboard/[slug]/results/actions';
 
