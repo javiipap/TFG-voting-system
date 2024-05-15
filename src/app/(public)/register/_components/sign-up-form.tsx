@@ -2,7 +2,7 @@
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { signUpAction } from '@/app/(public)/signup/actions';
+import { signUpAction } from '@/app/(public)/register/actions';
 import { useEffect } from 'react';
 import { env } from '@/env';
 import {
@@ -21,7 +21,7 @@ import { schema } from '../validation';
 export default function SignUpForm() {
   const form = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
-    defaultValues: { name: '', email: '', dni: '', cert: '' },
+    defaultValues: { name: '', email: '', cert: '' },
   });
 
   const getCertificate = async () => {
@@ -67,19 +67,6 @@ export default function SignUpForm() {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Correo</FormLabel>
-              <FormControl>
-                <Input {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="dni"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>DNI</FormLabel>
               <FormControl>
                 <Input {...field} />
               </FormControl>

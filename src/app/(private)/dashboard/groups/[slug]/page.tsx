@@ -20,7 +20,6 @@ import { updateGroup } from '@/app/(private)/dashboard/groups/[slug]/actions';
 interface Member {
   name: string;
   email: string;
-  dni?: string;
 }
 
 export default function GroupPage() {
@@ -28,7 +27,6 @@ export default function GroupPage() {
 
   const memberNameRef = useRef<HTMLInputElement>(null);
   const memberEmailRef = useRef<HTMLInputElement>(null);
-  const memberDNIRef = useRef<HTMLInputElement>(null);
 
   const addMember: MouseEventHandler<HTMLButtonElement> = (e) => {
     e.preventDefault();
@@ -37,13 +35,11 @@ export default function GroupPage() {
       {
         name: memberNameRef.current?.value || '',
         email: memberEmailRef.current?.value || '',
-        dni: memberDNIRef.current?.value || '',
       },
     ]);
 
     memberNameRef.current!.value = '';
     memberEmailRef.current!.value = '';
-    memberDNIRef.current!.value = '';
   };
 
   const deleteMember = (e: MouseEvent<HTMLButtonElement>, email: string) => {
@@ -75,10 +71,6 @@ export default function GroupPage() {
                 <Label>Email</Label>
                 <Input ref={memberEmailRef} />
               </FormField>
-              <FormField>
-                <Label>DNI</Label>
-                <Input ref={memberDNIRef} />
-              </FormField>
               <div className="flex-1 mb-4">
                 <Button
                   variant="secondary"
@@ -102,16 +94,14 @@ export default function GroupPage() {
             <TableRow>
               <TableHead>Name</TableHead>
               <TableHead>Email</TableHead>
-              <TableHead>DNI</TableHead>
               <TableHead>Action</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {members.map(({ name, email, dni }) => (
+            {members.map(({ name, email }) => (
               <TableRow key={email}>
                 <TableCell>{name}</TableCell>
                 <TableCell>{email}</TableCell>
-                <TableCell>{dni}</TableCell>
                 <TableCell>
                   <Button
                     variant="link"

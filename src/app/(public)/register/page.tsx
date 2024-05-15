@@ -1,5 +1,5 @@
 import { Separator } from '@/components/ui/separator';
-import SignUpForm from '@/app/(public)/signup/_components/sign-up-form';
+import SignUpForm from '@/app/(public)/register/_components/sign-up-form';
 
 export default function LoginPage({}) {
   return (
