@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button';
 import { usePathname } from 'next/navigation';
 import { useToast } from '@/components/ui/use-toast';
 import { DownloadButton } from '@/components/download-button';
+import { QRCodeSVG } from 'qrcode.react';
 
 type Account =
   | {
@@ -82,12 +83,20 @@ export default function PreviousStepsPage() {
           <div className="w-[400px] space-y-2">
             <AddrViewer title="Address" value={state.addr} />
             <AddrViewer title="Secret" value={state.sk} />
-            <Textarea
-              className="font-mono"
-              defaultValue={state.ticket}
-              readOnly
-            />
-            <div className="">
+            <div className="flex justify-center">
+              <QRCodeSVG
+                size={240}
+                level="L"
+                value={`https://e3vote.iaas.ull.es/faucet?ticket=${encodeURIComponent(
+                  state.ticket
+                )}`}
+              />
+            </div>
+            <div className="bg-foreground/10 p-2 rounded">
+              Escanea el QR para transferir el suficiente ether a tu cuenta y
+              así poder votar.
+            </div>
+            <div className="flex justify-center">
               <DownloadButton
                 name="key-pair.json"
                 data={JSON.stringify({

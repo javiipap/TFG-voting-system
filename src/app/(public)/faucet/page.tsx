@@ -19,12 +19,17 @@ import {
 } from '@/components/ui/form';
 import { z } from 'zod';
 import { useRef } from 'react';
+import { useSearchParams } from 'next/navigation';
 
 export default function Faucet() {
+  const searchParams = useSearchParams();
   const { toast } = useToast();
   const formRef = useRef<HTMLFormElement>(null);
   const form = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
+    defaultValues: {
+      ticket: searchParams.get('ticket') || '',
+    },
   });
 
   const { execute, status } = useAction(requestPermissionAction, {
