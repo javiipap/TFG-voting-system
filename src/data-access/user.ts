@@ -2,40 +2,15 @@ import { execQuery } from '@/db/helpers';
 import * as schema from '@/db/schema';
 import { and, eq, or } from 'drizzle-orm';
 
-export const isAuthorizedToVote = async (
-  userId: number,
-  electionId: number
-) => {
-  const result = await execQuery((db) =>
-    db
-      .selectDistinctOn([schema.users.id], {
-        id: schema.users.id,
-      })
-      .from(schema.elections)
-      .where(
-        and(eq(schema.elections.id, electionId), eq(schema.users.id, userId))
-      )
-      .innerJoin(
-        schema.authorizedGroups,
-        eq(schema.elections.id, schema.authorizedGroups.electionId)
-      )
-      .innerJoin(
-        schema.userGroups,
-        eq(schema.authorizedGroups.groupId, schema.userGroups.id)
-      )
-      .innerJoin(
-        schema.userGroupMemberships,
-        eq(schema.userGroups.id, schema.userGroupMemberships.groupId)
-      )
-      .innerJoin(
-        schema.users,
-        eq(schema.userGroupMemberships.userId, schema.users.id)
-      )
-      .groupBy(schema.users.id)
-  );
-
-  return result.length > 0;
-};
+export const isAuthorizedToVote = async (userId: number, electionId: number) =>
+  !!(await execQuery((db) =>
+    db.query.authorizedUsers.findFirst({
+      where: and(
+        eq(schema.authorizedUsers.userId, userId),
+        eq(schema.authorizedUsers.electionId, electionId)
+      ),
+    })
+  ));
 
 export const getUserByCertOrEmail = (cert: string, email: string) =>
   execQuery((db) =>

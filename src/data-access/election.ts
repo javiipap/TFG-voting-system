@@ -47,21 +47,15 @@ export const getVoters = async (slug: string) => {
     }
 
     if (!election.isPrivate) {
-      return (
-        await db
-          .selectDistinctOn([schema.users.id], {
-            id: schema.users.id,
-            name: schema.users.name,
-            hasVoted: schema.votes.id,
-          })
-          .from(schema.elections)
-          .where(eq(schema.elections.slug, slug))
-          .innerJoin(
-            schema.votes,
-            eq(schema.elections.id, schema.votes.electionId)
-          )
-          .innerJoin(schema.users, eq(schema.votes.userId, schema.users.id))
-      ).map((user) => ({ ...user, groupId: null, groupName: null }));
+      return await db
+        .selectDistinctOn([schema.users.id], {
+          id: schema.users.id,
+          name: schema.users.name,
+          hasVoted: schema.votes.id,
+        })
+        .from(schema.votes)
+        .where(eq(schema.votes.electionId, election.id))
+        .innerJoin(schema.users, eq(schema.votes.userId, schema.users.id));
     }
 
     return await db
@@ -69,39 +63,19 @@ export const getVoters = async (slug: string) => {
         id: schema.users.id,
         name: schema.users.name,
         hasVoted: schema.votes.id,
-        groupId: schema.userGroups.id,
-        groupName: schema.userGroups.name,
       })
-      .from(schema.elections)
-      .where(eq(schema.elections.slug, slug))
-      .innerJoin(
-        schema.authorizedGroups,
-        eq(schema.elections.id, schema.authorizedGroups.electionId)
-      )
-      .innerJoin(
-        schema.userGroups,
-        eq(schema.authorizedGroups.groupId, schema.userGroups.id)
-      )
-      .innerJoin(
-        schema.userGroupMemberships,
-        eq(schema.userGroups.id, schema.userGroupMemberships.groupId)
-      )
+      .from(schema.authorizedUsers)
+      .where(eq(schema.authorizedUsers.electionId, election.id))
       .innerJoin(
         schema.users,
-        eq(schema.userGroupMemberships.userId, schema.users.id)
+        eq(schema.users.id, schema.authorizedUsers.userId)
       )
       .leftJoin(
         schema.votes,
         and(
-          eq(schema.users.id, schema.votes.userId),
-          eq(schema.elections.id, schema.votes.electionId)
+          eq(schema.votes.userId, schema.users.id),
+          eq(schema.votes.electionId, election.id)
         )
-      )
-      .groupBy(
-        schema.votes.id,
-        schema.users.id,
-        schema.userGroups.id,
-        schema.userGroups.name
       );
   });
 };

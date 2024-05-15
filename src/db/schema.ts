@@ -21,6 +21,9 @@ export const users = pgTable('users', {
   publicKey: text('public_key'),
 });
 
+export type InsertUser = typeof users.$inferInsert;
+export type User = typeof users.$inferSelect;
+
 export const admins = pgTable('admins', {
   id: serial('id').primaryKey(),
   userId: integer('user_id')
@@ -46,6 +49,16 @@ export const elections = pgTable('elections', {
   encryptedResult: text('encrypted_result'),
 });
 
+export const authorizedUsers = pgTable('authorized_users', {
+  id: serial('id').primaryKey(),
+  userId: integer('user_id')
+    .references(() => users.id, { onDelete: 'cascade' })
+    .unique(),
+  electionId: integer('election_id')
+    .references(() => elections.id, { onDelete: 'cascade' })
+    .unique(),
+});
+
 export const candidates = pgTable('candidates', {
   id: serial('id').primaryKey(),
   name: text('name').notNull(),
@@ -55,16 +68,6 @@ export const candidates = pgTable('candidates', {
     .references(() => elections.id, { onDelete: 'cascade' })
     .notNull(),
   votes: integer('votes').default(0),
-});
-
-export const userGroups = pgTable('user_groups', {
-  id: serial('id').primaryKey(),
-  name: text('name').notNull(),
-  slug: text('slug').unique().notNull(),
-  description: text('description'),
-  adminId: integer('admin_id')
-    .references(() => admins.id, { onDelete: 'cascade' })
-    .notNull(),
 });
 
 export const votes = pgTable(
@@ -85,37 +88,8 @@ export const votes = pgTable(
   })
 );
 
-export const userGroupMemberships = pgTable(
-  'user_group_memberships',
-  {
-    id: serial('id').unique().notNull(),
-    groupId: integer('group_id')
-      .references(() => userGroups.id, { onDelete: 'cascade' })
-      .notNull(),
-    userId: integer('user_id')
-      .references(() => users.id, { onDelete: 'cascade' })
-      .notNull(),
-  },
-  (table) => ({
-    pk: primaryKey({ columns: [table.groupId, table.userId] }),
-  })
-);
-
-export const authorizedGroups = pgTable(
-  'authorized_groups',
-  {
-    id: serial('id').unique().notNull(),
-    groupId: integer('group_id')
-      .references(() => userGroups.id, { onDelete: 'cascade' })
-      .notNull(),
-    electionId: integer('election_id')
-      .references(() => elections.id, { onDelete: 'cascade' })
-      .notNull(),
-  },
-  (table) => ({
-    pk: primaryKey({ columns: [table.groupId, table.electionId] }),
-  })
-);
+export type InsertBallot = typeof votes.$inferInsert;
+export type Ballot = typeof votes.$inferSelect;
 
 export const issuedTickets = pgTable('issued_tickets', {
   id: serial('id').primaryKey(),

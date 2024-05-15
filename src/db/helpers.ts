@@ -71,30 +71,11 @@ export const deleteCandidate = async (id: number) => {
   );
 };
 
-export const createGroup = async (
-  group: typeof schema.userGroups.$inferInsert
-) => {
-  return await execQuery((db) =>
-    db
-      .insert(schema.userGroups)
-      .values(group)
-      .returning({ id: schema.userGroups.id })
-  );
-};
-
 export const addUsers = async (
   members: (typeof schema.users.$inferInsert)[]
 ) => {
   return await execQuery((db) =>
     db.insert(schema.users).values(members).returning({ id: schema.users.id })
-  );
-};
-
-export const linkMembers = async (userIds: number[], groupId: number) => {
-  return await execQuery((db) =>
-    db
-      .insert(schema.userGroupMemberships)
-      .values(userIds.map((userId) => ({ userId, groupId })))
   );
 };
 
@@ -139,31 +120,6 @@ export const getAdmin = async (email: string) => {
       adminId: result[0].admins.id,
     };
   });
-};
-
-export const getGroups = async (adminId: number) => {
-  return await execQuery((db) =>
-    db.query.userGroups.findMany({
-      where: eq(schema.userGroups.adminId, adminId),
-    })
-  );
-};
-
-export const linkGroupToElection = async (
-  electionId: number,
-  groupId: number
-) => {
-  return await execQuery((db) =>
-    db
-      .insert(schema.authorizedGroups)
-      .values({ electionId: electionId, groupId })
-  );
-};
-
-export const deleteGroup = async (id: number) => {
-  return await execQuery((db) =>
-    db.delete(schema.userGroups).where(eq(schema.userGroups.id, id))
-  );
 };
 
 export const getPublicElections = async () => {
