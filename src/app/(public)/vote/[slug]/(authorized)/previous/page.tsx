@@ -10,6 +10,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { usePathname } from 'next/navigation';
 import { useToast } from '@/components/ui/use-toast';
+import { DownloadButton } from '@/components/download-button';
 
 type Account =
   | {
@@ -74,7 +75,7 @@ export default function PreviousStepsPage() {
 
   return (
     <main className="flex justify-center">
-      {!state.isSet && <p>Loading...</p>}
+      {!state.isSet && <p>Cargando...</p>}
 
       {state.isSet && typeof state.error === 'undefined' && (
         <>
@@ -87,8 +88,18 @@ export default function PreviousStepsPage() {
               readOnly
             />
             <div className="">
+              <DownloadButton
+                name="key-pair.json"
+                data={JSON.stringify({
+                  address: state.addr,
+                  secretKey: state.sk,
+                  ticket: state.ticket,
+                })}
+              />
               <Link href={`${pathname.replace('previous', 'select')}`}>
-                <Button>Continue</Button>
+                <Button variant="secondary" className="ml-2">
+                  Continuar
+                </Button>
               </Link>
             </div>
           </div>

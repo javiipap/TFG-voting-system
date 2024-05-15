@@ -33,6 +33,9 @@ import {
 } from '@/components/ui/form';
 import { z } from 'zod';
 import { DatePicker } from '@/components/ui/dat-picker';
+import { DownloadButton } from '@/components/download-button';
+
+let hasRun = false;
 
 export default function SheetForm() {
   const [keyPair, setKeyPair] = useState<{ public: string; secret: string }>();
@@ -82,17 +85,17 @@ export default function SheetForm() {
   });
 
   useEffect(() => {
-    load_wasm().then(() => {
-      const keyPair = generate_elgamal_keypair();
-      setKeyPair(() => ({
-        public: Buffer.from(keyPair.public).toString('base64'),
-        secret: Buffer.from(keyPair.secret).toString('base64'),
-      }));
-      form.setValue(
-        'masterPublicKey',
-        Buffer.from(keyPair.public).toString('base64')
-      );
-    });
+    if (!hasRun) {
+      hasRun = true;
+      load_wasm().then(() => {
+        const _keyPair = generate_elgamal_keypair();
+        const pk = Buffer.from(_keyPair.public).toString('base64');
+        const sk = Buffer.from(_keyPair.secret).toString('base64');
+
+        setKeyPair(() => ({ public: pk, secret: sk }));
+        form.setValue('masterPublicKey', pk);
+      });
+    }
   }, []);
 
   return (
@@ -244,9 +247,10 @@ export default function SheetForm() {
                 <FormLabel>Secret key</FormLabel>
                 <Textarea readOnly defaultValue={keyPair.secret} />
               </div>
-              <SheetClose asChild>
-                <Button>Download</Button>
-              </SheetClose>
+              <DownloadButton
+                name={`election-keypair.json`}
+                data={JSON.stringify(keyPair)}
+              />
             </div>
           ) : (
             <Button type="submit" disabled={status === 'executing'}>
