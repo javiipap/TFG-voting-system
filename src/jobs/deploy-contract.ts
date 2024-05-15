@@ -1,17 +1,15 @@
 import { env } from '@/env';
 import Web3 from 'web3';
-import { execQuery } from '@/db/helpers';
-import { elections } from '@/db/schema';
-import { eq } from 'drizzle-orm';
 import { getCandidates } from '@/data-access/candidates';
 import { getContractInfo } from '@/lib/get-contract-info';
+import { getElection, startElection } from '@/data-access/election';
 
 export function createReference({ electionId }: { electionId: number }) {
   return `deploy-contract_${electionId}`;
 }
 
 export async function handler({ electionId }: { electionId: number }) {
-  const election = await execQuery((db) => db.query.elections.findFirst());
+  const election = await getElection(electionId);
   if (!election) {
     throw new Error(`Election ${electionId} doesn't exist`);
   }
@@ -68,10 +66,5 @@ export async function handler({ electionId }: { electionId: number }) {
       ? election.startDate
       : new Date();
 
-  await execQuery((db) =>
-    db
-      .update(elections)
-      .set({ contractAddr: receipient.contractAddress, startDate })
-      .where(eq(elections.id, electionId))
-  );
+  await startElection(receipient.contractAddress!, startDate, electionId);
 }

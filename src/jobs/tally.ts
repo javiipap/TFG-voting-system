@@ -1,17 +1,13 @@
-import { execQuery } from '@/db/helpers';
 import { env } from '@/env';
 import { callContract } from '@/lib/call-contract';
-import { eq } from 'drizzle-orm';
-import * as schema from '@/db/schema';
+import { getElection } from '@/data-access/election';
 
 export function createReference({ electionId }: { electionId: number }) {
   return `tally_${electionId}`;
 }
 
 export async function handler({ electionId }: { electionId: number }) {
-  const election = await execQuery((db) =>
-    db.query.elections.findFirst({ where: eq(schema.elections.id, electionId) })
-  );
+  const election = await getElection(electionId);
 
   if (!election) {
     throw new Error(`Election ${electionId} doesn't exist`);

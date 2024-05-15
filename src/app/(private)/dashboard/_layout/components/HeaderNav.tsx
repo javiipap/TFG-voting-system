@@ -7,11 +7,7 @@ const LINKS: {
   {
     href: '/dashboard',
     label: 'Elections',
-  },
-  {
-    href: '/dashboard/groups',
-    label: 'Groups',
-  },
+  }
 ];
 
 export default function HeaderNav() {

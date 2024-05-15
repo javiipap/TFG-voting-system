@@ -1,15 +1,14 @@
 'use server';
 
-import { execQuery, storeTicket } from '@/db/helpers';
+import { storeTicket } from '@/db/helpers';
 import { verify } from 'server_utilities';
 import { Ticket } from '@/tfg-types';
-import * as schema from '@/db/schema';
-import { eq } from 'drizzle-orm';
 import { sendWei } from './sendWei';
 import { calculateGas } from '@/app/(public)/faucet/_actions/calculateGas';
 import { grantPermissions } from './grantPermissions';
 import { ActionError, unauthenticatedAction } from '@/lib/safe-action';
 import { schema as requestSchema } from '@/app/(public)/faucet/validation';
+import { getElection, getCandidates } from '@/data-access/election';
 
 export const requestPermissionAction = unauthenticatedAction(
   requestSchema,
@@ -18,11 +17,7 @@ export const requestPermissionAction = unauthenticatedAction(
       Buffer.from(rawTicket, 'base64').toString()
     ) as Ticket;
 
-    const election = await execQuery((db) =>
-      db.query.elections.findFirst({
-        where: eq(schema.elections.id, ticket.electionId),
-      })
-    );
+    const election = await getElection(ticket.electionId);
 
     if (!election) {
       throw new ActionError('Election not found');
@@ -51,15 +46,7 @@ export const requestPermissionAction = unauthenticatedAction(
     // Guardar en bbdd
     await storeTicket({ addr: ticket.addr, electionId: ticket.electionId });
 
-    const candidates = await execQuery((db) =>
-      db
-        .select()
-        .from(schema.elections)
-        .innerJoin(
-          schema.candidates,
-          eq(schema.elections.id, schema.candidates.electionId)
-        )
-    );
+    const candidates = await getCandidates(ticket.electionId);
 
     // Añadir dirección a la lista granted
     await grantPermissions(ticket.addr, election.contractAddr);

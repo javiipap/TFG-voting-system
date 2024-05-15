@@ -105,3 +105,59 @@ export const getVoters = async (slug: string) => {
       );
   });
 };
+
+export const startElection = async (
+  contractAddr: string,
+  startDate: Date,
+  electionId: number
+) =>
+  execQuery((db) =>
+    db
+      .update(schema.elections)
+      .set({ contractAddr, startDate })
+      .where(eq(schema.elections.id, electionId))
+  );
+
+export const addBallot = async ({
+  userId,
+  electionId,
+  encryptedEthSecret,
+  recoveryEthSecret,
+}: schema.InsertBallot) =>
+  execQuery((db) =>
+    db.insert(schema.votes).values({
+      userId,
+      electionId,
+      encryptedEthSecret,
+      recoveryEthSecret,
+    })
+  );
+
+export const getCandidates = async (electionId: number) =>
+  execQuery((db) =>
+    db.query.candidates.findMany({
+      where: eq(schema.candidates.electionId, electionId),
+    })
+  );
+
+export const getBallot = async (electionId: number, userId: number) =>
+  execQuery((db) =>
+    db.query.votes.findFirst({
+      where: and(
+        eq(schema.votes.electionId, electionId),
+        eq(schema.votes.userId, userId)
+      ),
+    })
+  );
+
+export const deleteBallot = async (electionId: number, userId: number) =>
+  execQuery((db) =>
+    db
+      .delete(schema.votes)
+      .where(
+        and(
+          eq(schema.votes.electionId, electionId),
+          eq(schema.votes.userId, userId)
+        )
+      )
+  );

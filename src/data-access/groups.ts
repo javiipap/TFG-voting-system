@@ -70,7 +70,7 @@ export const createGroup = (
       })
       .returning({ id: schema.userGroups.id });
 
-    if (group.length) {
+    if (group.length < 1) {
       throw new Error('Unknown database error');
     }
 

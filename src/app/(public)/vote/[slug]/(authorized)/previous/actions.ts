@@ -1,12 +1,10 @@
 'use server';
 
-import { execQuery } from '@/db/helpers';
-import { eq } from 'drizzle-orm';
 import { sign } from 'server_utilities';
 import { ActionError, authenticatedAction } from '@/lib/safe-action';
 import { isAuthorizedToVote } from '@/data-access/user';
-import { elections, votes } from '@/db/schema';
 import { schema } from '@/app/(public)/vote/[slug]/(authorized)/previous/validation';
+import { addBallot, getElection } from '@/data-access/election';
 
 export const requestSignatureAction = authenticatedAction(
   schema,
@@ -14,11 +12,7 @@ export const requestSignatureAction = authenticatedAction(
     { electionId, blinded, encryptedEthSecret, recoveryEthSecret },
     { user }
   ) => {
-    const election = await execQuery((db) =>
-      db.query.elections.findFirst({
-        where: eq(elections.id, electionId),
-      })
-    );
+    const election = await getElection(electionId);
 
     if (!election) {
       throw new ActionError("Election doesen't exist");
@@ -34,14 +28,12 @@ export const requestSignatureAction = authenticatedAction(
 
     // Crear papeleta en la base de datos
     try {
-      await execQuery((db) =>
-        db.insert(votes).values({
-          userId: user.userId,
-          electionId: election.id,
-          encryptedEthSecret,
-          recoveryEthSecret,
-        })
-      );
+      await addBallot({
+        userId: user.userId,
+        electionId,
+        encryptedEthSecret,
+        recoveryEthSecret,
+      });
     } catch {
       throw new ActionError('already-voted');
     }

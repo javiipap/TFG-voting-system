@@ -22,7 +22,6 @@ export default async function Voters({
             <TableRow>
               <TableHead>#</TableHead>
               <TableHead>Name</TableHead>
-              <TableHead>Group</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Action</TableHead>
             </TableRow>

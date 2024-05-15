@@ -23,7 +23,11 @@ import { Context } from '@/app/(private)/dashboard/[slug]/context';
 export default function AddCandidate() {
   const { id: electionId, slug } = useContext(Context) as Context;
   const formRef = useRef<HTMLFormElement>(null);
-  const { execute } = useAction(addCandidateAction);
+  const { execute } = useAction(addCandidateAction, {
+    onSuccess: () => {
+      formRef.current?.reset();
+    },
+  });
 
   const form = useForm<z.infer<typeof schema>>({
     defaultValues: {

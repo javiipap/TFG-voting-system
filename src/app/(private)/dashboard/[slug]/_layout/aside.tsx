@@ -11,9 +11,7 @@ import { useToast } from '@/components/ui/use-toast';
 import { Context } from '@/app/(private)/dashboard/[slug]/context';
 
 export default function Aside() {
-  const { id, masterPublicKey, candidates, startDate } = useContext(
-    Context
-  ) as Context;
+  const { id, candidates, startDate } = useContext(Context) as Context;
   const { toast } = useToast();
   const { execute, status } = useAction(deployContractAction, {
     onSuccess: () => {
@@ -40,7 +38,6 @@ export default function Aside() {
             onClick={() =>
               execute({
                 id,
-                masterPublicKey,
                 candidateCount: candidates.length,
               })
             }

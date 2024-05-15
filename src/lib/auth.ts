@@ -1,10 +1,9 @@
 import NextAuth, { DefaultSession } from 'next-auth';
 import { JWT } from 'next-auth/jwt';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import { execQuery, getAdminId, isAdmin } from '../db/helpers';
-import * as schema from '../db/schema';
-import { eq } from 'drizzle-orm';
+import { getAdminId, isAdmin } from '../db/helpers';
 import { redirect } from 'next/navigation';
+import { getUserByCertOrEmail } from '@/data-access/user';
 
 type Role = 'admin' | 'user';
 
@@ -71,11 +70,7 @@ export const {
         cert: {},
       },
       async authorize({ cert }) {
-        const user = await execQuery((db) =>
-          db.query.users.findFirst({
-            where: eq(schema.users.cert, cert as string),
-          })
-        );
+        const user = await getUserByCertOrEmail(cert as string, '');
 
         if (!user || !user.publicKey || !user.cert) {
           return null;
