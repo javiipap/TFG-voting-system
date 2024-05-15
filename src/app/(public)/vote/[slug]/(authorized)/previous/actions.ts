@@ -4,7 +4,7 @@ import { execQuery } from '@/db/helpers';
 import { eq } from 'drizzle-orm';
 import { sign } from 'server_utilities';
 import { ActionError, authenticatedAction } from '@/lib/safe-action';
-import { isAuthorizedTovote } from '@/data-access/user';
+import { isAuthorizedToVote } from '@/data-access/user';
 import { elections, votes } from '@/db/schema';
 import { schema } from '@/app/(public)/vote/[slug]/(authorized)/previous/validation';
 
@@ -25,7 +25,7 @@ export const requestSignatureAction = authenticatedAction(
     }
 
     if (election.isPrivate) {
-      const isAuthorized = isAuthorizedTovote(user.userId, election.id);
+      const isAuthorized = await isAuthorizedToVote(user.userId, election.id);
 
       if (!isAuthorized) {
         throw new ActionError("User isn't authorized to vote");

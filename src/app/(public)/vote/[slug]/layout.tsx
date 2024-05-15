@@ -1,11 +1,14 @@
 import { getCandidates, getElection } from '@/db/helpers';
 import ContextProvider from './context';
+import { auth } from '@/lib/auth';
+import { isAuthorizedToVote } from '@/data-access/user';
+import { ReactNode } from 'react';
 
 export default async function VoteLayout({
   children,
   params,
 }: {
-  children: React.ReactNode;
+  children: ReactNode;
   params: { slug: string };
 }) {
   const election = await getElection(params.slug);
@@ -14,7 +17,12 @@ export default async function VoteLayout({
     return <div>Election not found</div>;
   }
 
-  // TODO: Validar usuario
+  let canVote = !election.isPrivate;
+
+  if (election.isPrivate) {
+    const session = await auth();
+    canVote = await isAuthorizedToVote(session?.user.userId!, election.id);
+  }
 
   const candidates = (await getCandidates(params.slug)).map(
     ({ candidates }) => candidates
@@ -40,7 +48,7 @@ export default async function VoteLayout({
           masterPublicKey: election.masterPublicKey!,
         }}
       >
-        {children}
+        {canVote && <>{children}</>}
       </ContextProvider>
     </div>
   );

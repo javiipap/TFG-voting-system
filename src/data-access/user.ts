@@ -2,8 +2,11 @@ import { execQuery } from '@/db/helpers';
 import * as schema from '@/db/schema';
 import { and, eq } from 'drizzle-orm';
 
-export const isAuthorizedTovote = (userId: number, electionId: number) =>
-  execQuery((db) =>
+export const isAuthorizedToVote = async (
+  userId: number,
+  electionId: number
+) => {
+  const result = await execQuery((db) =>
     db
       .selectDistinctOn([schema.users.id], {
         id: schema.users.id,
@@ -31,6 +34,9 @@ export const isAuthorizedTovote = (userId: number, electionId: number) =>
       .groupBy(schema.users.id)
   );
 
+  return result.length > 0;
+};
+
 export const getUser = () => {};
 
 export const insertIfNotExist = async (members: { email: string }[]) =>
@@ -44,3 +50,16 @@ export const insertIfNotExist = async (members: { email: string }[]) =>
       })
       .returning({ id: schema.users.id })
   );
+
+export const getEncryptedAddr = async (userId: number, electionId: number) => {
+  const ballot = await execQuery((db) =>
+    db.query.votes.findFirst({
+      where: and(
+        eq(schema.votes.userId, userId),
+        eq(schema.votes.electionId, electionId)
+      ),
+    })
+  );
+
+  return ballot?.recoveryEthSecret;
+};

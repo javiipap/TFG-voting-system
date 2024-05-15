@@ -28,7 +28,7 @@ const handlers = {
 const executeJob = async (job: Job, force = false) => {
   const now = new Date();
 
-  if (job.executionDate.getTime() < now.getTime() && !force) {
+  if (job.executionDate.getTime() >= now.getTime() && !force) {
     return;
   }
 

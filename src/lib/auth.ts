@@ -4,6 +4,7 @@ import CredentialsProvider from 'next-auth/providers/credentials';
 import { execQuery, getAdminId, isAdmin } from '../db/helpers';
 import * as schema from '../db/schema';
 import { eq } from 'drizzle-orm';
+import { redirect } from 'next/navigation';
 
 type Role = 'admin' | 'user';
 
@@ -90,3 +91,13 @@ export const {
     }),
   ],
 });
+
+export const getSessionSSR = async () => {
+  const session = await auth();
+
+  if (!session) {
+    redirect('/login');
+  }
+
+  return session.user;
+};
