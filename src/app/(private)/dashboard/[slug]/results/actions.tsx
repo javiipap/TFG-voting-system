@@ -1,6 +1,6 @@
 'use server';
 
-import { getElectionBySlug } from '@/data-access/election';
+import { getElectionBySlug } from '@/data-access/elections';
 import { createReference } from '@/jobs/tally';
 import { forceExecution } from '@/lib/scheduler';
 

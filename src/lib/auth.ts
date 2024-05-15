@@ -1,9 +1,9 @@
 import NextAuth, { DefaultSession } from 'next-auth';
 import { JWT } from 'next-auth/jwt';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import { getAdminId, isAdmin } from '../db/helpers';
+import { getAdminId, isAdmin } from '@/data-access/admins';
 import { redirect } from 'next/navigation';
-import { getUserByCertOrEmail } from '@/data-access/user';
+import { getUserByCertOrEmail } from '@/data-access/users';
 
 type Role = 'admin' | 'user';
 

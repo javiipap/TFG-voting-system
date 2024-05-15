@@ -1,5 +1,5 @@
 import { Separator } from '@/components/ui/separator';
-import { getPublicElections } from '@/db/helpers';
+import { getPublicElections } from '@/data-access/elections';
 import Link from 'next/link';
 
 export default async function Home() {

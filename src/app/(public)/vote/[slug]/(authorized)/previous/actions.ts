@@ -2,9 +2,9 @@
 
 import { sign } from 'server_utilities';
 import { ActionError, authenticatedAction } from '@/lib/safe-action';
-import { isAuthorizedToVote } from '@/data-access/user';
+import { isAuthorizedToVote } from '@/data-access/users';
 import { schema } from '@/app/(public)/vote/[slug]/(authorized)/previous/validation';
-import { addBallot, getElection } from '@/data-access/election';
+import { addBallot, getElection } from '@/data-access/elections';
 
 export const requestSignatureAction = authenticatedAction(
   schema,

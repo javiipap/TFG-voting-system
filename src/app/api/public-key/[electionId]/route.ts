@@ -1,4 +1,4 @@
-import { getElection } from '@/data-access/election';
+import { getElection } from '@/data-access/elections';
 import { NextRequest } from 'next/server';
 
 export async function GET(

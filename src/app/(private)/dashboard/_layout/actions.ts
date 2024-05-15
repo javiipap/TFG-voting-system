@@ -5,7 +5,7 @@ import { createSlug } from '@/lib/utils';
 import { generateRsaKeypair } from 'server_utilities';
 import { authenticatedAction } from '@/lib/safe-action';
 import { schema } from '@/app/(private)/dashboard/_layout/validation';
-import { createElection } from '@/data-access/election';
+import { createElection } from '@/data-access/elections';
 import { schedule } from '@/lib/scheduler';
 
 export const submitElectionAction = authenticatedAction(

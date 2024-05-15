@@ -8,7 +8,7 @@ import {
   addUser,
   getUserByCertOrEmail,
   updateUserByEmail,
-} from '@/data-access/user';
+} from '@/data-access/users';
 
 export const signUpAction = unauthenticatedAction(
   schema,

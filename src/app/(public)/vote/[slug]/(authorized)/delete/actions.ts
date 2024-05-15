@@ -6,7 +6,7 @@ import { ecc_decrypt } from 'server_utilities';
 import { callContract } from '@/lib/call-contract';
 import { env } from '@/env';
 import { Web3 } from 'web3';
-import { deleteBallot, getBallot, getElection } from '@/data-access/election';
+import { deleteBallot, getBallot, getElection } from '@/data-access/elections';
 
 export const requestDeleteAction = authenticatedAction(
   schema,

@@ -5,7 +5,7 @@ import { schema } from '@/app/(private)/dashboard/[slug]/_layout/validation';
 import { forceExecution } from '@/lib/scheduler';
 import { createReference } from '@/jobs/deploy-contract';
 import { revalidatePath } from 'next/cache';
-import { getElection } from '@/data-access/election';
+import { getElection } from '@/data-access/elections';
 
 export const deployContractAction = authenticatedAction(
   schema,

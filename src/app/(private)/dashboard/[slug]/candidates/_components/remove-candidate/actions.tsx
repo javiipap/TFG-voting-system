@@ -1,9 +1,9 @@
 'use server';
 
-import { deleteCandidate } from '@/db/helpers';
 import { authenticatedElectionAction } from '@/lib/safe-action';
 import { revalidatePath } from 'next/cache';
 import { schema } from '@/app/(private)/dashboard/[slug]/candidates/_components/remove-candidate/validation';
+import { deleteCandidate } from '@/data-access/candidates';
 
 export const removeCandidateAction = authenticatedElectionAction(
   schema,

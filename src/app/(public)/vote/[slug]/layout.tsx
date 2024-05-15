@@ -1,8 +1,8 @@
-import { getCandidates, getElection } from '@/db/helpers';
 import ContextProvider from './context';
 import { auth } from '@/lib/auth';
-import { isAuthorizedToVote } from '@/data-access/user';
+import { isAuthorizedToVote } from '@/data-access/users';
 import { ReactNode } from 'react';
+import { getCandidates, getElectionBySlug } from '@/data-access/elections';
 
 export default async function VoteLayout({
   children,
@@ -11,7 +11,7 @@ export default async function VoteLayout({
   children: ReactNode;
   params: { slug: string };
 }) {
-  const election = await getElection(params.slug);
+  const election = await getElectionBySlug(params.slug);
 
   if (!election) {
     return <div>Election not found</div>;
@@ -24,9 +24,7 @@ export default async function VoteLayout({
     canVote = await isAuthorizedToVote(session?.user.userId!, election.id);
   }
 
-  const candidates = (await getCandidates(params.slug)).map(
-    ({ candidates }) => candidates
-  );
+  const candidates = await getCandidates(election.id);
 
   return (
     <div className="min-h-screen h-full min-w-screen flex flex-col justify-center space-y-8">

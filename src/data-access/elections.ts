@@ -135,3 +135,20 @@ export const deleteBallot = async (electionId: number, userId: number) =>
         )
       )
   );
+
+export const getPublicElections = async () => {
+  return await execQuery((db) =>
+    db
+      .select()
+      .from(schema.elections)
+      .where(eq(schema.elections.isPrivate, false))
+  );
+};
+
+export const storeTicket = async (
+  ticket: typeof schema.issuedTickets.$inferInsert
+) => {
+  return await execQuery((db) =>
+    db.insert(schema.issuedTickets).values(ticket)
+  );
+};

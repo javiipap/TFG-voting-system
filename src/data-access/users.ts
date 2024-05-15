@@ -19,18 +19,6 @@ export const getUserByCertOrEmail = (cert: string, email: string) =>
     })
   );
 
-export const insertIfNotExist = async (members: { email: string }[]) =>
-  execQuery((db) =>
-    db
-      .insert(schema.users)
-      .values(members)
-      .onConflictDoUpdate({
-        target: [schema.users.email],
-        set: { emailVerified: new Date() },
-      })
-      .returning({ id: schema.users.id })
-  );
-
 export const getEncryptedAddr = async (userId: number, electionId: number) => {
   const ballot = await execQuery((db) =>
     db.query.votes.findFirst({
@@ -43,6 +31,18 @@ export const getEncryptedAddr = async (userId: number, electionId: number) => {
 
   return ballot?.recoveryEthSecret;
 };
+
+export const insertIfNotExist = async (members: { email: string }[]) =>
+  execQuery((db) =>
+    db
+      .insert(schema.users)
+      .values(members)
+      .onConflictDoUpdate({
+        target: [schema.users.email],
+        set: { emailVerified: new Date() },
+      })
+      .returning({ id: schema.users.id })
+  );
 
 export const addUser = (user: schema.InsertUser) =>
   execQuery((db) => db.insert(schema.users).values(user));

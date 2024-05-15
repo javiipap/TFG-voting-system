@@ -1,5 +1,5 @@
-import { getElectionBySlug } from '@/data-access/election';
-import { isAuthorizedToVote } from '@/data-access/user';
+import { getElectionBySlug } from '@/data-access/elections';
+import { isAuthorizedToVote } from '@/data-access/users';
 import { auth } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 import { ReactNode } from 'react';

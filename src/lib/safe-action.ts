@@ -1,4 +1,4 @@
-import { canEditElection, getElection } from '@/data-access/election';
+import { canEditElection, getElection } from '@/data-access/elections';
 import { auth } from '@/lib/auth';
 import { DEFAULT_SERVER_ERROR, createSafeActionClient } from 'next-safe-action';
 

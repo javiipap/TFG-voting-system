@@ -1,7 +1,7 @@
 import CopyButton from '@/app/(public)/vote/[slug]/(authorized)/recover/copy-btn';
 import { Button } from '@/components/ui/button';
-import { getElectionBySlug } from '@/data-access/election';
-import { getEncryptedAddr } from '@/data-access/user';
+import { getElectionBySlug } from '@/data-access/elections';
+import { getEncryptedAddr } from '@/data-access/users';
 import { getSessionSSR } from '@/lib/auth';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';

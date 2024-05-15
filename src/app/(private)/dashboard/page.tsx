@@ -1,14 +1,14 @@
-import { getElections } from '@/db/helpers';
+import { getElections } from '@/data-access/admins';
 import Title from './_components/title';
 import ElectionCard from './_components/election';
-import { auth } from '@/lib/auth';
+import { getSessionSSR } from '@/lib/auth';
 import { Button } from '@/components/ui/button';
 import { SheetTrigger } from '@/components/ui/sheet';
 
 export default async function DashboardPage() {
-  const session = await auth();
+  const user = await getSessionSSR();
 
-  const elections = await getElections(session!.user.adminId!);
+  const elections = await getElections(user.adminId);
 
   return (
     <main className="p-6">

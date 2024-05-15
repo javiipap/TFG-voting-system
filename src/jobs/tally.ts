@@ -1,6 +1,6 @@
 import { env } from '@/env';
 import { callContract } from '@/lib/call-contract';
-import { getElection } from '@/data-access/election';
+import { getElection } from '@/data-access/elections';
 
 export function createReference({ electionId }: { electionId: number }) {
   return `tally_${electionId}`;

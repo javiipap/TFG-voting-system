@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { TableCell, TableRow } from '@/components/ui/table';
 
-import { getVoters } from '@/data-access/election';
+import { getVoters } from '@/data-access/elections';
 
 export default async function Voters({ params }: { params: { slug: string } }) {
   const voters = await getVoters(params.slug);

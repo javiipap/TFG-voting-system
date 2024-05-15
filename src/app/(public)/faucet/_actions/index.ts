@@ -1,6 +1,6 @@
 'use server';
 
-import { storeTicket } from '@/db/helpers';
+import { storeTicket } from '@/data-access/elections';
 import { verify } from 'server_utilities';
 import { Ticket } from '@/tfg-types';
 import { sendWei } from './sendWei';
@@ -8,7 +8,7 @@ import { calculateGas } from '@/app/(public)/faucet/_actions/calculateGas';
 import { grantPermissions } from './grantPermissions';
 import { ActionError, unauthenticatedAction } from '@/lib/safe-action';
 import { schema as requestSchema } from '@/app/(public)/faucet/validation';
-import { getElection, getCandidates } from '@/data-access/election';
+import { getElection, getCandidates } from '@/data-access/elections';
 
 export const requestPermissionAction = unauthenticatedAction(
   requestSchema,

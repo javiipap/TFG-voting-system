@@ -1,11 +1,11 @@
-import { auth } from '@/lib/auth';
+import { getSessionSSR } from '@/lib/auth';
 import HeaderNav from './components/HeaderNav';
 import Title from './components/Title';
-import { getElections } from '@/db/helpers';
+import { getElections } from '@/data-access/admins';
 
 export default async function Header() {
-  const session = await auth();
-  const elections = await getElections(session!.user.adminId!);
+  const user = await getSessionSSR();
+  const elections = await getElections(user.adminId);
 
   return (
     <header className="h-14 lg:h-[60px] border-b bg-neutral-100 dark:bg-black dark:border-neutral-800 flex justify-between items-center">

@@ -1,7 +1,7 @@
 import Aside from './_layout/aside';
-import { getElection } from '@/db/helpers';
 import { getCandidates } from '@/data-access/candidates';
 import ContextProvider from './context';
+import { getElectionBySlug } from '@/data-access/elections';
 
 export default async function RootLayout({
   children,
@@ -10,7 +10,7 @@ export default async function RootLayout({
   children: React.ReactNode;
   params: { slug: string };
 }>) {
-  const election = await getElection(params.slug);
+  const election = await getElectionBySlug(params.slug);
 
   if (!election) {
     return <div>Not found</div>;
