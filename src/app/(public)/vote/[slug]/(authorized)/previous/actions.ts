@@ -21,26 +21,30 @@ export const requestSignatureAction = authenticatedAction(
     );
 
     if (!election) {
-      throw new ActionError('');
+      throw new ActionError("Election doesen't exist");
     }
 
     if (election.isPrivate) {
       const isAuthorized = isAuthorizedTovote(user.userId, election.id);
 
       if (!isAuthorized) {
-        throw new ActionError('');
+        throw new ActionError("User isn't authorized to vote");
       }
     }
 
     // Crear papeleta en la base de datos
-    await execQuery((db) =>
-      db.insert(votes).values({
-        userId: user.userId,
-        electionId: election.id,
-        encryptedEthSecret,
-        recoveryEthSecret,
-      })
-    );
+    try {
+      await execQuery((db) =>
+        db.insert(votes).values({
+          userId: user.userId,
+          electionId: election.id,
+          encryptedEthSecret,
+          recoveryEthSecret,
+        })
+      );
+    } catch {
+      throw new ActionError('User has already voted');
+    }
 
     // Firmar petición
     const blindedSignature = sign(
