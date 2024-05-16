@@ -5,7 +5,7 @@ import { storeClearResultsAction } from '@/app/(private)/dashboard/[slug]/result
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { decrypt_result } from 'client_utilities';
+import wasm_init, { decrypt_result } from 'client_utilities';
 import { useAction } from 'next-safe-action/hooks';
 import { useContext, useState } from 'react';
 
@@ -14,14 +14,12 @@ export default function DecryptForm() {
   const { execute } = useAction(storeClearResultsAction);
   const [inputState, setInputState] = useState('');
 
-  const decryptResult = () => {
-    const encryptedArray = JSON.parse(
-      Buffer.from(encryptedResult!.slice(2), 'hex').toString()
-    );
+  const decryptResult = async () => {
+    await wasm_init();
 
     const result = decrypt_result(
       Buffer.from(inputState, 'base64'),
-      encryptedArray
+      Buffer.from(encryptedResult!.slice(2), 'hex').toString()
     );
 
     execute({
