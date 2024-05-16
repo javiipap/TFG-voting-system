@@ -11,7 +11,7 @@ export function DownloadButton({ name, data }: { name: string; data: string }) {
       target="_blank"
       rel="noreferrer"
       href={URL.createObjectURL(file)}
-      className="bg-foreground text-background rounded py-2 flex justify-center items-center hover:bg-foreground/95 transition-colors"
+      className="bg-foreground text-sm text-background rounded px-4 py-2 flex justify-center items-center hover:bg-foreground/95 transition-colors"
     >
       Download
       <Download className="ml-1 h-[1em]" />
