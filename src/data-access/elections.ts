@@ -191,3 +191,11 @@ export const unAuthorizeUser = (userId: number, electionId: number) =>
         )
       )
   );
+
+export const setResult = (electionId: number, result: string) =>
+  execQuery((db) =>
+    db
+      .update(schema.elections)
+      .set({ encryptedResult: result })
+      .where(eq(schema.elections.id, electionId))
+  );

@@ -1,6 +1,5 @@
 'use client';
 
-import React, { useState } from 'react';
 import {
   Table,
   TableBody,
@@ -10,21 +9,19 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import Title from '@/app/(private)/dashboard/_components/title';
-import { Button } from '@/components/ui/button';
-import { forceTally } from '@/app/(private)/dashboard/[slug]/results/actions';
+import DecryptForm from '@/app/(private)/dashboard/[slug]/results/_components/decrypt-form';
+import { useContext } from 'react';
+import { Context } from '@/app/(private)/dashboard/[slug]/context';
+import ForceTally from '@/app/(private)/dashboard/[slug]/results/_components/force-tally';
 
 export default function Page({ params }: { params: { slug: string } }) {
-  const [result, setResult] = useState<string>();
-  const onClick = async () => {
-    await forceTally(params.slug);
-  };
+  const { encryptedResult, candidates } = useContext(Context) as Context;
 
   return (
     <main>
       <Title>Results</Title>
-      <div className="flex gap-8 h-[400px] mb-8">
-        <Button onClick={onClick}>Retrieve results</Button>
-        {!!result && <p>result</p>}
+      <div className="mb-8">
+        {encryptedResult ? <DecryptForm /> : <ForceTally />}
       </div>
       <div className="border shadow-sm rounded-lg">
         <Table className="w-full">
@@ -36,11 +33,15 @@ export default function Page({ params }: { params: { slug: string } }) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            <TableRow>
-              <TableCell>1</TableCell>
-              <TableCell>Jan</TableCell>
-              <TableCell>111</TableCell>
-            </TableRow>
+            {candidates
+              .toSorted((lhs, rhs) => (lhs.votes || 0) - (rhs.votes || 0))
+              .map(({ name, votes, id }, i) => (
+                <TableRow key={`candidate-${id}`}>
+                  <TableCell>{i + 1}</TableCell>
+                  <TableCell>{name}</TableCell>
+                  <TableCell>{votes ?? 'N/A'}</TableCell>
+                </TableRow>
+              ))}
           </TableBody>
         </Table>
       </div>

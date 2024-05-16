@@ -22,3 +22,11 @@ export const deleteCandidate = async (id: number) => {
     db.delete(schema.candidates).where(eq(schema.candidates.id, id))
   );
 };
+
+export const updateCandidateVotes = async (id: number, votes: number) =>
+  execQuery((db) =>
+    db
+      .update(schema.candidates)
+      .set({ votes })
+      .where(eq(schema.candidates.id, id))
+  );
