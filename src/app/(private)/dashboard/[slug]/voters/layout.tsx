@@ -6,7 +6,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import Title from '@/app/(private)/dashboard/_components/title';
-import AddVoterDialog from '@/app/(private)/dashboard/[slug]/voters/add-voter-dialog';
+import AddVoterDialog from '@/app/(private)/dashboard/[slug]/voters/_components/authorize-voter-dialog';
 
 export default async function Voters({
   children,
@@ -22,6 +22,7 @@ export default async function Voters({
             <TableRow>
               <TableHead>#</TableHead>
               <TableHead>Name</TableHead>
+              <TableHead>Email</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Action</TableHead>
             </TableRow>

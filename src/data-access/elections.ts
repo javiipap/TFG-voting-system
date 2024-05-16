@@ -1,4 +1,4 @@
-import { execQuery } from '@/db/helpers';
+import { execQuery, getConnection } from '@/db/helpers';
 import * as schema from '@/db/schema';
 import { and, eq } from 'drizzle-orm';
 
@@ -51,6 +51,7 @@ export const getVoters = async (slug: string) => {
         .selectDistinctOn([schema.users.id], {
           id: schema.users.id,
           name: schema.users.name,
+          email: schema.users.email,
           hasVoted: schema.votes.id,
         })
         .from(schema.votes)
@@ -62,6 +63,7 @@ export const getVoters = async (slug: string) => {
       .selectDistinctOn([schema.users.id], {
         id: schema.users.id,
         name: schema.users.name,
+        email: schema.users.email,
         hasVoted: schema.votes.id,
       })
       .from(schema.authorizedUsers)
@@ -136,8 +138,8 @@ export const deleteBallot = async (electionId: number, userId: number) =>
       )
   );
 
-export const getPublicElections = async () => {
-  return await execQuery((db) =>
+export const getPublicElections = () => {
+  return execQuery((db) =>
     db
       .select()
       .from(schema.elections)
@@ -152,3 +154,40 @@ export const storeTicket = async (
     db.insert(schema.issuedTickets).values(ticket)
   );
 };
+
+export const authorizeUser = async (email: string, electionId: number) => {
+  const { db, client } = getConnection();
+
+  let userId = (
+    await db.query.users.findFirst({
+      where: eq(schema.users.email, email),
+    })
+  )?.id;
+
+  if (!userId) {
+    userId = (
+      await db
+        .insert(schema.users)
+        .values({ email })
+        .returning({ id: schema.users.id })
+    )[0].id;
+  }
+
+  await db
+    .insert(schema.authorizedUsers)
+    .values({ electionId, userId: userId });
+
+  client.end();
+};
+
+export const unAuthorizeUser = (userId: number, electionId: number) =>
+  execQuery((db) =>
+    db
+      .delete(schema.authorizedUsers)
+      .where(
+        and(
+          eq(schema.authorizedUsers.electionId, electionId),
+          eq(schema.authorizedUsers.userId, userId)
+        )
+      )
+  );

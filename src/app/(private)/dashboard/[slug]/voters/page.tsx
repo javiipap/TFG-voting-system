@@ -1,4 +1,4 @@
-import { Button } from '@/components/ui/button';
+import DeleteVoter from '@/app/(private)/dashboard/[slug]/voters/_components/unauthorize-voter';
 import { TableCell, TableRow } from '@/components/ui/table';
 
 import { getVoters } from '@/data-access/elections';
@@ -12,11 +12,10 @@ export default async function Voters({ params }: { params: { slug: string } }) {
         <TableRow key={`voter-${index}`}>
           <TableCell>{index + 1}</TableCell>
           <TableCell>{voter.name}</TableCell>
+          <TableCell>{voter.email}</TableCell>
           <TableCell>{voter.hasVoted === null ? '❌' : '✅'}</TableCell>
           <TableCell>
-            <Button variant="link" className="text-red-600 px-0">
-              Delete
-            </Button>
+            <DeleteVoter userId={voter.id} />
           </TableCell>
         </TableRow>
       ))}

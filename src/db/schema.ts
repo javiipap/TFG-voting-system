@@ -53,10 +53,10 @@ export const authorizedUsers = pgTable('authorized_users', {
   id: serial('id').primaryKey(),
   userId: integer('user_id')
     .references(() => users.id, { onDelete: 'cascade' })
-    .unique(),
+    .notNull(),
   electionId: integer('election_id')
     .references(() => elections.id, { onDelete: 'cascade' })
-    .unique(),
+    .notNull(),
 });
 
 export const candidates = pgTable('candidates', {
