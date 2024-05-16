@@ -1,24 +1,20 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
+import { Download } from 'lucide-react';
 
 export function DownloadButton({ name, data }: { name: string; data: string }) {
   const file = new Blob([data], { type: 'text/plain' });
 
   return (
-    <Button>
-      <a
-        download={name}
-        target="_blank"
-        rel="noreferrer"
-        href={URL.createObjectURL(file)}
-        style={{
-          textDecoration: 'inherit',
-          color: 'inherit',
-        }}
-      >
-        Download
-      </a>
-    </Button>
+    <a
+      download={name}
+      target="_blank"
+      rel="noreferrer"
+      href={URL.createObjectURL(file)}
+      className="bg-foreground text-background rounded py-2 flex justify-center items-center hover:bg-foreground/95 transition-colors"
+    >
+      Download
+      <Download className="ml-1 h-[1em]" />
+    </a>
   );
 }
