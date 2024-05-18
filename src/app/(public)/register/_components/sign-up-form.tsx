@@ -2,9 +2,7 @@
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { signUpAction } from '@/app/(public)/register/actions';
-import { useEffect } from 'react';
-import { env } from '@/env';
+import { signUpAction } from '@/app/(public)/register/_components/actions';
 import {
   Form,
   FormControl,
@@ -16,7 +14,9 @@ import {
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { schema } from '../validation';
+import { schema } from '@/app/(public)/register/_components/validation';
+import { useEffect } from 'react';
+import { env } from '@/env';
 
 export default function SignUpForm() {
   const form = useForm<z.infer<typeof schema>>({
@@ -31,8 +31,9 @@ export default function SignUpForm() {
       form.setValue('cert', '');
       return;
     }
-    const { cert } = await req.json();
+    const { cert, email } = await req.json();
 
+    form.setValue('email', decodeURIComponent(email));
     form.setValue('cert', decodeURIComponent(cert));
   };
 
@@ -68,19 +69,7 @@ export default function SignUpForm() {
             <FormItem>
               <FormLabel>Correo</FormLabel>
               <FormControl>
-                <Input {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="cert"
-          render={({ field }) => (
-            <FormItem>
-              <FormControl className="hidden">
-                <Input {...field} />
+                <Input {...field} readOnly />
               </FormControl>
               <FormMessage />
             </FormItem>

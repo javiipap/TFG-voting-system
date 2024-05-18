@@ -1,7 +1,7 @@
 'use server';
 
 import { ActionError, unauthenticatedAction } from '@/lib/safe-action';
-import { schema } from '@/app/(public)/register/validation';
+import { schema } from '@/app/(public)/register/_components/validation';
 import { redirect } from 'next/navigation';
 import crypto from 'crypto';
 import {
