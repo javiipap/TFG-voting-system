@@ -1,7 +1,7 @@
 import { env } from '@/env';
 import Web3 from 'web3';
 import { getCandidates } from '@/data-access/candidates';
-import { getContractInfo } from '@/lib/get-contract-info';
+import { getContractInfo } from '@/lib/utils/get-contract-info';
 import { getElection, startElection } from '@/data-access/elections';
 
 export function createReference({ electionId }: { electionId: number }) {

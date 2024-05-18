@@ -3,7 +3,7 @@
 import { schema } from '@/app/(public)/vote/[slug]/(authorized)/delete/validation';
 import { ActionError, authenticatedAction } from '@/lib/safe-action';
 import { ecc_decrypt } from 'server_utilities';
-import { callContract } from '@/lib/call-contract';
+import { callContract } from '@/lib/utils/call-contract';
 import { env } from '@/env';
 import { Web3 } from 'web3';
 import { deleteBallot, getBallot, getElection } from '@/data-access/elections';

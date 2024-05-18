@@ -1,4 +1,4 @@
-import { getContractInfo } from '@/lib/get-contract-info';
+import { getContractInfo } from '@/lib/utils/get-contract-info';
 import { env } from '@/env';
 import { Web3 } from 'web3';
 
