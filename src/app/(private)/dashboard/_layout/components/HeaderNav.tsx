@@ -7,7 +7,11 @@ const LINKS: {
   {
     href: '/dashboard',
     label: 'Elections',
-  }
+  },
+  {
+    href: '/',
+    label: 'Home',
+  },
 ];
 
 export default function HeaderNav() {

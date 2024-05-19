@@ -10,6 +10,7 @@ type Role = 'admin' | 'user';
 declare module 'next-auth' {
   interface Session extends DefaultSession {
     user: User & {
+      name: string;
       role: Role;
       adminId: number;
     };
@@ -51,6 +52,7 @@ export const {
         token.adminId = adminId;
         token.pk = user.pk;
         token.userId = user.userId;
+        token.name = user.name;
       }
 
       return token;
@@ -60,6 +62,7 @@ export const {
       session.user.adminId = token.adminId as number;
       session.user.pk = token.pk as string;
       session.user.userId = token.userId as number;
+      session.user.name = token.name as string;
 
       return session;
     },

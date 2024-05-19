@@ -1,12 +1,16 @@
+import Navigation from '@/app/(public)/_layout/navigation';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { auth } from '@/lib/auth';
 import Link from 'next/link';
 import React from 'react';
 
-export default function UserLayout({
+export default async function UserLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const session = await auth();
+
   return (
     <div className="">
       <header className="fixed w-full top-0 left-0 h-[80px] border-b ">
@@ -15,22 +19,14 @@ export default function UserLayout({
             Logo
           </Link>
           <div className="flex gap-4 items-center">
-            <nav className="">
-              <ul className="flex space-x-4">
-                <li>
-                  <a href="/">Home</a>
-                </li>
-                <li>
-                  <a href="/login">Login</a>
-                </li>
-                <li>
-                  <a href="/register">Register</a>
-                </li>
-              </ul>
-            </nav>
-            <Avatar>
-              <AvatarFallback>JP</AvatarFallback>
-            </Avatar>
+            <Navigation user={session?.user} />
+            {!!session?.user && (
+              <Avatar>
+                <AvatarFallback>
+                  {session.user.name.slice(0, 2).toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
+            )}
           </div>
         </div>
       </header>
