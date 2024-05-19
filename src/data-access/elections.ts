@@ -67,7 +67,6 @@ export const getVoters = async (slug: string) => {
         hasVoted: schema.votes.id,
       })
       .from(schema.authorizedUsers)
-      .where(eq(schema.authorizedUsers.electionId, election.id))
       .innerJoin(
         schema.users,
         eq(schema.users.id, schema.authorizedUsers.userId)
@@ -75,10 +74,11 @@ export const getVoters = async (slug: string) => {
       .leftJoin(
         schema.votes,
         and(
-          eq(schema.votes.userId, schema.users.id),
-          eq(schema.votes.electionId, election.id)
+          eq(schema.votes.userId, schema.authorizedUsers.userId),
+          eq(schema.votes.electionId, schema.authorizedUsers.electionId)
         )
-      );
+      )
+      .where(eq(schema.authorizedUsers.electionId, election.id));
   });
 };
 
@@ -171,6 +171,18 @@ export const authorizeUser = async (email: string, electionId: number) => {
         .values({ email })
         .returning({ id: schema.users.id })
     )[0].id;
+  } else {
+    const isAuthorized = await db.query.authorizedUsers.findFirst({
+      where: and(
+        eq(schema.authorizedUsers.userId, userId),
+        eq(schema.authorizedUsers.electionId, electionId)
+      ),
+    });
+
+    if (isAuthorized) {
+      client.end();
+      return;
+    }
   }
 
   await db
@@ -192,10 +204,10 @@ export const unAuthorizeUser = (userId: number, electionId: number) =>
       )
   );
 
-export const setResult = (electionId: number, result: string) =>
+export const setResult = (electionId: number, result: string, endDate: Date) =>
   execQuery((db) =>
     db
       .update(schema.elections)
-      .set({ encryptedResult: result })
+      .set({ encryptedResult: result, endDate })
       .where(eq(schema.elections.id, electionId))
   );

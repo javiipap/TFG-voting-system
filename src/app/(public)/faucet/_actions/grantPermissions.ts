@@ -10,16 +10,15 @@ export const grantPermissions = async (
 
   const { abi } = await getContractInfo();
 
-  var mySmartContract = new web3.eth.Contract(abi, contractAddr);
+  const electionContract = new web3.eth.Contract(abi, contractAddr);
 
   const gasPrice = Math.ceil(Number(await web3.eth.getGasPrice()) * 1.4);
 
-  const gas = await mySmartContract.methods
+  const gas = await electionContract.methods
     .grant(clientAddr)
     .estimateGas({ from: env.ETH_ACCOUNT });
-  console.log(`expected gas: ${gas}`);
 
-  const encodedABI = mySmartContract.methods.grant(clientAddr).encodeABI();
+  const encodedABI = electionContract.methods.grant(clientAddr).encodeABI();
 
   const signed = await web3.eth.accounts.signTransaction(
     {

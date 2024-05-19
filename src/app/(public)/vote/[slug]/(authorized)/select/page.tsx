@@ -17,6 +17,7 @@ export default function SelectVotePage() {
   ) as Context;
 
   const [inputState, setInputState] = useState({ addr: '', secret: '' });
+  const [isLoading, setIsLoading] = useState(false);
   const [blockInfo, setBlockInfo] =
     useState<Awaited<ReturnType<typeof submitVote>>>();
 
@@ -29,6 +30,8 @@ export default function SelectVotePage() {
       return;
     }
 
+    setIsLoading(true);
+
     await init();
     const ballot = encrypt_vote(
       Buffer.from(masterPublicKey, 'base64'),
@@ -36,14 +39,20 @@ export default function SelectVotePage() {
       candidates.length
     );
 
-    const response = await submitVote(
-      ballot,
-      contractAddr,
-      inputState.addr,
-      inputState.secret
-    );
-
-    setBlockInfo(response);
+    try {
+      const response = await submitVote(
+        ballot,
+        contractAddr,
+        inputState.addr,
+        inputState.secret
+      );
+      setBlockInfo(response);
+    } catch (err) {
+      toast({
+        title: 'Ha habido un error inesperado, ¿Ya has canjeado tu ticket?',
+      });
+    }
+    setIsLoading(false);
   };
 
   return (
@@ -96,7 +105,13 @@ export default function SelectVotePage() {
                 <Separator className="my-4" />
               </div>
             </div>
-            <SelectCandidate onChange={onSubmit} candidates={candidates} />
+            <SelectCandidate
+              onChange={onSubmit}
+              candidates={candidates}
+              submitDisabled={
+                !(inputState.addr && inputState.secret) || isLoading
+              }
+            />
           </>
         )}
       </div>

@@ -31,7 +31,12 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 export default function AddVoterDialog() {
-  const { startDate, id: electionId, slug } = useContext(Context) as Context;
+  const {
+    startDate,
+    id: electionId,
+    slug,
+    isPrivate,
+  } = useContext(Context) as Context;
   const dialogCloseRef = useRef<HTMLButtonElement>(null);
   const { toast } = useToast();
   const { execute, status } = useAction(authorizeUserAction, {
@@ -54,9 +59,11 @@ export default function AddVoterDialog() {
 
   return (
     <Dialog>
-      <DialogTrigger asChild>
-        <Button variant="secondary">Add voter</Button>
-      </DialogTrigger>
+      {isPrivate && (
+        <DialogTrigger asChild>
+          <Button variant="secondary">Add voter</Button>
+        </DialogTrigger>
+      )}
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Add voter</DialogTitle>

@@ -92,9 +92,18 @@ export default function PreviousStepsPage() {
                 )}`}
               />
             </div>
-            <div className="bg-foreground/10 p-2 rounded">
+            <div className="bg-foreground/5 py-2 px-4 rounded border text-sm tracking-wide text-justify">
               Escanea el QR para transferir el suficiente ether a tu cuenta y
-              así poder votar.
+              así poder votar. También lo puedes hacer manualmente desde este
+              ordenador accediendo al{' '}
+              <Link
+                className="underline"
+                target="_blank"
+                href={`/faucet?ticket=${encodeURIComponent(state.ticket)}`}
+              >
+                faucet
+              </Link>
+              , o usando el ticket que puedes descargar abajo.
             </div>
             <div className="flex justify-center">
               <DownloadButton

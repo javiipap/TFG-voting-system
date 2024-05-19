@@ -13,11 +13,11 @@ export async function calculateGas(
 
   const { abi } = await getContractInfo();
 
-  var mySmartContract = new web3.eth.Contract(abi, contractAddr);
+  const electionContract = new web3.eth.Contract(abi, contractAddr);
 
   const ballot = encryptVote(publicKey, 0, candidateCount);
 
-  const gas = await mySmartContract.methods
+  const gas = await electionContract.methods
     .vote(ballot)
     .estimateGas({ from: clientAddr });
 

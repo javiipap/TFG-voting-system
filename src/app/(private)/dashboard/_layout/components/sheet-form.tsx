@@ -34,6 +34,7 @@ import {
 import { z } from 'zod';
 import { DatePicker } from '@/components/ui/dat-picker';
 import { DownloadButton } from '@/components/download-button';
+import { Separator } from '@/components/ui/separator';
 
 let hasRun = false;
 
@@ -238,19 +239,22 @@ export default function SheetForm() {
         />
         <SheetFooter>
           {!!keyPair && status === 'hasSucceeded' ? (
-            <div className="flex flex-col w-full space-y-3 mt-4">
-              <div className="">
-                <FormLabel>Public key</FormLabel>
-                <Textarea readOnly defaultValue={keyPair.public} />
+            <div className="w-full">
+              <Separator />
+              <div className="flex flex-col w-full space-y-3 mt-4">
+                <div className="">
+                  <FormLabel>Public key</FormLabel>
+                  <Textarea readOnly defaultValue={keyPair.public} />
+                </div>
+                <div className="">
+                  <FormLabel>Secret key</FormLabel>
+                  <Textarea readOnly defaultValue={keyPair.secret} />
+                </div>
+                <DownloadButton
+                  name={`election-keypair.json`}
+                  data={JSON.stringify(keyPair)}
+                />
               </div>
-              <div className="">
-                <FormLabel>Secret key</FormLabel>
-                <Textarea readOnly defaultValue={keyPair.secret} />
-              </div>
-              <DownloadButton
-                name={`election-keypair.json`}
-                data={JSON.stringify(keyPair)}
-              />
             </div>
           ) : (
             <Button type="submit" disabled={status === 'executing'}>

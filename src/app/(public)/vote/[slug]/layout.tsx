@@ -3,6 +3,7 @@ import { auth } from '@/lib/auth';
 import { isAuthorizedToVote } from '@/data-access/users';
 import { ReactNode } from 'react';
 import { getCandidates, getElectionBySlug } from '@/data-access/elections';
+import { redirect } from 'next/navigation';
 
 export default async function VoteLayout({
   children,
@@ -23,6 +24,13 @@ export default async function VoteLayout({
     const session = await auth();
     canVote = await isAuthorizedToVote(session?.user.userId!, election.id);
   }
+
+  if (!canVote) {
+    redirect('/');
+  }
+
+  const isOpen =
+    election.startDate < new Date() && election.endDate > new Date();
 
   const candidates = await getCandidates(election.id);
 
@@ -46,7 +54,7 @@ export default async function VoteLayout({
           masterPublicKey: election.masterPublicKey!,
         }}
       >
-        {canVote && <>{children}</>}
+        {isOpen && <>{children}</>}
       </ContextProvider>
     </div>
   );

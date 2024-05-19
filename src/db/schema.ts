@@ -67,7 +67,7 @@ export const candidates = pgTable('candidates', {
   electionId: integer('election_id')
     .references(() => elections.id, { onDelete: 'cascade' })
     .notNull(),
-  votes: integer('votes').default(0),
+  votes: integer('votes'),
 });
 
 export const votes = pgTable(

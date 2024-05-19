@@ -17,16 +17,11 @@ export default async function AuthorizedLayout({
     return <div>Election not found</div>;
   }
 
-  if (election.isPrivate) {
-    const session = await auth();
-    const canVote = await isAuthorizedToVote(
-      session?.user.userId!,
-      election.id
-    );
+  const isOpen =
+    election.startDate < new Date() && election.endDate > new Date();
 
-    if (!canVote) {
-      redirect('/');
-    }
+  if (!isOpen) {
+    redirect('/');
   }
 
   return <>{children}</>;

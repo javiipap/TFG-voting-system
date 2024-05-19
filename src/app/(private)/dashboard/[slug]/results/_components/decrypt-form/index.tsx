@@ -11,10 +11,12 @@ import { useContext, useState } from 'react';
 
 export default function DecryptForm() {
   const { encryptedResult, candidates, slug } = useContext(Context) as Context;
-  const { execute } = useAction(storeClearResultsAction);
+  const { execute, status } = useAction(storeClearResultsAction);
   const [inputState, setInputState] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const decryptResult = async () => {
+    setIsLoading(true);
     await wasm_init();
 
     const result = decrypt_result(
@@ -22,6 +24,7 @@ export default function DecryptForm() {
       Buffer.from(encryptedResult!.slice(2), 'hex').toString()
     );
 
+    setIsLoading(false);
     execute({
       slug,
       candidates: candidates.map((c, i) => ({
@@ -43,7 +46,12 @@ export default function DecryptForm() {
           value={inputState}
           onChange={(e) => setInputState(e.target.value)}
         />
-        <Button onClick={decryptResult}>Desencriptar</Button>
+        <Button
+          onClick={decryptResult}
+          disabled={status === 'executing' || isLoading}
+        >
+          Desencriptar
+        </Button>
       </div>
     </div>
   );

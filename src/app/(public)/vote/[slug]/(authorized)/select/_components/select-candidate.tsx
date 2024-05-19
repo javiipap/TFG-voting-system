@@ -11,9 +11,11 @@ import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 export default function SelectCandidate({
   candidates,
   onChange,
+  submitDisabled,
 }: {
   candidates: (typeof Candidates.$inferSelect)[];
   onChange: (selected: number) => void;
+  submitDisabled?: boolean;
 }) {
   const [selected, setSelected] = useState<number | null>(null);
 
@@ -54,7 +56,7 @@ export default function SelectCandidate({
         <Button
           className="px-8"
           onClick={() => onChange(selected!)}
-          disabled={typeof selected !== 'number'}
+          disabled={typeof selected !== 'number' || submitDisabled}
         >
           <Vote className="mr-2" />
           Vota

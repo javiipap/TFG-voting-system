@@ -11,8 +11,6 @@ export const forceTallyAction = authenticatedAction(
   async ({ electionId, slug }) => {
     const reference = createReference({ electionId });
 
-    // Si ya ha terminado no hacer na
-
     await forceExecution(reference);
     revalidatePath(`/dashboard/${slug}`, 'layout');
   }

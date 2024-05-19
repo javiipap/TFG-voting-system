@@ -36,5 +36,12 @@ export async function handler({ electionId }: { electionId: number }) {
     throw new Error('Unexpected error while retrieving result');
   }
 
-  await setResult(electionId, result);
+  const DELTA = 5 * 60 * 1000;
+
+  const endDate =
+    Math.abs(new Date().getTime() - election.endDate.getTime()) <= DELTA
+      ? election.endDate
+      : new Date();
+
+  await setResult(electionId, result, endDate);
 }
