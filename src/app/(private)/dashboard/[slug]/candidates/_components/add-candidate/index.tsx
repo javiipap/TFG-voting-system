@@ -19,13 +19,19 @@ import { z } from 'zod';
 import { schema } from '@/app/(private)/dashboard/[slug]/candidates/_components/add-candidate/validation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Context } from '@/app/(private)/dashboard/[slug]/context';
+import { useToast } from '@/components/ui/use-toast';
 
 export default function AddCandidate() {
+  const { toast } = useToast();
   const { id: electionId, slug } = useContext(Context) as Context;
   const formRef = useRef<HTMLFormElement>(null);
   const { execute } = useAction(addCandidateAction, {
-    onSuccess: () => {
+    onExecute: () => {
+      // TODO: No se ejecuta
       formRef.current?.reset();
+    },
+    onError: (e) => {
+      toast({ title: e.serverError || 'Unkown validation error' });
     },
   });
 
