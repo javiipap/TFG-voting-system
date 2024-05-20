@@ -97,11 +97,11 @@ export default function SelectVotePage() {
         ) : (
           <>
             <div className="my-4 flex items-center justify-center gap-2">
-              <div className="flex relative flex-1">
-                <Separator className="my-4" />
+              <div className="flex flex-1">
+                <Separator className="my-4 static" />
               </div>
               <h2 className="text-center text-2xl font-bold">Candidatos</h2>
-              <div className="flex relative flex-1">
+              <div className="flex flex-1">
                 <Separator className="my-4" />
               </div>
             </div>

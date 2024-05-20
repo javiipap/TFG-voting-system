@@ -21,7 +21,7 @@ export default function SelectCandidate({
 
   return (
     <div className="">
-      <ScrollArea className="whitespace-nowrap">
+      <ScrollArea className="whitespace-nowrap z-[-1]">
         <div className="flex space-x-4 items-center justify-center pb-4 w-max">
           {candidates.map((candidate, i) => (
             <Card
@@ -52,7 +52,7 @@ export default function SelectCandidate({
         </div>
         <ScrollBar orientation="horizontal" />
       </ScrollArea>
-      <div className="pt-4">
+      <div className="pt-4 relative z-[-1]">
         <Button
           className="px-8"
           onClick={() => onChange(selected!)}
