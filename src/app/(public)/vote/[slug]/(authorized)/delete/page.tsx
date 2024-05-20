@@ -53,7 +53,7 @@ export default function DeleteVote() {
           onSubmit={form.handleSubmit(async (values) => {
             execute(values);
           })}
-          className="w-[400px] space-y-2"
+          className="w-[95%] mx-auto md:w-[400px] space-y-2"
         >
           <FormField
             control={form.control}

@@ -23,7 +23,7 @@ export default async function ({ params }: { params: { slug: string } }) {
 
   return (
     <main className="flex justify-center">
-      <div className="max-w-[600px]">
+      <div className="w-[95%] mx-auto md:max-w-[600px]">
         <p>
           A continuación se muestra su clave privada eth cifrada usando su
           certificado digital. Para recuperarla puede utilizar el siguiente

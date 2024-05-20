@@ -80,7 +80,7 @@ export default function PreviousStepsPage() {
 
       {state.isSet && typeof state.error === 'undefined' && (
         <>
-          <div className="w-[400px] space-y-2">
+          <div className="w-[95%] mx-auto md:w-[400px] space-y-2">
             <AddrViewer title="Address" value={state.addr} />
             <AddrViewer title="Secret" value={state.sk} />
             <div className="flex justify-center">

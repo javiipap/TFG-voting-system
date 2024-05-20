@@ -57,7 +57,7 @@ export default function SelectVotePage() {
 
   return (
     <main className="flex justify-center">
-      <div className="w-[800px]">
+      <div className="w-[95%] mx-auto md:w-[800px]">
         <div className="mb-2 space-y-1">
           <Label>Dirección eth</Label>
           <Input name="addr" value={inputState.addr} onChange={onChange} />

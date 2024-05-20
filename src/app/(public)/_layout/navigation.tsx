@@ -12,8 +12,8 @@ export default function Navigation({ user }: { user: any | null }) {
     <nav className="">
       <ul
         className={`${
-          isOpen ? 'left-0' : 'left-[-100vw]'
-        } transition-all fixed h-full w-full bg-background top-[80px] ml-12 mt-8 text-xl space-y-8 flex flex-col md:left-0 md:relative md:top-0 md:text-base md:mt-0 md:space-y-0 md:ml-0 md:flex-row md:space-x-4`}
+          isOpen ? 'left-0' : 'left-[-120vw]'
+        } z-40 transition-all fixed h-[100vh] w-full bg-background top-[80px] pl-12 mt-8 text-xl space-y-8 flex flex-col md:h-auto md:left-0 md:relative md:top-0 md:text-base md:mt-0 md:space-y-0 md:ml-0 md:flex-row md:space-x-4`}
       >
         <li>
           <a href="/">Home</a>

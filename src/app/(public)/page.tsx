@@ -7,13 +7,13 @@ export default async function Home() {
 
   return (
     <main className="">
-      <div className="min-h-screen flex justify-center items-center">
+      <div className="mt-[60px] h-[40vh] flex justify-center items-center">
         <div className="">
           <h1 className="font-bold text-7xl">E3VOTE</h1>
           <div className="flex justify-between text-lg">
             <span>Easy</span>
+            <span>Electronic</span>
             <span>Encrypted</span>
-            <span>Secure</span>
           </div>
         </div>
       </div>
