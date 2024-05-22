@@ -1,6 +1,6 @@
 'use server';
 
-import { ActionError, unauthenticatedAction } from '@/lib/safe-action';
+import { unauthenticatedAction } from '@/lib/safe-action';
 import { schema } from '@/app/(public)/register/_components/validation';
 import { redirect } from 'next/navigation';
 import crypto from 'crypto';
@@ -16,7 +16,7 @@ export const signUpAction = unauthenticatedAction(
     const existingUser = await getUserByCertOrEmail(cert, email);
 
     if (existingUser && existingUser.cert) {
-      throw new ActionError('User already exists on database');
+      redirect('/login');
     }
 
     const publicKey = crypto

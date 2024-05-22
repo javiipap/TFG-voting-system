@@ -1,5 +1,8 @@
+'use client';
+
 import { Separator } from '@/components/ui/separator';
 import SignUpForm from '@/app/(public)/register/_components/sign-up-form';
+import { Suspense } from 'react';
 
 export default function LoginPage({}) {
   return (
@@ -7,7 +10,9 @@ export default function LoginPage({}) {
       <div className="relative mx-auto flex w-full max-w-[400px] flex-col space-y-2.5 p-8 md:-mt-32 bg-foreground/5 rounded-sm">
         <h1 className="text-5xl font-bold text-center">Sign up</h1>
         <Separator />
-        <SignUpForm />
+        <Suspense>
+          <SignUpForm />
+        </Suspense>
       </div>
     </main>
   );

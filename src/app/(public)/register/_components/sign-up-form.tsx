@@ -17,8 +17,21 @@ import { z } from 'zod';
 import { schema } from '@/app/(public)/register/_components/validation';
 import { useEffect } from 'react';
 import { env } from '@/env';
+import { useSearchParams } from 'next/navigation';
+
+function getErrorText(err: string) {
+  switch (err) {
+    case 'no-acc':
+      return 'Ha intentado iniciar sesión con una cuenta que no existe, regístrese primero.';
+
+    default:
+      return 'Ha habido un error inesperado, inténtalo de nuevo más tarde.';
+  }
+}
 
 export default function SignUpForm() {
+  const error = useSearchParams().get('error');
+
   const form = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
     defaultValues: { name: '', email: '', cert: '' },
@@ -75,6 +88,11 @@ export default function SignUpForm() {
             </FormItem>
           )}
         />
+        {error && (
+          <div className="bg-red-700 p-4 rounded text-sm">
+            {getErrorText(error)}
+          </div>
+        )}
         <Button type="submit" className="w-full mt-4">
           Submit
         </Button>
