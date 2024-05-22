@@ -4,6 +4,14 @@ import { isAuthorizedToVote } from '@/data-access/users';
 import { ReactNode } from 'react';
 import { getCandidates, getElectionBySlug } from '@/data-access/elections';
 import { redirect } from 'next/navigation';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 
 export default async function VoteLayout({
   children,
@@ -55,6 +63,31 @@ export default async function VoteLayout({
         }}
       >
         {isOpen && <>{children}</>}
+
+        {!isOpen && typeof candidates[0].votes === 'number' && (
+          <Table className="mx-auto border max-w-4xl">
+            <TableHeader className="border-b">
+              <TableHead>Candidato</TableHead>
+              <TableHead>Votos</TableHead>
+            </TableHeader>
+            <TableBody>
+              {candidates
+                .sort((lhs, rhs) => rhs.votes! - lhs.votes!)
+                .map(({ name, votes, id }) => (
+                  <TableRow className="space-x-2" key={`candidate_${id}`}>
+                    <TableCell>{name}</TableCell>
+                    <TableCell>{votes}</TableCell>
+                  </TableRow>
+                ))}
+            </TableBody>
+          </Table>
+        )}
+
+        {!isOpen && typeof candidates[0].votes !== 'number' && (
+          <>
+            <p className="text-center">Pendiente de recuento...</p>
+          </>
+        )}
       </ContextProvider>
     </div>
   );

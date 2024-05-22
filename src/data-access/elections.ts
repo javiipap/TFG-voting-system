@@ -219,7 +219,7 @@ export const getPrivateElections = async (userId: number | undefined) => {
 
   return await execQuery((db) =>
     db
-      .select({
+      .selectDistinctOn([schema.elections.id], {
         slug: schema.elections.slug,
         id: schema.elections.id,
         name: schema.elections.name,
@@ -233,3 +233,13 @@ export const getPrivateElections = async (userId: number | undefined) => {
       .where(eq(schema.authorizedUsers.userId, userId))
   );
 };
+
+export const getVote = (userId: number, electionId: number) =>
+  execQuery((db) =>
+    db.query.votes.findFirst({
+      where: and(
+        eq(schema.votes.userId, userId),
+        eq(schema.votes.electionId, electionId)
+      ),
+    })
+  );
