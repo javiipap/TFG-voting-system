@@ -211,3 +211,25 @@ export const setResult = (electionId: number, result: string, endDate: Date) =>
       .set({ encryptedResult: result, endDate })
       .where(eq(schema.elections.id, electionId))
   );
+
+export const getPrivateElections = async (userId: number | undefined) => {
+  if (typeof userId === 'undefined') {
+    return [];
+  }
+
+  return await execQuery((db) =>
+    db
+      .select({
+        slug: schema.elections.slug,
+        id: schema.elections.id,
+        name: schema.elections.name,
+        description: schema.elections.description,
+      })
+      .from(schema.elections)
+      .innerJoin(
+        schema.authorizedUsers,
+        eq(schema.elections.id, schema.authorizedUsers.electionId)
+      )
+      .where(eq(schema.authorizedUsers.userId, userId))
+  );
+};
