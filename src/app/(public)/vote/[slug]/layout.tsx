@@ -34,7 +34,7 @@ export default async function VoteLayout({
   }
 
   if (!canVote) {
-    redirect('/');
+    return redirect('/');
   }
 
   const isOpen =
@@ -83,9 +83,16 @@ export default async function VoteLayout({
           </Table>
         )}
 
-        {!isOpen && typeof candidates[0].votes !== 'number' && (
+        {election.endDate < new Date() &&
+          typeof candidates[0].votes !== 'number' && (
+            <>
+              <p className="text-center">Pendiente de recuento...</p>
+            </>
+          )}
+
+        {election.startDate > new Date() && (
           <>
-            <p className="text-center">Pendiente de recuento...</p>
+            <p className="text-center">Todavía no ha empezado...</p>
           </>
         )}
       </ContextProvider>

@@ -8,7 +8,7 @@ export default function Links() {
   const pathname = usePathname();
 
   return (
-    <div className="space-x-2">
+    <div className="flex flex-col items-center space-y-4 md:flex-row md:space-y-0 md:space-x-2">
       <Link href={`${pathname}/delete`}>
         <Button>Eliminar voto previo</Button>
       </Link>
