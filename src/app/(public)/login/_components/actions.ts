@@ -7,8 +7,10 @@ import { redirect } from 'next/navigation';
 
 export const signInAction = unauthenticatedAction(schema, async ({ cert }) => {
   try {
-    await signIn('credentials', { cert, redirect: true, redirectTo: '/' });
+    await signIn('credentials', { cert, redirect: false });
   } catch {
-    redirect('/register?error=no-acc');
+    return redirect('/register?error=no-acc');
   }
+
+  redirect('/');
 });

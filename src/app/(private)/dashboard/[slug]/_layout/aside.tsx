@@ -9,6 +9,7 @@ import { useAction } from 'next-safe-action/hooks';
 import { deployContractAction } from '@/app/(private)/dashboard/[slug]/_layout/actions';
 import { useToast } from '@/components/ui/use-toast';
 import { Context } from '@/app/(private)/dashboard/[slug]/context';
+import LoadingButton from '@/components/loading-button';
 
 export default function Aside() {
   const { id, candidates, startDate } = useContext(Context) as Context;
@@ -32,7 +33,7 @@ export default function Aside() {
       <AsideNav />
       <div className="flex justify-center items-stretch flex-col py-4 space-y-2 px-4">
         {startDate >= new Date() ? (
-          <Button
+          <LoadingButton
             variant={'secondary'}
             disabled={status === 'executing'}
             onClick={() =>
@@ -43,7 +44,7 @@ export default function Aside() {
             }
           >
             Deploy
-          </Button>
+          </LoadingButton>
         ) : (
           ''
         )}

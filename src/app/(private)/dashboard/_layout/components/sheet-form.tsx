@@ -11,8 +11,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useToast } from '@/components/ui/use-toast';
-import { SheetClose, SheetFooter } from '@/components/ui/sheet';
-import { Button } from '@/components/ui/button';
+import { SheetFooter } from '@/components/ui/sheet';
 import React, { useEffect, useState } from 'react';
 import { submitElectionAction } from '@/app/(private)/dashboard/_layout/actions';
 import Link from 'next/link';
@@ -35,6 +34,7 @@ import { z } from 'zod';
 import { DatePicker } from '@/components/ui/dat-picker';
 import { DownloadButton } from '@/components/download-button';
 import { Separator } from '@/components/ui/separator';
+import LoadingButton from '@/components/loading-button';
 
 let hasRun = false;
 
@@ -257,9 +257,9 @@ export default function SheetForm() {
               </div>
             </div>
           ) : (
-            <Button type="submit" disabled={status === 'executing'}>
+            <LoadingButton type="submit" disabled={status === 'executing'}>
               Create
-            </Button>
+            </LoadingButton>
           )}
         </SheetFooter>
       </form>

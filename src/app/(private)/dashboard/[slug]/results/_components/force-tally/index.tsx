@@ -5,6 +5,7 @@ import { forceTallyAction } from '@/app/(private)/dashboard/[slug]/results/_comp
 import { useContext } from 'react';
 import { Context } from '@/app/(private)/dashboard/[slug]/context';
 import { useAction } from 'next-safe-action/hooks';
+import LoadingButton from '@/components/loading-button';
 
 export default function ForceTally() {
   const { slug, id: electionId } = useContext(Context) as Context;
@@ -13,8 +14,8 @@ export default function ForceTally() {
   const onClick = () => execute({ slug, electionId });
 
   return (
-    <Button onClick={onClick} disabled={status === 'executing'}>
+    <LoadingButton onClick={onClick} disabled={status === 'executing'}>
       Retrieve results
-    </Button>
+    </LoadingButton>
   );
 }

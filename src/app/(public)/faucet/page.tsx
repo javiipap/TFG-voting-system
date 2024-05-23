@@ -20,6 +20,7 @@ import {
 import { z } from 'zod';
 import { useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
+import LoadingButton from '@/components/loading-button';
 
 export default function Faucet() {
   const searchParams = useSearchParams();
@@ -75,13 +76,13 @@ export default function Faucet() {
               </FormItem>
             )}
           />
-          <Button
+          <LoadingButton
             type="submit"
             className="float-right"
             disabled={status === 'executing'}
           >
             Solicitar
-          </Button>
+          </LoadingButton>
         </form>
       </Form>
     </main>
