@@ -22,8 +22,8 @@ export default async function ({ params }: { params: { slug: string } }) {
     <main className="flex justify-center">
       <div className="w-[95%] mx-auto md:max-w-[600px]">
         <p>
-          A continuación se muestra su clave privada eth cifrada usando su
-          certificado digital. Adjunte su clave privada para desencriptar.
+          Adjunte su clave privada para desencriptar y recuperar su dirección de
+          ETH.
         </p>
         <RecoverForm vote={vote} />
       </div>
