@@ -20,11 +20,13 @@ export default function Navigation({ user }: { user: any | null }) {
         </li>
         {user ? (
           <>
-            <li>
-              <Link href="/dashboard" onClick={() => setIsOpen(false)}>
-                Dashboard
-              </Link>
-            </li>
+            {user.role === 'admin' && (
+              <li>
+                <Link href="/dashboard" onClick={() => setIsOpen(false)}>
+                  Dashboard
+                </Link>
+              </li>
+            )}
             <li
               className="cursor-pointer"
               onClick={() => {
