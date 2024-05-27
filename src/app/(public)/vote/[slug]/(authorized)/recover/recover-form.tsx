@@ -2,17 +2,26 @@
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useMemo, useState } from 'react';
 import wasm_init, { rsa_decrypt } from 'client_utilities';
-import CopyButton from '@/app/(public)/vote/[slug]/(authorized)/recover/copy-btn';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { AddrViewer } from '@/app/(public)/vote/[slug]/(authorized)/previous/_components/addr-viewer';
+import { Web3 } from 'web3';
 
 export default function RecoverForm({ vote }: { vote: any }) {
   const pathname = usePathname();
   const [secret, setSecret] = useState<string | null>();
   const [isLoading, setIsLoading] = useState(false);
   const [decrypted, setDecrypted] = useState<string>();
+
+  const address = useMemo(() => {
+    if (!decrypted) return '';
+
+    return new Web3().eth.accounts.privateKeyToAccount(
+      Buffer.from(decrypted.slice(2), 'hex')
+    ).address;
+  }, [decrypted]);
 
   const handleUpload = (e: ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -52,14 +61,9 @@ export default function RecoverForm({ vote }: { vote: any }) {
 
       {decrypted && (
         <div>
-          <p>Secret key: </p>
-          <div className="flex space-x-2 items-center">
-            <div className="border rounded-md p-2 overflow-hidden text-ellipsis">
-              {decrypted}
-            </div>
-            <div className="w-4">
-              <CopyButton text={decrypted} />
-            </div>
+          <div className="space-y-2">
+            <AddrViewer title="Address" value={address} />
+            <AddrViewer title="Secret" value={decrypted} />
           </div>
           <Link href={pathname.replace('recover', 'delete')}>
             <Button className="mt-4">Eliminar</Button>
