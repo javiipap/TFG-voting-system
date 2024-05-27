@@ -3,7 +3,6 @@
 import { useContext, useEffect, useState } from 'react';
 import { createAccount } from '@/app/(public)/vote/[slug]/(authorized)/previous/_lib';
 import { requestEther } from '@/app/(public)/vote/[slug]/(authorized)/previous/_lib/request-ether';
-import { Textarea } from '@/components/ui/textarea';
 import { AddrViewer } from '@/app/(public)/vote/[slug]/(authorized)/previous/_components/addr-viewer';
 import { Context } from '@/app/(public)/vote/[slug]/context';
 import Link from 'next/link';
@@ -12,6 +11,7 @@ import { usePathname } from 'next/navigation';
 import { useToast } from '@/components/ui/use-toast';
 import { DownloadButton } from '@/components/download-button';
 import { QRCodeSVG } from 'qrcode.react';
+import { User } from 'next-auth';
 
 type Account =
   | {
@@ -36,7 +36,7 @@ let hasRan = false;
 export default function PreviousStepsPage() {
   const { toast } = useToast();
   const pathname = usePathname();
-  const { electionId } = useContext(Context) as Context;
+  const { electionId, user } = useContext(Context) as Context;
 
   const [state, setState] = useState<Account>({
     isSet: false,
@@ -54,7 +54,8 @@ export default function PreviousStepsPage() {
       account.sk,
       account.encryptedEthSecret,
       account.addr,
-      electionId
+      electionId,
+      (user as User).pk
     );
 
     setState({ isSet: true, error: undefined, ticket, ...account });

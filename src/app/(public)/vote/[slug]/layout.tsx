@@ -27,9 +27,9 @@ export default async function VoteLayout({
   }
 
   let canVote = !election.isPrivate;
+  const session = await auth();
 
   if (election.isPrivate) {
-    const session = await auth();
     canVote = await isAuthorizedToVote(session?.user.userId!, election.id);
   }
 
@@ -60,6 +60,7 @@ export default async function VoteLayout({
           candidates,
           contractAddr: election.contractAddr!,
           masterPublicKey: election.masterPublicKey!,
+          user: session?.user,
         }}
       >
         {isOpen && <>{children}</>}

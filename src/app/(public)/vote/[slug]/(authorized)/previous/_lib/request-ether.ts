@@ -10,7 +10,8 @@ export async function requestEther(
   sk: string,
   encryptedEthSecret: string,
   addr: string,
-  electionId: number
+  electionId: number,
+  userPublicKey: string
 ) {
   await load_wasm();
 
@@ -24,9 +25,9 @@ export async function requestEther(
 
   const request = create_request(publicKey, addr);
 
-  const recoveryEthSecret = Buffer.from(rsa_encrypt(publicKey, sk)).toString(
-    'base64'
-  );
+  const recoveryEthSecret = Buffer.from(
+    rsa_encrypt(userPublicKey, sk)
+  ).toString('base64');
 
   // Pedir al servidor que lo firme
   const { data, serverError } = await requestSignatureAction({
