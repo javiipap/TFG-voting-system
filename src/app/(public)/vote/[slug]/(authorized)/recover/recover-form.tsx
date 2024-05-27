@@ -34,8 +34,9 @@ export default function RecoverForm({ vote }: { vote: any }) {
     setDecrypted(
       Buffer.from(
         rsa_decrypt(secret, Buffer.from(vote.recoveryEthSecret, 'base64'))
-      ).toString('hex')
+      ).toString()
     );
+
     setIsLoading(false);
   };
 
@@ -54,10 +55,10 @@ export default function RecoverForm({ vote }: { vote: any }) {
           <p>Secret key: </p>
           <div className="flex space-x-2 items-center">
             <div className="border rounded-md p-2 overflow-hidden text-ellipsis">
-              0x{decrypted}
+              {decrypted}
             </div>
             <div className="w-4">
-              <CopyButton text={'0x' + decrypted} />
+              <CopyButton text={decrypted} />
             </div>
           </div>
           <Link href={pathname.replace('recover', 'delete')}>

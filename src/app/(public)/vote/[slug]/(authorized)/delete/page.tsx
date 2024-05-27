@@ -30,7 +30,7 @@ export default function DeleteVote() {
     resolver: zodResolver(schema),
   });
 
-  const { execute } = useAction(requestDeleteAction, {
+  const { execute, status } = useAction(requestDeleteAction, {
     onSuccess: () => {
       toast({
         title: 'Success',
@@ -69,7 +69,11 @@ export default function DeleteVote() {
             )}
           />
           {}
-          <Button type="submit" className="float-right">
+          <Button
+            type="submit"
+            className="float-right"
+            disabled={status === 'executing'}
+          >
             Solicitar
           </Button>
         </form>

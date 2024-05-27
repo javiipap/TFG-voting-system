@@ -52,24 +52,18 @@ contract Election {
     }
 
     function revoke(address voter) external _ownerOnly _notEndend {
-        bool deleted = false;
-
+        deleted_votes_address_.push(voter);
+        votes_[voter].deleted = true;
+ 
         for (uint i = 0; i < votes_address_.length; i++) {
             if (votes_address_[i] == voter) {
                 // Eliminar dirección de el array de votos
                 votes_address_[i] = votes_address_[votes_address_.length - 1];
                 votes_address_.pop();
-                
-                // Guardar la dirección
-                deleted_votes_address_.push(voter);
-                votes_[voter].deleted = true;
-                
-                deleted = true;
+
                 break;
             }
         }
-
-        require(deleted == true, "Vote didn't exist");
     }
 
     function tally() external _ownerOnly _notEndend returns (string memory) {
