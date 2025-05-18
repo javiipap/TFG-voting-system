@@ -1,8 +1,7 @@
-import { env } from '@/env';
-import { callContract } from '@/lib/utils/call-contract';
+import { callContractWithNonce } from '@/lib/ethereum/call-contract';
 import { getElection, setResult } from '@/data-access/elections';
-import { Web3 } from 'web3';
-import { getContractInfo } from '@/lib/utils/get-contract-info';
+import { getAccount } from '@/data-access/accounts';
+import { contractGetter } from '@/lib/ethereum/contract-getter';
 
 export function createReference({ electionId }: { electionId: number }) {
   return `tally_${electionId}`;
@@ -19,18 +18,21 @@ export async function handler({ electionId }: { electionId: number }) {
     throw new Error(`Election ${electionId} hasn't been deployed`);
   }
 
-  await callContract(
-    env.ETH_ACCOUNT,
-    env.ETH_PRIV,
+  const account = await getAccount(false);
+
+  if (!account) {
+    throw new Error("Couldn't retrieve admin ETH account");
+  }
+
+  await callContractWithNonce(
+    account.addr,
+    account.privateKey,
     election.contractAddr,
-    'tally'
+    'tally',
+    account.nonce
   );
 
-  const web3 = new Web3(env.NEXT_PUBLIC_ETH_HOST);
-  const { abi } = await getContractInfo();
-  const contract = new web3.eth.Contract(abi, election.contractAddr);
-
-  const result = (await contract.methods.result_().call()) as string;
+  const result = await contractGetter(election.contractAddr, 'result_');
 
   if (!result) {
     throw new Error('Unexpected error while retrieving result');

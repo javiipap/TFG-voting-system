@@ -1,0 +1,13 @@
+{
+  "name": "server_utilities",
+  "version": "0.0.0",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "napi": {
+    "name": "server_utilities",
+    "triples": {}
+  },
+  "ava": {
+    "timeout": "3m"
+  }
+}

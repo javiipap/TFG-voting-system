@@ -2,9 +2,9 @@
   {
     "inputs": [
       {
-        "internalType": "uint64",
+        "internalType": "uint256",
         "name": "candidates_count",
-        "type": "uint64"
+        "type": "uint256"
       },
       {
         "internalType": "string",
@@ -12,13 +12,37 @@
         "type": "string"
       },
       {
-        "internalType": "string",
+        "internalType": "bytes",
         "name": "public_key",
-        "type": "string"
+        "type": "bytes"
+      },
+      {
+        "internalType": "bytes",
+        "name": "rsa_public_key",
+        "type": "bytes"
       }
     ],
     "stateMutability": "nonpayable",
     "type": "constructor"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_addr",
+        "type": "address"
+      }
+    ],
+    "name": "addressToString",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function"
   },
   {
     "inputs": [
@@ -83,9 +107,9 @@
     "name": "public_key_",
     "outputs": [
       {
-        "internalType": "string",
+        "internalType": "bytes",
         "name": "",
-        "type": "string"
+        "type": "bytes"
       }
     ],
     "stateMutability": "view",
@@ -119,6 +143,19 @@
   },
   {
     "inputs": [],
+    "name": "rsa_public_key_",
+    "outputs": [
+      {
+        "internalType": "bytes",
+        "name": "",
+        "type": "bytes"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "tally",
     "outputs": [
       {
@@ -131,11 +168,34 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "test",
+    "outputs": [
+      {
+        "internalType": "bytes",
+        "name": "",
+        "type": "bytes"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
-        "internalType": "string",
+        "internalType": "bytes",
         "name": "ballot",
-        "type": "string"
+        "type": "bytes"
+      },
+      {
+        "internalType": "uint256",
+        "name": "iat_offset",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bytes",
+        "name": "signature",
+        "type": "bytes"
       }
     ],
     "name": "vote",
@@ -154,9 +214,9 @@
     "name": "votes_",
     "outputs": [
       {
-        "internalType": "string",
+        "internalType": "bytes",
         "name": "ballot",
-        "type": "string"
+        "type": "bytes"
       },
       {
         "internalType": "bool",

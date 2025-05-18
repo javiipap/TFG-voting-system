@@ -10,10 +10,9 @@
  *
  */
 
-import { Web3 } from 'web3';
-import { env } from '@/env';
 import { publicKeyCreate } from 'secp256k1';
 import load_wasm, { ecc_encrypt } from 'client_utilities';
+import { createEthAccount } from '@/lib/ethereum';
 
 const encryptSecret = async (privateKey: string) => {
   await load_wasm();
@@ -26,8 +25,7 @@ const encryptSecret = async (privateKey: string) => {
 };
 
 export const createAccount = async () => {
-  const web3 = new Web3(env.NEXT_PUBLIC_ETH_HOST);
-  const account = web3.eth.accounts.create();
+  const account = createEthAccount();
 
   return {
     addr: account.address,

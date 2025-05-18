@@ -1,0 +1,24 @@
+---
+name: e3vote
+
+services:
+  web:
+    build: .
+    container_name: web
+
+  rev_proxy:
+    container_name: reverse-proxy
+    image: nginx
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - /path/to/certs:/etc/certs
+
+  database:
+    container_name: database
+    image: postgres
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: password

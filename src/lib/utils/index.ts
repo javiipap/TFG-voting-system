@@ -26,3 +26,28 @@ export const downloadFile = (content: string) => {
     new Blob([content], { type: 'text/plain' })
   );
 };
+
+export const retry = async <T>(
+  callback: () => Promise<T>,
+  maxAttempts: number = -1
+) => {
+  for (let i = 0; i < maxAttempts || maxAttempts === -1; i++) {
+    try {
+      return await callback();
+    } catch (e) {
+      if (i === maxAttempts - 1) {
+        throw e;
+      }
+
+      sleep(i * 1000 + Math.random() * 100);
+    }
+  }
+
+  throw new Error('Retry function exited unexpectedly');
+};
+
+export const sleep = async (ms: number) =>
+  new Promise((r) => setTimeout(r, ms));
+
+export const getRandomElement = (array: Array<any>) =>
+  array[Math.floor(Math.random() * array.length)];

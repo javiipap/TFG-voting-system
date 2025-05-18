@@ -1,0 +1,802 @@
+[
+  {
+    "accountCreation": 143.87684099999933,
+    "ballotCreation": 76.01098000000093,
+    "grantAccount": 12829.937558000001,
+    "gasCalculation": 410.4673269999985,
+    "accountFund": 12064.189479999997,
+    "castVote": 13397.034398000003
+  },
+  {
+    "accountCreation": 136.87307200000032,
+    "ballotCreation": 74.86842100000104,
+    "grantAccount": 12835.725707000001,
+    "gasCalculation": 402.6145429999997,
+    "accountFund": 12090.899041,
+    "castVote": 13369.612165999999
+  },
+  {
+    "accountCreation": 132.36405399999967,
+    "ballotCreation": 74.14877999999953,
+    "grantAccount": 12975.811983,
+    "gasCalculation": 286.0087540000022,
+    "accountFund": 12118.298060999998,
+    "castVote": 13316.826635999998
+  },
+  {
+    "accountCreation": 129.1031409999996,
+    "ballotCreation": 73.49199500000032,
+    "grantAccount": 13176.536596,
+    "gasCalculation": 180.64806599999793,
+    "accountFund": 12123.030353000002,
+    "castVote": 26154.584481000005
+  },
+  {
+    "accountCreation": 125.54046500000004,
+    "ballotCreation": 72.81003899999996,
+    "grantAccount": 12823.489192,
+    "gasCalculation": 414.783367,
+    "accountFund": 12220.191663999998,
+    "castVote": 13259.906537000003
+  },
+  {
+    "accountCreation": 123.87470399999984,
+    "ballotCreation": 72.13922699999966,
+    "grantAccount": 13153.540538999998,
+    "gasCalculation": 175.9700939999966,
+    "accountFund": 12096.306727000003,
+    "castVote": 13281.178641999999
+  },
+  {
+    "accountCreation": 121.06944400000066,
+    "ballotCreation": 71.49685299999874,
+    "grantAccount": 12838.000269000002,
+    "gasCalculation": 400.6522839999998,
+    "accountFund": 12059.441281,
+    "castVote": 13396.322603
+  },
+  {
+    "accountCreation": 118.93141999999898,
+    "ballotCreation": 70.8627800000013,
+    "grantAccount": 13006.124337000001,
+    "gasCalculation": 270.9265260000029,
+    "accountFund": 12054.711406000002,
+    "castVote": 13363.690912999999
+  },
+  {
+    "accountCreation": 116.8512410000003,
+    "ballotCreation": 70.21329400000104,
+    "grantAccount": 12929.825748,
+    "gasCalculation": 363.47647799999686,
+    "accountFund": 12090.306845,
+    "castVote": 26233.2871
+  },
+  {
+    "accountCreation": 113.72861999999986,
+    "ballotCreation": 69.5863019999997,
+    "grantAccount": 12897.644393000002,
+    "gasCalculation": 382.81353500000114,
+    "accountFund": 12053.717720999997,
+    "castVote": 26295.298666999995
+  },
+  {
+    "accountCreation": 112.18525300000147,
+    "ballotCreation": 68.93137800000113,
+    "grantAccount": 12843.822051,
+    "gasCalculation": 388.52984500000093,
+    "accountFund": 12055.403248999999,
+    "castVote": 13409.239506999998
+  },
+  {
+    "accountCreation": 110.7768730000007,
+    "ballotCreation": 68.23612999999932,
+    "grantAccount": 12833.343481999998,
+    "gasCalculation": 404.3154800000011,
+    "accountFund": 12103.561313000002,
+    "castVote": 13357.209485
+  },
+  {
+    "accountCreation": 108.30765900000006,
+    "ballotCreation": 67.539444,
+    "grantAccount": 12986.598401000001,
+    "gasCalculation": 277.81876900000134,
+    "accountFund": 12053.305559999997,
+    "castVote": 13375.867544
+  },
+  {
+    "accountCreation": 107.27692799999932,
+    "ballotCreation": 66.80250499999966,
+    "grantAccount": 13085.442576999998,
+    "gasCalculation": 222.3594959999973,
+    "accountFund": 12113.499858999996,
+    "castVote": 26193.768314
+  },
+  {
+    "accountCreation": 105.0775279999998,
+    "ballotCreation": 65.90604900000108,
+    "grantAccount": 12962.230227,
+    "gasCalculation": 287.8271769999992,
+    "accountFund": 12038.275566999997,
+    "castVote": 13394.387390999997
+  },
+  {
+    "accountCreation": 104.09040699999969,
+    "ballotCreation": 65.07479200000125,
+    "grantAccount": 12910.000810000001,
+    "gasCalculation": 364.5640459999995,
+    "accountFund": 12082.021495,
+    "castVote": 26256.484911
+  },
+  {
+    "accountCreation": 103.1345399999991,
+    "ballotCreation": 64.38717100000031,
+    "grantAccount": 12891.810683,
+    "gasCalculation": 379.69281200000114,
+    "accountFund": 12059.001016000002,
+    "castVote": 13348.396949999995
+  },
+  {
+    "accountCreation": 102.0159050000002,
+    "ballotCreation": 63.63475899999867,
+    "grantAccount": 12888.601327,
+    "gasCalculation": 387.710836000002,
+    "accountFund": 12020.545447,
+    "castVote": 13383.144339999999
+  },
+  {
+    "accountCreation": 100.56564900000012,
+    "ballotCreation": 62.79044100000101,
+    "grantAccount": 13104.303263,
+    "gasCalculation": 205.53698599999916,
+    "accountFund": 12106.667039999997,
+    "castVote": 26197.075463
+  },
+  {
+    "accountCreation": 99.33972200000062,
+    "ballotCreation": 62.009776000000784,
+    "grantAccount": 12836.306166,
+    "gasCalculation": 394.3245079999979,
+    "accountFund": 12106.252703000002,
+    "castVote": 26275.546886000004
+  },
+  {
+    "accountCreation": 96.96587499999987,
+    "ballotCreation": 61.33849399999963,
+    "grantAccount": 12985.800408000001,
+    "gasCalculation": 272.3729920000005,
+    "accountFund": 12040.945972000001,
+    "castVote": 13400.161923
+  },
+  {
+    "accountCreation": 96.04462799999965,
+    "ballotCreation": 60.66413900000043,
+    "grantAccount": 12967.479131,
+    "gasCalculation": 282.46165800000017,
+    "accountFund": 12042.584227,
+    "castVote": 13385.539138
+  },
+  {
+    "accountCreation": 95.04720799999996,
+    "ballotCreation": 59.67996899999889,
+    "grantAccount": 12892.581097,
+    "gasCalculation": 383.1674630000016,
+    "accountFund": 12061.622610999999,
+    "castVote": 13336.223716
+  },
+  {
+    "accountCreation": 93.58427800000027,
+    "ballotCreation": 58.21373799999856,
+    "grantAccount": 13121.506203,
+    "gasCalculation": 202.8039749999989,
+    "accountFund": 12100.262211999998,
+    "castVote": 26185.338267
+  },
+  {
+    "accountCreation": 92.41505599999982,
+    "ballotCreation": 57.149397000001045,
+    "grantAccount": 12825.446874,
+    "gasCalculation": 398.71346899999844,
+    "accountFund": 12125.029243000004,
+    "castVote": 26261.086494999996
+  },
+  {
+    "accountCreation": 89.7197240000005,
+    "ballotCreation": 56.26428699999997,
+    "grantAccount": 12900.032966,
+    "gasCalculation": 367.5307009999997,
+    "accountFund": 12127.297376000002,
+    "castVote": 13278.384462000002
+  },
+  {
+    "accountCreation": 88.69727799999964,
+    "ballotCreation": 55.596519000000626,
+    "grantAccount": 12814.760079000001,
+    "gasCalculation": 398.09892000000036,
+    "accountFund": 12074.590976,
+    "castVote": 13393.524637000002
+  },
+  {
+    "accountCreation": 87.72893000000113,
+    "ballotCreation": 54.944980999998734,
+    "grantAccount": 13026.235085,
+    "gasCalculation": 257.0366890000005,
+    "accountFund": 12112.464454,
+    "castVote": 13300.337031999996
+  },
+  {
+    "accountCreation": 86.84055500000068,
+    "ballotCreation": 54.2609220000013,
+    "grantAccount": 13057.375265,
+    "gasCalculation": 236.0460529999982,
+    "accountFund": 12021.049193000003,
+    "castVote": 13365.895293999994
+  },
+  {
+    "accountCreation": 85.96487299999899,
+    "ballotCreation": 53.523409999999785,
+    "grantAccount": 13040.539760000001,
+    "gasCalculation": 239.17616499999713,
+    "accountFund": 12027.108934000004,
+    "castVote": 13367.073589000007
+  },
+  {
+    "accountCreation": 83.56363599999895,
+    "ballotCreation": 52.72174099999938,
+    "grantAccount": 13086.257159,
+    "gasCalculation": 212.70692600000257,
+    "accountFund": 12066.461217,
+    "castVote": 13329.607087999997
+  },
+  {
+    "accountCreation": 82.5608800000009,
+    "ballotCreation": 52.03617200000008,
+    "grantAccount": 12891.208539000001,
+    "gasCalculation": 375.5398419999983,
+    "accountFund": 12070.315765999996,
+    "castVote": 13356.787747000002
+  },
+  {
+    "accountCreation": 81.70500399999946,
+    "ballotCreation": 51.21141499999976,
+    "grantAccount": 13056.549114000001,
+    "gasCalculation": 228.49840699999913,
+    "accountFund": 12118.516354,
+    "castVote": 13263.264595
+  },
+  {
+    "accountCreation": 80.86424000000079,
+    "ballotCreation": 50.47526400000061,
+    "grantAccount": 13057.996217,
+    "gasCalculation": 230.36771299999964,
+    "accountFund": 12049.595328,
+    "castVote": 13329.447525999996
+  },
+  {
+    "accountCreation": 79.97108099999969,
+    "ballotCreation": 49.789380999998684,
+    "grantAccount": 12995.587789,
+    "gasCalculation": 256.8134310000023,
+    "accountFund": 12065.008949,
+    "castVote": 26285.500857
+  },
+  {
+    "accountCreation": 77.0066169999991,
+    "ballotCreation": 49.143833999998606,
+    "grantAccount": 13021.435608000002,
+    "gasCalculation": 251.2353170000024,
+    "accountFund": 12088.292248000002,
+    "castVote": 13323.694559000003
+  },
+  {
+    "accountCreation": 75.8362219999999,
+    "ballotCreation": 48.50371499999892,
+    "grantAccount": 13060.349393,
+    "gasCalculation": 226.6169090000003,
+    "accountFund": 12054.689351000005,
+    "castVote": 26256.628658
+  },
+  {
+    "accountCreation": 74.88563299999987,
+    "ballotCreation": 47.831232000000455,
+    "grantAccount": 12823.76453,
+    "gasCalculation": 384.7670880000005,
+    "accountFund": 12064.162568999996,
+    "castVote": 13392.072243000002
+  },
+  {
+    "accountCreation": 73.66010599999936,
+    "ballotCreation": 47.139837999999145,
+    "grantAccount": 13043.289236000002,
+    "gasCalculation": 234.5219219999999,
+    "accountFund": 12076.420179999997,
+    "castVote": 13327.034065
+  },
+  {
+    "accountCreation": 72.63806600000134,
+    "ballotCreation": 46.31453499999952,
+    "grantAccount": 13004.140425999998,
+    "gasCalculation": 271.9700159999993,
+    "accountFund": 12126.475592000003,
+    "castVote": 13255.556649999999
+  },
+  {
+    "accountCreation": 69.85854199999994,
+    "ballotCreation": 45.65555100000165,
+    "grantAccount": 13072.263288,
+    "gasCalculation": 216.5951380000006,
+    "accountFund": 12034.691226000003,
+    "castVote": 13336.298990999996
+  },
+  {
+    "accountCreation": 68.77834200000143,
+    "ballotCreation": 45.032264999999825,
+    "grantAccount": 13114.198010999999,
+    "gasCalculation": 184.1795979999988,
+    "accountFund": 12120.665380000002,
+    "castVote": 26177.50234
+  },
+  {
+    "accountCreation": 67.79993300000024,
+    "ballotCreation": 44.32899699999871,
+    "grantAccount": 13037.307389,
+    "gasCalculation": 246.7074390000016,
+    "accountFund": 12099.645047000002,
+    "castVote": 13285.557473
+  },
+  {
+    "accountCreation": 66.89785200000006,
+    "ballotCreation": 43.46065300000009,
+    "grantAccount": 13003.578056000002,
+    "gasCalculation": 260.6064349999979,
+    "accountFund": 12141.039047999999,
+    "castVote": 26185.863934
+  },
+  {
+    "accountCreation": 65.95223400000032,
+    "ballotCreation": 42.180326000001514,
+    "grantAccount": 12978.51916,
+    "gasCalculation": 269.32843400000274,
+    "accountFund": 12045.665622,
+    "castVote": 26296.981648
+  },
+  {
+    "accountCreation": 65.03355600000032,
+    "ballotCreation": 41.43014299999959,
+    "grantAccount": 13028.767906000001,
+    "gasCalculation": 245.61395600000105,
+    "accountFund": 12135.722563999996,
+    "castVote": 26181.509101000003
+  },
+  {
+    "accountCreation": 63.983047000001534,
+    "ballotCreation": 40.59932100000151,
+    "grantAccount": 12948.961834,
+    "gasCalculation": 277.2939719999995,
+    "accountFund": 12190.010969999996,
+    "castVote": 13252.007844
+  },
+  {
+    "accountCreation": 62.91958499999964,
+    "ballotCreation": 39.887119000000894,
+    "grantAccount": 12926.311509,
+    "gasCalculation": 290.9518379999972,
+    "accountFund": 12112.429070999999,
+    "castVote": 26248.357261999998
+  },
+  {
+    "accountCreation": 61.880153000000064,
+    "ballotCreation": 39.121876999999586,
+    "grantAccount": 13116.160547,
+    "gasCalculation": 177.10975699999835,
+    "accountFund": 12135.716056000001,
+    "castVote": 26147.778512000004
+  },
+  {
+    "accountCreation": 60.81952900000033,
+    "ballotCreation": 38.24331500000153,
+    "grantAccount": 13089.628024999998,
+    "gasCalculation": 212.26741500000207,
+    "accountFund": 12118.072745000005,
+    "castVote": 26166.30178
+  },
+  {
+    "accountCreation": 59.7731930000009,
+    "ballotCreation": 37.41597999999976,
+    "grantAccount": 13125.241798000001,
+    "gasCalculation": 178.3833029999987,
+    "accountFund": 12117.388110000004,
+    "castVote": 13251.960394000002
+  },
+  {
+    "accountCreation": 57.007589999999254,
+    "ballotCreation": 36.64793800000007,
+    "grantAccount": 13067.34488,
+    "gasCalculation": 214.5544399999999,
+    "accountFund": 12093.756556,
+    "castVote": 13292.250376999997
+  },
+  {
+    "accountCreation": 56.020329999999376,
+    "ballotCreation": 35.92957100000058,
+    "grantAccount": 13132.060893,
+    "gasCalculation": 186.50137600000016,
+    "accountFund": 12109.245752999996,
+    "castVote": 13216.570469000006
+  },
+  {
+    "accountCreation": 55.11835500000052,
+    "ballotCreation": 35.227670999998736,
+    "grantAccount": 13053.591245000001,
+    "gasCalculation": 220.801660000001,
+    "accountFund": 12116.382894000002,
+    "castVote": 13253.388197
+  },
+  {
+    "accountCreation": 54.263747999999396,
+    "ballotCreation": 34.53259199999957,
+    "grantAccount": 12993.066414,
+    "gasCalculation": 246.31754899999942,
+    "accountFund": 12073.674143,
+    "castVote": 13352.460406999999
+  },
+  {
+    "accountCreation": 53.40021499999966,
+    "ballotCreation": 33.79515100000026,
+    "grantAccount": 13115.85766,
+    "gasCalculation": 180.52822799999922,
+    "accountFund": 12111.348842,
+    "castVote": 26160.182885000002
+  },
+  {
+    "accountCreation": 52.39199100000042,
+    "ballotCreation": 33.097929999999906,
+    "grantAccount": 13038.021596999999,
+    "gasCalculation": 235.68410399999993,
+    "accountFund": 12127.724867,
+    "castVote": 13254.102743999996
+  },
+  {
+    "accountCreation": 51.365631000000576,
+    "ballotCreation": 32.36420700000053,
+    "grantAccount": 13077.570422,
+    "gasCalculation": 202.97434999999678,
+    "accountFund": 12118.493122999997,
+    "castVote": 26180.107248
+  },
+  {
+    "accountCreation": 50.37756199999967,
+    "ballotCreation": 31.556362999999692,
+    "grantAccount": 13111.309063,
+    "gasCalculation": 175.11881100000028,
+    "accountFund": 12133.201111999995,
+    "castVote": 26159.109701
+  },
+  {
+    "accountCreation": 49.37450699999863,
+    "ballotCreation": 30.791221999999834,
+    "grantAccount": 13070.487207999999,
+    "gasCalculation": 204.30908799999816,
+    "accountFund": 12094.644685000003,
+    "castVote": 13293.996635000003
+  },
+  {
+    "accountCreation": 48.082887999999,
+    "ballotCreation": 30.073531000000003,
+    "grantAccount": 13058.494284999999,
+    "gasCalculation": 214.88866300000154,
+    "accountFund": 12148.442272999997,
+    "castVote": 26153.783976
+  },
+  {
+    "accountCreation": 45.06474100000014,
+    "ballotCreation": 29.362348000000566,
+    "grantAccount": 13106.763340999998,
+    "gasCalculation": 188.8964589999996,
+    "accountFund": 12118.812182999998,
+    "castVote": 26164.651642000004
+  },
+  {
+    "accountCreation": 43.222382999998445,
+    "ballotCreation": 28.66285500000049,
+    "grantAccount": 12938.165643000002,
+    "gasCalculation": 276.92211999999927,
+    "accountFund": 12070.503023999998,
+    "castVote": 13365.360762000004
+  },
+  {
+    "accountCreation": 41.83566400000018,
+    "ballotCreation": 27.93121699999938,
+    "grantAccount": 13004.267697,
+    "gasCalculation": 254.54418499999883,
+    "accountFund": 12107.105743999997,
+    "castVote": 13271.207823999997
+  },
+  {
+    "accountCreation": 40.551847999999154,
+    "ballotCreation": 27.209765999999945,
+    "grantAccount": 12806.186071000002,
+    "gasCalculation": 382.62071399999695,
+    "accountFund": 12120.366642,
+    "castVote": 13328.095113999996
+  },
+  {
+    "accountCreation": 39.63546099999985,
+    "ballotCreation": 26.48381799999879,
+    "grantAccount": 12912.24696,
+    "gasCalculation": 287.0923650000004,
+    "accountFund": 12115.349562,
+    "castVote": 13334.220167000007
+  },
+  {
+    "accountCreation": 38.7451119999987,
+    "ballotCreation": 25.572752000000037,
+    "grantAccount": 12923.700963,
+    "gasCalculation": 288.41614400000253,
+    "accountFund": 12113.242837000002,
+    "castVote": 13308.367483000002
+  },
+  {
+    "accountCreation": 37.26090099999965,
+    "ballotCreation": 24.6378050000003,
+    "grantAccount": 13084.211657,
+    "gasCalculation": 202.04671600000074,
+    "accountFund": 12098.945240999998,
+    "castVote": 13269.998201000002
+  },
+  {
+    "accountCreation": 36.3571179999999,
+    "ballotCreation": 23.891351000000213,
+    "grantAccount": 12901.128456,
+    "gasCalculation": 305.08863199999905,
+    "accountFund": 12046.058697,
+    "castVote": 13388.199448
+  },
+  {
+    "accountCreation": 35.36047400000098,
+    "ballotCreation": 23.17459500000041,
+    "grantAccount": 13061.592607,
+    "gasCalculation": 205.11307399999714,
+    "accountFund": 12095.345550999999,
+    "castVote": 13266.054069000005
+  },
+  {
+    "accountCreation": 34.43993600000067,
+    "ballotCreation": 22.385260999999446,
+    "grantAccount": 12869.677033000002,
+    "gasCalculation": 363.8620119999978,
+    "accountFund": 12129.379214,
+    "castVote": 13264.530682999997
+  },
+  {
+    "accountCreation": 33.585456000000704,
+    "ballotCreation": 21.23356899999999,
+    "grantAccount": 12913.446664,
+    "gasCalculation": 287.32170999999653,
+    "accountFund": 12151.483937,
+    "castVote": 26210.685856999997
+  },
+  {
+    "accountCreation": 29.961871000001338,
+    "ballotCreation": 20.500159000001076,
+    "grantAccount": 12954.429244,
+    "gasCalculation": 267.25894199999675,
+    "accountFund": 12093.833652999998,
+    "castVote": 26246.150591999998
+  },
+  {
+    "accountCreation": 29.058831000000282,
+    "ballotCreation": 19.79063899999892,
+    "grantAccount": 12790.995182,
+    "gasCalculation": 383.53645099999994,
+    "accountFund": 12147.443251,
+    "castVote": 13324.801400000004
+  },
+  {
+    "accountCreation": 28.19905699999981,
+    "ballotCreation": 19.056352999999945,
+    "grantAccount": 12950.074363000002,
+    "gasCalculation": 260.68743899999754,
+    "accountFund": 12063.199001,
+    "castVote": 13354.019660999998
+  },
+  {
+    "accountCreation": 27.31768000000011,
+    "ballotCreation": 18.300602999999683,
+    "grantAccount": 13000.814061,
+    "gasCalculation": 234.77577499999825,
+    "accountFund": 12141.355461,
+    "castVote": 13267.872973999998
+  },
+  {
+    "accountCreation": 26.471482000000833,
+    "ballotCreation": 17.663942999999563,
+    "grantAccount": 13076.169057999998,
+    "gasCalculation": 190.7226750000009,
+    "accountFund": 12136.447615000001,
+    "castVote": 26144.902910999997
+  },
+  {
+    "accountCreation": 25.53688300000067,
+    "ballotCreation": 17.02009899999939,
+    "grantAccount": 12963.168881999998,
+    "gasCalculation": 262.0966929999995,
+    "accountFund": 12037.819259,
+    "castVote": 13361.703501000004
+  },
+  {
+    "accountCreation": 24.688412999999855,
+    "ballotCreation": 16.38009300000158,
+    "grantAccount": 12927.764342,
+    "gasCalculation": 276.9726179999998,
+    "accountFund": 12045.194244000002,
+    "castVote": 13374.108774
+  },
+  {
+    "accountCreation": 23.80510200000026,
+    "ballotCreation": 15.732060000000274,
+    "grantAccount": 38563.764209,
+    "gasCalculation": 112.04473699999653,
+    "accountFund": 13371.441912999995,
+    "castVote": 12517.342131999998
+  },
+  {
+    "accountCreation": 22.989396000000852,
+    "ballotCreation": 15.102888999999777,
+    "grantAccount": 38439.860827,
+    "gasCalculation": 211.0394460000025,
+    "accountFund": 13352.743696999998,
+    "castVote": 12554.895853000002
+  },
+  {
+    "accountCreation": 21.986398999999437,
+    "ballotCreation": 14.350288999999975,
+    "grantAccount": 38581.431386,
+    "gasCalculation": 85.13364699999511,
+    "accountFund": 13368.369014000004,
+    "castVote": 12524.825696999993
+  },
+  {
+    "accountCreation": 18.873515999999654,
+    "ballotCreation": 13.62478899999951,
+    "grantAccount": 38531.721865,
+    "gasCalculation": 143.97311799999443,
+    "accountFund": 13353.188487,
+    "castVote": 12528.319711999997
+  },
+  {
+    "accountCreation": 17.750025000001187,
+    "ballotCreation": 12.97019999999975,
+    "grantAccount": 38502.712,
+    "gasCalculation": 163.50848399999813,
+    "accountFund": 13364.469549000001,
+    "castVote": 12526.721934999994
+  },
+  {
+    "accountCreation": 16.815230000000156,
+    "ballotCreation": 12.332722000001013,
+    "grantAccount": 38530.989034,
+    "gasCalculation": 127.10491400000319,
+    "accountFund": 13357.510273,
+    "castVote": 12533.586226000007
+  },
+  {
+    "accountCreation": 15.988122999999177,
+    "ballotCreation": 11.684567000000243,
+    "grantAccount": 38590.928521,
+    "gasCalculation": 68.7542900000044,
+    "accountFund": 13345.358527000004,
+    "castVote": 12543.007569000001
+  },
+  {
+    "accountCreation": 14.99752400000034,
+    "ballotCreation": 11.02980899999966,
+    "grantAccount": 38565.986153000005,
+    "gasCalculation": 96.35181000000011,
+    "accountFund": 13353.895422000001,
+    "castVote": 12531.656654000006
+  },
+  {
+    "accountCreation": 14.122819000000163,
+    "ballotCreation": 10.392047999999704,
+    "grantAccount": 38462.083311,
+    "gasCalculation": 186.9984689999983,
+    "accountFund": 13361.509356999995,
+    "castVote": 12540.033072999999
+  },
+  {
+    "accountCreation": 13.319733999998789,
+    "ballotCreation": 9.706260000000839,
+    "grantAccount": 38454.701387,
+    "gasCalculation": 195.4431029999978,
+    "accountFund": 13368.092150000004,
+    "castVote": 12529.605809999994
+  },
+  {
+    "accountCreation": 12.50388600000042,
+    "ballotCreation": 8.964912000001277,
+    "grantAccount": 38449.851902,
+    "gasCalculation": 196.69796200000565,
+    "accountFund": 13374.201196999995,
+    "castVote": 12530.614652999997
+  },
+  {
+    "accountCreation": 11.680331999999908,
+    "ballotCreation": 8.172915999999532,
+    "grantAccount": 38457.830308,
+    "gasCalculation": 182.66604700000607,
+    "accountFund": 13354.670020000005,
+    "castVote": 12552.400413000003
+  },
+  {
+    "accountCreation": 10.753978999999163,
+    "ballotCreation": 7.335092000001168,
+    "grantAccount": 38579.51328,
+    "gasCalculation": 82.23474899999565,
+    "accountFund": 13360.730634,
+    "castVote": 12524.970179999997
+  },
+  {
+    "accountCreation": 9.823114999999234,
+    "ballotCreation": 6.41004200000134,
+    "grantAccount": 38545.615823,
+    "gasCalculation": 120.64814299999853,
+    "accountFund": 13354.414874999995,
+    "castVote": 12528.954445000003
+  },
+  {
+    "accountCreation": 6.675537000000986,
+    "ballotCreation": 5.552295999999842,
+    "grantAccount": 38535.511998,
+    "gasCalculation": 127.2016089999961,
+    "accountFund": 13385.58715,
+    "castVote": 12502.815981
+  },
+  {
+    "accountCreation": 5.696890000001076,
+    "ballotCreation": 4.734451000000263,
+    "grantAccount": 38531.130702,
+    "gasCalculation": 125.54559300000255,
+    "accountFund": 13372.349956999999,
+    "castVote": 12519.869099999996
+  },
+  {
+    "accountCreation": 4.867329999999129,
+    "ballotCreation": 3.808350999999675,
+    "grantAccount": 38564.984637,
+    "gasCalculation": 101.14928499999951,
+    "accountFund": 13368.731669,
+    "castVote": 12514.998601999992
+  },
+  {
+    "accountCreation": 3.9744689999988623,
+    "ballotCreation": 3.101607000000513,
+    "grantAccount": 38436.288445,
+    "gasCalculation": 202.29633900000044,
+    "accountFund": 13355.703256,
+    "castVote": 12548.508547999998
+  },
+  {
+    "accountCreation": 3.04587999999967,
+    "ballotCreation": 2.2778920000000653,
+    "grantAccount": 38580.245676,
+    "gasCalculation": 75.66972899999382,
+    "accountFund": 13356.474672999997,
+    "castVote": 12531.569436999998
+  },
+  {
+    "accountCreation": 2.1592360000013286,
+    "ballotCreation": 1.484032999998817,
+    "grantAccount": 38537.500779,
+    "gasCalculation": 130.11484200000268,
+    "accountFund": 13367.205687000001,
+    "castVote": 12508.885642999994
+  },
+  {
+    "accountCreation": 1.2109139999993204,
+    "ballotCreation": 0.6984799999991083,
+    "grantAccount": 38570.19919100001,
+    "gasCalculation": 95.04149799999868,
+    "accountFund": 13389.867194999999,
+    "castVote": 12494.323307999999
+  }
+]

@@ -1,14 +1,13 @@
 'use client';
 
-import { requestPermissionAction } from '@/app/(public)/faucet/_actions';
-import { Button } from '@/components/ui/button';
+import { requestPermissionAction } from '@/app/(public)/faucet/actions';
 import { Textarea } from '@/components/ui/textarea';
 import { Separator } from '@/components/ui/separator';
 import { useAction } from 'next-safe-action/hooks';
 import { useToast } from '@/components/ui/use-toast';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { schema } from './validation';
+import { schema } from '@/app/(public)/faucet/validation';
 import {
   Form,
   FormControl,

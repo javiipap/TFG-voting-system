@@ -3,7 +3,7 @@ pragma solidity ^0.8.19;
 
 contract Election {
     struct Vote {
-        string ballot;
+        bytes ballot;
         bool deleted;
         bool granted;
     }
@@ -16,7 +16,8 @@ contract Election {
     address owner_;
     bool public ended_ = false;
     bytes public result_;
-    string public public_key_;
+    bytes public public_key_;
+    bytes public rsa_public_key_;
 
     modifier _ownerOnly() {
         require(msg.sender == owner_, "Only the owner can execute this method");
@@ -28,24 +29,80 @@ contract Election {
         _;
     }
 
-    constructor(uint64 candidates_count, string memory id, string memory public_key) {
+    function addressToString(address _addr) public pure returns (string memory) {
+        bytes memory data = abi.encodePacked(_addr);
+        bytes memory alphabet = "0123456789abcdef";
+
+        bytes memory str = new bytes(42);
+        str[0] = '0';
+        str[1] = 'x';
+
+        for (uint256 i = 0; i < 20; i++) {
+            str[2 + i * 2] = alphabet[uint8(data[i] >> 4)];
+            str[3 + i * 2] = alphabet[uint8(data[i] & 0x0f)];
+        }
+
+        return string(str);
+    }
+
+    constructor(uint256 candidates_count, string memory id, bytes memory public_key, bytes memory rsa_public_key) {
         owner_ = msg.sender;
         candidates_count_ = candidates_count;
         id_ = id;
         public_key_ = public_key;
+        rsa_public_key_ = rsa_public_key;
+
+        bytes memory generator_input = abi.encode(candidates_count);
+        uint256 generator_input_size = generator_input.length;
+
+        uint256 result_size = 80 * candidates_count_ + 8;
+        bytes memory result = new bytes(result_size);
+
+        assembly {
+            if iszero(staticcall(not(0), 0x12, add(generator_input, 0x20), generator_input_size, add(result, 0x20), result_size)) {
+                revert(0, 0)
+            }
+        }
+
+        result_ = result;
     }
 
     function grant(address addr) external _notEndend _ownerOnly {
         votes_[addr].granted = true;
     }
 
-    function vote(string calldata ballot) external _notEndend {
+    function vote(bytes calldata ballot , uint256 iat_offset, bytes calldata signature) external _notEndend {
         // Ya se ha emitido un voto con esta cuenta
         require(abi.encodePacked(votes_[msg.sender].ballot).length <= 0, "This account has already been used to vote");
         // Ya se ha emitido un voto con esta cuenta que ha sido borrado
         require(!votes_[msg.sender].deleted, "This account has been removed");
         // El usuario está autorizado a votar
-        require(votes_[msg.sender].granted, "This account hasn't been granted to vote");
+
+        require (block.timestamp > iat_offset, "The account hasn't reached the necesary delay since creation");
+
+        bytes memory ticket = abi.encode(addressToString(msg.sender), id_, iat_offset);
+        bytes memory verify_sig_props = abi.encode(rsa_public_key_, ticket, signature);
+        uint256 verify_sig_props_len = verify_sig_props.length;
+        uint[1] memory verified;
+
+        assembly {
+            if iszero(staticcall(not(0), 0x15, add(verify_sig_props, 0x20), verify_sig_props_len, verified, 0x20)) {
+                revert(0, 0)
+            }
+        }
+
+        require(verified[0] == 1, "Invalid server signature");
+        
+        bytes memory verify_ballot_props = abi.encode(candidates_count_, public_key_, ballot);
+        uint256 verify_ballot_props_len = verify_ballot_props.length;
+
+        assembly {
+            if iszero(staticcall(not(0), 0x14, add(verify_ballot_props, 0x20), verify_ballot_props_len, verified, 0x20)) {
+                revert(0, 0)
+            }
+        }
+
+        require(verified[0] == 1, "Invalid ballot");
 
         votes_[msg.sender].ballot = ballot;
         votes_address_.push(msg.sender);
@@ -66,73 +123,27 @@ contract Election {
         }
     }
 
+    function test() view public returns (bytes memory) {
+        return votes_[votes_address_[0]].ballot;
+    }
+
     function tally() external _ownerOnly _notEndend returns (string memory) {
-        uint256 result_size = (129 * candidates_count_) + 1;
-        bytes memory result = new bytes(result_size);
-
-        uint256 ballot_size = bytes(votes_[votes_address_[0]].ballot).length;
-        
-        bytes memory sum_input = new bytes(ballot_size + result_size + 64);
-        uint256 sum_input_size = sum_input.length + 32;
-
-        bytes memory public_key = bytes(public_key_);
-        uint256 public_key_size = public_key.length + 32;
- 
-        bytes memory verify_input = new bytes(public_key_size + ballot_size + 64);
-        uint256 verify_input_size = verify_input.length + 32;
-
-        uint256 candidates_count = candidates_count_;
-
-        // Crear input pk + n_candidatos + voto
-        for (uint j = 32; j < public_key_size + 32; j += 32) {
-            assembly {
-                mstore(add(verify_input, j), mload(add(public_key, sub(j, 32))))
-            }
-        }
-
-        assembly {
-            mstore(add(verify_input, add(public_key_size, 32)), candidates_count)
-        }
+        bytes memory result = result_;
+        uint256 result_len = result.length;
 
         for (uint i = 0; i < votes_address_.length; i++) {
-            string memory ballot = votes_[votes_address_[i]].ballot;
-
-            // Añadir voto a verify_input
-            for (uint j = public_key_size + 64; j < public_key_size + ballot_size + 96; j += 32) {
-                assembly {
-                    mstore(add(verify_input, j), mload(add(ballot, sub(j, add(public_key_size, 64)))))
-                }
-            }
-
-            // Crear sum_input voto + result
-            for (uint j = 32; j < ballot_size + 64; j += 32) {
-                assembly {
-                    mstore(add(sum_input, j), mload(add(ballot, sub(j, 32))))
-                }
-            }
-            for (uint j = 64 + ballot_size; j < result_size + ballot_size + 96; j += 32) {
-                assembly {
-                    mstore(add(sum_input, j), mload(add(result, sub(j, add(64, ballot_size)))))
-                }
-            }
-
-            uint[1] memory verified;
+            bytes memory add_props = abi.encode(result, votes_[votes_address_[i]].ballot);
+            uint256 add_props_len = add_props.length;
 
             assembly {
-                if iszero(staticcall(not(0), 0xc, verify_input, verify_input_size, verified, 32)) {
+                if iszero(staticcall(not(0), 0x13, add(add_props, 0x20), add_props_len, add(result, 0x20), result_len)) {
                     revert(0, 0)
-                }
-
-                if eq(mload(verified), 1) {
-                    if iszero(staticcall(not(0), 0xb, sum_input, sum_input_size, add(result, 32), result_size)) {
-                        revert(0, 0)
-                    }
                 }
             }
         }
 
-        // ended_ = true;
         result_ = result;
+
         return string(result);
     }
 }

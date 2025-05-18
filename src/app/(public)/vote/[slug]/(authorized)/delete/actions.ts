@@ -3,10 +3,10 @@
 import { schema } from '@/app/(public)/vote/[slug]/(authorized)/delete/validation';
 import { ActionError, authenticatedAction } from '@/lib/safe-action';
 import { ecc_decrypt } from 'server_utilities';
-import { callContract } from '@/lib/utils/call-contract';
-import { env } from '@/env';
-import { Web3 } from 'web3';
+import { callContractWithNonce } from '@/lib/ethereum/call-contract';
 import { deleteBallot, getBallot, getElection } from '@/data-access/elections';
+import { privateKeyToAddress } from '@/lib/ethereum';
+import { getAccount } from '@/data-access/accounts';
 
 export const requestDeleteAction = authenticatedAction(
   schema,
@@ -34,13 +34,20 @@ export const requestDeleteAction = authenticatedAction(
       throw new ActionError("Account don't match");
     }
 
-    const addr = new Web3().eth.accounts.privateKeyToAccount(sk).address;
+    const addr = privateKeyToAddress(sk);
 
-    await callContract(
-      env.ETH_ACCOUNT,
-      env.ETH_PRIV,
+    const account = await getAccount(false);
+
+    if (!account) {
+      throw new Error("Couldn't retrieve admin ETH account");
+    }
+
+    await callContractWithNonce(
+      account.addr,
+      account.privateKey,
       election.contractAddr || '',
       'revoke',
+      account.nonce,
       addr
     );
 

@@ -80,7 +80,7 @@ export const votes = pgTable(
     electionId: integer('election_id')
       .references(() => elections.id, { onDelete: 'cascade' })
       .notNull(),
-    encryptedEthSecret: text('encrypted_eth_secret').notNull(),
+    encryptedEthSecret: text('encrypted_eth_secret').notNull(), // TODO: Eliminar y usar ZKP
     recoveryEthSecret: text('recovery_eth_secret').notNull(),
   },
   (table) => ({
@@ -102,6 +102,15 @@ export const issuedTickets = pgTable('issued_tickets', {
     onDelete: 'set null',
   }),
 });
+
+export const accounts = pgTable('eth_accounts', {
+  id: serial('id').primaryKey(),
+  addr: text('addr').unique().notNull(),
+  privateKey: text('private_key').unique().notNull(),
+  nonce: integer('nonce').default(0).notNull(),
+});
+
+export type Account = typeof accounts.$inferSelect;
 
 const jobStatus = ['idle', 'executing', 'success', 'error'] as const;
 

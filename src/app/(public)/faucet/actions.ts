@@ -3,9 +3,9 @@
 import { storeTicket } from '@/data-access/elections';
 import { verify } from 'server_utilities';
 import { Ticket } from '@/tfg-types';
-import { sendWei } from './sendWei';
-import { calculateGas } from '@/app/(public)/faucet/_actions/calculateGas';
-import { grantPermissions } from './grantPermissions';
+import { sendWei } from '@/lib/ethereum/send-wei';
+import { calculateGas } from '@/lib/ethereum/calculate-gas';
+import { grantPermissions } from '@/lib/ethereum/grant-permissions';
 import { ActionError, unauthenticatedAction } from '@/lib/safe-action';
 import { schema as requestSchema } from '@/app/(public)/faucet/validation';
 import { getElection, getCandidates } from '@/data-access/elections';

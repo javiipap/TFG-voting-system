@@ -7,7 +7,7 @@ import wasm_init, { rsa_decrypt } from 'client_utilities';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { AddrViewer } from '@/app/(public)/vote/[slug]/(authorized)/previous/_components/addr-viewer';
-import { Web3 } from 'web3';
+import { privateKeyToAddress } from '@/lib/ethereum';
 
 export default function RecoverForm({ vote }: { vote: any }) {
   const pathname = usePathname();
@@ -18,9 +18,9 @@ export default function RecoverForm({ vote }: { vote: any }) {
   const address = useMemo(() => {
     if (!decrypted) return '';
 
-    return new Web3().eth.accounts.privateKeyToAccount(
-      Buffer.from(decrypted.slice(2), 'hex')
-    ).address;
+    return privateKeyToAddress(
+      Buffer.from(decrypted.slice(2), 'hex').toString()
+    );
   }, [decrypted]);
 
   const handleUpload = (e: ChangeEvent<HTMLInputElement>) => {
