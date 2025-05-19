@@ -14,9 +14,11 @@ export async function synchronizeAdminAccounts() {
         'pending'
       );
 
-      await updateAccountNonce(addr, pendingTransactions).catch((err) => {
-        console.error(`[SYNC]: ERROR ${addr} - ${err}`);
-      });
+      await updateAccountNonce(addr, Number(pendingTransactions)).catch(
+        (err) => {
+          console.error(`[SYNC]: ERROR ${addr} - ${err}`);
+        }
+      );
 
       console.log(
         `[SYNC]: INFO synchronized ${addr} with nonce ${pendingTransactions}`

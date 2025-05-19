@@ -42,7 +42,10 @@ export default function RecoverForm({ vote }: { vote: any }) {
 
     setDecrypted(
       Buffer.from(
-        rsa_decrypt(secret, Buffer.from(vote.recoveryEthSecret, 'base64'))
+        rsa_decrypt(
+          Buffer.from(secret) as unknown as Uint8Array,
+          Buffer.from(vote.recoveryEthSecret, 'base64') as unknown as Uint8Array
+        )
       ).toString()
     );
 

@@ -21,7 +21,8 @@ export async function handler({ electionId }: { electionId: number }) {
   const contractAddress = await deployContract(
     candidates,
     electionId.toString(),
-    election.masterPublicKey
+    Buffer.from(election.masterPublicKey, 'base64'),
+    Buffer.from(election.publicKey, 'base64')
   );
 
   if (!contractAddress) {

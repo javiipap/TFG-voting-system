@@ -34,14 +34,14 @@ export default function SelectVotePage() {
 
     await init();
     const ballot = encrypt_vote(
-      Buffer.from(masterPublicKey, 'base64'),
+      Buffer.from(masterPublicKey, 'base64') as unknown as Uint8Array,
       selected,
       candidates.length
     );
 
     try {
       const response = await submitVote(
-        ballot,
+        Buffer.from(ballot),
         contractAddr,
         inputState.addr,
         inputState.secret

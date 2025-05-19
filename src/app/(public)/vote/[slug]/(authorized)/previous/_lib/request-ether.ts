@@ -22,11 +22,15 @@ export async function requestEther(
   }
 
   const { publicKey } = await publicKeyReq.json();
-
-  const request = create_request(publicKey, addr);
+  const iatOffset = Date.now();
+  const request = create_request(publicKey, addr, electionId, iatOffset);
+  const { blind_msg: blindedSignature, secret } = request;
 
   const recoveryEthSecret = Buffer.from(
-    rsa_encrypt(userPublicKey, sk)
+    rsa_encrypt(
+      Buffer.from(userPublicKey) as unknown as Uint8Array,
+      Buffer.from(sk, 'base64') as unknown as Uint8Array
+    )
   ).toString('base64');
 
   // Pedir al servidor que lo firme
@@ -43,10 +47,9 @@ export async function requestEther(
 
   const unblinded = unblind(
     publicKey,
-    addr,
-    request.secret,
-    request.msg_randomizer,
-    Buffer.from(data, 'base64')
+    blindedSignature,
+    secret,
+    Buffer.from(data, 'base64') as unknown as Uint8Array
   );
 
   return Buffer.from(
@@ -54,9 +57,9 @@ export async function requestEther(
       ticket: {
         addr,
         electionId,
+        iatOffset,
       },
       signature: Buffer.from(unblinded).toString('base64'),
-      padding: Buffer.from(request.msg_randomizer).toString('base64'),
     } as Ticket)
   ).toString('base64');
 }

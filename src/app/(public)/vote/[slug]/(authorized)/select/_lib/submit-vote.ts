@@ -1,7 +1,7 @@
 import { callContract } from '@/lib/ethereum/call-contract';
 
 export async function submitVote(
-  ballot: string,
+  ballot: Buffer,
   contractAddr: string,
   clientAddr: string,
   clientPriv: string

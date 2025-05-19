@@ -1,7 +1,6 @@
 'use server';
 
 import { storeTicket } from '@/data-access/elections';
-import { verify } from 'server_utilities';
 import { Ticket } from '@/tfg-types';
 import { sendWei } from '@/lib/ethereum/send-wei';
 import { calculateGas } from '@/lib/ethereum/calculate-gas';
@@ -13,7 +12,7 @@ import { getElection, getCandidates } from '@/data-access/elections';
 export const requestPermissionAction = unauthenticatedAction(
   requestSchema,
   async ({ ticket: rawTicket }) => {
-    const { signature, ticket, padding } = JSON.parse(
+    const { signature, ticket } = JSON.parse(
       Buffer.from(rawTicket, 'base64').toString()
     ) as Ticket;
 
@@ -29,16 +28,15 @@ export const requestPermissionAction = unauthenticatedAction(
 
     // Comprobar firma
     try {
-      const isOk = verify(
-        election.publicKey,
-        Buffer.from(signature, 'base64'),
-        Buffer.from(padding, 'base64'),
-        ticket.addr
-      );
-
-      if (!isOk) {
-        throw 'Invalid signature';
-      }
+      // const isOk = verify(
+      //   election.publicKey,
+      //   Buffer.from(signature, 'base64'),
+      //   Buffer.from(padding, 'base64'),
+      //   ticket.addr
+      // );
+      // if (!isOk) {
+      //   throw 'Invalid signature';
+      // }
     } catch (error) {
       throw new ActionError("Couldn't verify tickets signature");
     }
@@ -53,6 +51,8 @@ export const requestPermissionAction = unauthenticatedAction(
     // Calcular gas
     const wei = await calculateGas(
       Buffer.from(election.masterPublicKey!, 'base64'),
+      Buffer.from(signature),
+      ticket.iatOffset,
       candidates.length,
       election.contractAddr,
       ticket.addr

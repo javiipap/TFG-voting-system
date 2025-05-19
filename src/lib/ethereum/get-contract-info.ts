@@ -1,3 +1,5 @@
+'use server';
+
 import { readFileSync } from 'fs';
 
 export async function getContractInfo() {

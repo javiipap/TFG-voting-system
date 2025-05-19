@@ -2,7 +2,7 @@
 
 import { schema } from '@/app/(public)/vote/[slug]/(authorized)/delete/validation';
 import { ActionError, authenticatedAction } from '@/lib/safe-action';
-import { ecc_decrypt } from 'server_utilities';
+import { eccDecrypt } from 'server_utilities';
 import { callContractWithNonce } from '@/lib/ethereum/call-contract';
 import { deleteBallot, getBallot, getElection } from '@/data-access/elections';
 import { privateKeyToAddress } from '@/lib/ethereum';
@@ -23,11 +23,9 @@ export const requestDeleteAction = authenticatedAction(
       throw new ActionError("User hasn't voted");
     }
 
-    const expectedSk = Buffer.from(
-      ecc_decrypt(
-        Buffer.from(sk.slice(2), 'hex'),
-        Buffer.from(ballot.encryptedEthSecret, 'base64')
-      )
+    const expectedSk = eccDecrypt(
+      Buffer.from(sk.slice(2), 'hex'),
+      Buffer.from(ballot.encryptedEthSecret, 'base64')
     ).toString('hex');
 
     if (sk !== '0x' + expectedSk) {

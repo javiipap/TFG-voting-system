@@ -91,7 +91,7 @@ export default function SheetForm() {
       load_wasm().then(() => {
         const _keyPair = generate_elgamal_keypair();
         const pk = Buffer.from(_keyPair.public).toString('base64');
-        const sk = Buffer.from(_keyPair.secret).toString('base64');
+        const sk = Buffer.from(_keyPair.private).toString('base64');
 
         setKeyPair(() => ({ public: pk, secret: sk }));
         form.setValue('masterPublicKey', pk);

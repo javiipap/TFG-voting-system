@@ -21,8 +21,8 @@ export default function DecryptForm() {
     await wasm_init();
 
     const result = decrypt_result(
-      Buffer.from(inputState, 'base64'),
-      Buffer.from(encryptedResult!.slice(2), 'hex').toString()
+      Buffer.from(inputState, 'base64') as unknown as Uint8Array,
+      Buffer.from(encryptedResult!.slice(2), 'hex') as unknown as Uint8Array
     );
 
     setIsLoading(false);

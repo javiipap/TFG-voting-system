@@ -27,6 +27,7 @@ export const grantPermissions = async (
       from: account.addr,
       to: contractAddr,
       data: encodedABI,
+      nonce: account.nonce,
     },
     account.privateKey
   );
