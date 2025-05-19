@@ -16,7 +16,10 @@ import { createEthAccount } from '@/lib/ethereum';
 
 const encryptSecret = async (privateKey: string) => {
   await load_wasm();
-  const bufferedSecretKey = Buffer.from(privateKey.slice(2), 'hex');
+  const bufferedSecretKey = Buffer.from(
+    privateKey.slice(2),
+    'hex'
+  ) as unknown as Uint8Array;
   const publicKey = publicKeyCreate(bufferedSecretKey);
 
   const encryptedEthSecret = ecc_encrypt(publicKey, bufferedSecretKey);
