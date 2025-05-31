@@ -40,7 +40,7 @@ export const requestSignatureAction = authenticatedAction(
 
     // Firmar petición
     const blindedSignature = sign(
-      Buffer.from(election.secretKey, 'base64'),
+      Buffer.from(election.privateKey, 'base64'),
       Buffer.from(blinded, 'base64')
     ).toString('base64');
 

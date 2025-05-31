@@ -111,7 +111,7 @@ export default function PreviousStepsPage() {
                 name="key-pair.json"
                 data={JSON.stringify({
                   address: state.addr,
-                  secretKey: state.sk,
+                  privateKey: state.sk,
                   ticket: state.ticket,
                 })}
               />

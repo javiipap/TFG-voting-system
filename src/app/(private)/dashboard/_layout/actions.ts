@@ -29,7 +29,7 @@ export const submitElectionAction = authenticatedAction(
       endDate,
       adminId: user.adminId,
       isPrivate,
-      secretKey: keypair.private.toString('base64'),
+      privateKey: keypair.private.toString('base64'),
       publicKey: keypair.public.toString('base64'),
       masterPublicKey,
     });

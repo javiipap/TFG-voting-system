@@ -10,12 +10,12 @@ export async function POST(request: Request) {
   if (!election) {
     throw new Error('Election not found');
   }
-  console.time('SIGN');
+  console.time(`SIGN-${blindedTicket}`);
   const signedTicket = sign(
-    Buffer.from(election.secretKey, 'base64'),
+    Buffer.from(election.privateKey, 'base64'),
     Buffer.from(blindedTicket, 'base64')
   );
-  console.timeEnd('SIGN');
+  console.timeEnd(`SIGN-${blindedTicket}`);
 
   return Response.json({ signedTicket: signedTicket.toString('base64') });
 }

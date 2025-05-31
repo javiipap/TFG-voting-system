@@ -11,7 +11,7 @@ import { privateKeyToAddress } from '@/lib/ethereum';
 
 export default function RecoverForm({ vote }: { vote: any }) {
   const pathname = usePathname();
-  const [secret, setSecret] = useState<string | null>();
+  const [privateKey, setPrivateKey] = useState<string | null>();
   const [isLoading, setIsLoading] = useState(false);
   const [decrypted, setDecrypted] = useState<string>();
 
@@ -28,7 +28,7 @@ export default function RecoverForm({ vote }: { vote: any }) {
     if (!files || files.length < 1) return;
 
     const reader = new FileReader();
-    reader.onload = (file) => setSecret(file.target?.result?.toString());
+    reader.onload = (file) => setPrivateKey(file.target?.result?.toString());
 
     reader.readAsText(files[0]);
     e.target.value = '';
@@ -36,14 +36,14 @@ export default function RecoverForm({ vote }: { vote: any }) {
   };
 
   const handleDecrypt = async () => {
-    if (!secret) return;
+    if (!privateKey) return;
     setIsLoading(true);
     await wasm_init();
 
     setDecrypted(
       Buffer.from(
         rsa_decrypt(
-          Buffer.from(secret) as unknown as Uint8Array,
+          Buffer.from(privateKey) as unknown as Uint8Array,
           Buffer.from(vote.recoveryEthSecret, 'base64') as unknown as Uint8Array
         )
       ).toString()
@@ -54,9 +54,9 @@ export default function RecoverForm({ vote }: { vote: any }) {
 
   return (
     <div className="mt-4">
-      {!secret && <Input type="file" onChange={handleUpload} />}
+      {!privateKey && <Input type="file" onChange={handleUpload} />}
 
-      {!decrypted && secret && (
+      {!decrypted && privateKey && (
         <Button onClick={handleDecrypt} disabled={isLoading}>
           Descifrar
         </Button>

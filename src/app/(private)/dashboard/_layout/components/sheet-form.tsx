@@ -39,7 +39,7 @@ import LoadingButton from '@/components/loading-button';
 let hasRun = false;
 
 export default function SheetForm() {
-  const [keyPair, setKeyPair] = useState<{ public: string; secret: string }>();
+  const [keyPair, setKeyPair] = useState<{ public: string; private: string }>();
   const { toast } = useToast();
 
   const formRef = React.useRef<HTMLFormElement>(null);
@@ -93,7 +93,7 @@ export default function SheetForm() {
         const pk = Buffer.from(_keyPair.public).toString('base64');
         const sk = Buffer.from(_keyPair.private).toString('base64');
 
-        setKeyPair(() => ({ public: pk, secret: sk }));
+        setKeyPair(() => ({ public: pk, private: sk }));
         form.setValue('masterPublicKey', pk);
       });
     }
@@ -248,7 +248,14 @@ export default function SheetForm() {
                 </div>
                 <div className="">
                   <FormLabel>Secret key</FormLabel>
-                  <Textarea readOnly defaultValue={keyPair.secret} />
+                  <Textarea
+                    readOnly
+                    defaultValue={keyPair.private}
+                    style={{
+                      color: 'transparent',
+                      textShadow: '0 0 8px rgba(0, 0, 0, 0.5)',
+                    }}
+                  />
                 </div>
                 <DownloadButton
                   name={`election-keypair.json`}

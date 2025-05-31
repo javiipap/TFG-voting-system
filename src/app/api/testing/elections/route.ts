@@ -86,7 +86,7 @@ export async function POST() {
     description: 'Lorem ipsum...',
     startDate: new Date(),
     endDate: new Date(Date.now() + 24 * 60 * 60 * 1000),
-    secretKey: rsaKeypair.private.toString('base64'),
+    privateKey: rsaKeypair.private.toString('base64'),
     publicKey: rsaKeypair.public.toString('base64'),
     masterPublicKey: elgamalKeyPair.public.toString('base64'),
   });

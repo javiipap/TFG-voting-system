@@ -16,7 +16,7 @@ export default function SelectVotePage() {
     Context
   ) as Context;
 
-  const [inputState, setInputState] = useState({ addr: '', secret: '' });
+  const [inputState, setInputState] = useState({ addr: '', privateKey: '' });
   const [isLoading, setIsLoading] = useState(false);
   const [blockInfo, setBlockInfo] =
     useState<Awaited<ReturnType<typeof submitVote>>>();
@@ -25,7 +25,7 @@ export default function SelectVotePage() {
     setInputState((s) => ({ ...s, [e.target.name]: e.target.value }));
 
   const onSubmit = async (selected: number) => {
-    if (!inputState.addr || !inputState.secret) {
+    if (!inputState.addr || !inputState.privateKey) {
       toast({ title: 'Debes introducir tu dirección y clave privada' });
       return;
     }
@@ -44,7 +44,7 @@ export default function SelectVotePage() {
         Buffer.from(ballot),
         contractAddr,
         inputState.addr,
-        inputState.secret
+        inputState.privateKey
       );
       setBlockInfo(response);
     } catch (err) {
@@ -63,10 +63,10 @@ export default function SelectVotePage() {
           <Input name="addr" value={inputState.addr} onChange={onChange} />
         </div>
         <div className="space-y-1">
-          <Label>Clave secreta</Label>
+          <Label>Clave privada</Label>
           <Input
-            name="secret"
-            value={inputState.secret}
+            name="private"
+            value={inputState.privateKey}
             onChange={onChange}
             autoComplete="off"
           />
@@ -109,7 +109,7 @@ export default function SelectVotePage() {
               onChange={onSubmit}
               candidates={candidates}
               submitDisabled={
-                !(inputState.addr && inputState.secret) || isLoading
+                !(inputState.addr && inputState.privateKey) || isLoading
               }
             />
           </>

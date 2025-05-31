@@ -42,7 +42,7 @@ export const elections = pgTable('elections', {
   isPrivate: boolean('private').default(true),
   startDate: timestamp('start_date').notNull(),
   endDate: timestamp('end_date').notNull(),
-  secretKey: text('secret_key').notNull().unique(),
+  privateKey: text('private_key').notNull().unique(),
   publicKey: text('public_key').notNull().unique(),
   masterPublicKey: text('master_public_key').notNull(),
   contractAddr: text('contract_addr'),
@@ -80,8 +80,7 @@ export const votes = pgTable(
     electionId: integer('election_id')
       .references(() => elections.id, { onDelete: 'cascade' })
       .notNull(),
-    encryptedEthSecret: text('encrypted_eth_secret').notNull(), // TODO: Eliminar y usar ZKP
-    recoveryEthSecret: text('recovery_eth_secret').notNull(),
+    recoveryEthPrivateKey: text('recovery_eth_private').notNull(),
   },
   (table) => ({
     pk: primaryKey({ columns: [table.userId, table.electionId] }),

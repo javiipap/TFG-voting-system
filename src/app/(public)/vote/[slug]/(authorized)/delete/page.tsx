@@ -60,7 +60,7 @@ export default function DeleteVote() {
             name="sk"
             render={({ field }) => (
               <FormItem>
-                <Label>Clave secreta eth</Label>
+                <Label>Clave privada eth</Label>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>

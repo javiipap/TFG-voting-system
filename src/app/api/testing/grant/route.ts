@@ -13,7 +13,7 @@ export async function POST(request: Request) {
     iatOffset,
   } = body;
 
-  console.time('GRANT');
+  console.time(`GRANT-${clientAddr}`);
 
   const wei = await calculateGas(
     Buffer.from(publicKey, 'base64'),
@@ -25,7 +25,7 @@ export async function POST(request: Request) {
   );
 
   await sendWei(clientAddr, wei);
-  console.timeEnd('GRANT');
+  console.timeEnd(`GRANT-${clientAddr}`);
 
   return Response.json({ status: 'Account granted' });
 }
