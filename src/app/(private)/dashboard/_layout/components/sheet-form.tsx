@@ -250,7 +250,7 @@ export default function SheetForm() {
                   <FormLabel>Secret key</FormLabel>
                   <Textarea
                     readOnly
-                    defaultValue={keyPair.private}
+                    defaultValue={'&#9679;'.repeat(keyPair.private.length)}
                     style={{
                       color: 'transparent',
                       textShadow: '0 0 8px rgba(0, 0, 0, 0.5)',

@@ -6,7 +6,15 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 
-export function AddrViewer({ title, value }: { title: string; value: string }) {
+export function AddrViewer({
+  title,
+  value,
+  secret = false,
+}: {
+  title: string;
+  value: string;
+  secret?: boolean;
+}) {
   return (
     <div className="flex gap-2 items-center">
       <TooltipProvider>
@@ -14,7 +22,7 @@ export function AddrViewer({ title, value }: { title: string; value: string }) {
           <TooltipTrigger asChild>
             <p className="border rounded-md truncate py-2 px-4 font-mono">
               <span>{title}: </span>
-              {value}
+              <span>{secret ? '&#9679;'.repeat(value.length) : value}</span>
             </p>
           </TooltipTrigger>
           <TooltipContent>
