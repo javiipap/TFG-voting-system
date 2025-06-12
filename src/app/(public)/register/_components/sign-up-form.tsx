@@ -15,14 +15,16 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { schema } from '@/app/(public)/register/_components/validation';
-import { useEffect } from 'react';
-import { env } from '@/env';
-import { useSearchParams } from 'next/navigation';
+import { useEffect, useRef } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { execChallenge } from '@/lib/challenge';
 
 function getErrorText(err: string) {
   switch (err) {
     case 'no-acc':
       return 'Ha intentado iniciar sesión con una cuenta que no existe, regístrese primero.';
+    case 'no-cert':
+      return 'El certificado utilizado no es reconocido por el servidor.';
 
     default:
       return 'Ha habido un error inesperado, inténtalo de nuevo más tarde.';
@@ -31,27 +33,26 @@ function getErrorText(err: string) {
 
 export default function SignUpForm() {
   const error = useSearchParams().get('error');
+  const triggered = useRef(false);
+  const router = useRouter();
 
   const form = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
     defaultValues: { name: '', email: '', cert: '' },
   });
 
-  const getCertificate = async () => {
-    const req = await fetch(env.NEXT_PUBLIC_AUTH_PROXY);
-
-    if (!req.ok) {
-      form.setValue('cert', '');
-      return;
-    }
-    const { cert, email } = await req.json();
-
-    form.setValue('email', decodeURIComponent(email));
-    form.setValue('cert', decodeURIComponent(cert));
-  };
-
   useEffect(() => {
-    getCertificate();
+    if (triggered.current) return;
+    triggered.current = true;
+    execChallenge()
+      .then(({ subj, certificate, publicKey }) => {
+        form.setValue('email', subj);
+        form.setValue('cert', Buffer.from(certificate).toString('base64'));
+        form.setValue('publicKey', Buffer.from(publicKey).toString('base64'));
+      })
+      .catch((e) => {
+        router.push('/register?error=no-cert');
+      });
   }, []);
 
   return (

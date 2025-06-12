@@ -12,17 +12,12 @@ import {
 
 export const signUpAction = unauthenticatedAction(
   schema,
-  async ({ name, email, cert }) => {
+  async ({ name, email, cert, publicKey }) => {
     const existingUser = await getUserByCertOrEmail(cert, email);
 
     if (existingUser && existingUser.cert) {
       redirect('/login');
     }
-
-    const publicKey = crypto
-      .createPublicKey(cert)
-      .export({ type: 'pkcs1', format: 'pem' })
-      .toString();
 
     if (!existingUser) {
       await addUser({ name, email, cert, publicKey });

@@ -51,3 +51,14 @@ export const sleep = async (ms: number) =>
 
 export const getRandomElement = (array: Array<any>) =>
   array[Math.floor(Math.random() * array.length)];
+
+export const generateChallenge = (length: number = 24) => {
+  const alphabet =
+    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
+  const randomValues = new Uint32Array(length);
+  crypto.getRandomValues(randomValues);
+
+  return Buffer.from(
+    randomValues.reduce((acc, val) => acc + alphabet[val % alphabet.length], '')
+  );
+};

@@ -1,5 +1,4 @@
 import NextAuth, { DefaultSession } from 'next-auth';
-import { JWT } from 'next-auth/jwt';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { getAdminId, isAdmin } from '@/data-access/admins';
 import { redirect } from 'next/navigation';

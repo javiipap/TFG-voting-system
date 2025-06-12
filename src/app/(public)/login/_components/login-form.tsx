@@ -4,26 +4,25 @@ import { Button } from '@/components/ui/button';
 import { FileKey2 } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
 import { signInAction } from '@/app/(public)/login/_components/actions';
-import { env } from '@/env';
 import { useState } from 'react';
+import { execChallenge } from '@/lib/challenge';
 
 export default function LoginForm() {
   const searchParams = useSearchParams();
   const [error, setError] = useState(searchParams.get('error'));
 
   const signIn = async () => {
-    const req = await fetch(env.NEXT_PUBLIC_AUTH_PROXY);
+    try {
+      const { certificate } = await execChallenge();
+      const result = await signInAction({
+        cert: Buffer.from(certificate).toString('base64'),
+      });
 
-    if (!req.ok) {
+      if (result && result.serverError) {
+        setError(result.serverError);
+      }
+    } catch {
       setError("Couldn't retrieve certificate.");
-      return;
-    }
-
-    const { cert } = await req.json();
-    const result = await signInAction({ cert: decodeURIComponent(cert) });
-
-    if (result && result.serverError) {
-      setError(result.serverError);
     }
   };
 
