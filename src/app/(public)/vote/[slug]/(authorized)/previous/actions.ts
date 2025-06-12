@@ -9,7 +9,7 @@ import { addBallot, getElection } from '@/data-access/elections';
 export const requestSignatureAction = authenticatedAction(
   schema,
   async (
-    { electionId, blinded, encryptedEthSecret, recoveryEthSecret },
+    { electionId, blinded, recoveryEthPrivateKey, signature },
     { user }
   ) => {
     const election = await getElection(electionId);
@@ -31,8 +31,8 @@ export const requestSignatureAction = authenticatedAction(
       await addBallot({
         userId: user.userId,
         electionId,
-        encryptedEthSecret,
-        recoveryEthSecret,
+        recoveryEthPrivateKey,
+        signature,
       });
     } catch {
       throw new ActionError('already-voted');

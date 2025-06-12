@@ -9,6 +9,8 @@ import SelectCandidate from '@/app/(public)/vote/[slug]/(authorized)/select/_com
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/components/ui/use-toast';
+import { AddrViewer } from '@/components/addr-viewer';
+import { Ticket } from '@/tfg-types';
 
 export default function SelectVotePage() {
   const { toast } = useToast();
@@ -16,17 +18,30 @@ export default function SelectVotePage() {
     Context
   ) as Context;
 
-  const [inputState, setInputState] = useState({ addr: '', privateKey: '' });
+  const [ticket, setTicket] = useState<
+    (Ticket & { privateKey: string }) | null
+  >(null);
+
+  const onUploadTicket = async (e: ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files || e.target.files.length < 1) return;
+    const rawTicket = await e.target.files[0].text();
+
+    try {
+      const decoded = JSON.parse(rawTicket);
+      setTicket(decoded);
+    } catch {
+      e.target.files = null;
+      // TODO: mostrar error
+    }
+  };
+
   const [isLoading, setIsLoading] = useState(false);
   const [blockInfo, setBlockInfo] =
     useState<Awaited<ReturnType<typeof submitVote>>>();
 
-  const onChange = (e: ChangeEvent<HTMLInputElement>) =>
-    setInputState((s) => ({ ...s, [e.target.name]: e.target.value }));
-
   const onSubmit = async (selected: number) => {
-    if (!inputState.addr || !inputState.privateKey) {
-      toast({ title: 'Debes introducir tu dirección y clave privada' });
+    if (!ticket) {
+      toast({ title: 'Debes adjuntar tu tique para poder votar' });
       return;
     }
 
@@ -43,11 +58,15 @@ export default function SelectVotePage() {
       const response = await submitVote(
         Buffer.from(ballot),
         contractAddr,
-        inputState.addr,
-        inputState.privateKey
+        ticket.ticket.addr,
+        ticket.privateKey,
+        ticket.ticket.iat,
+        Buffer.from(ticket.signature, 'base64')
       );
       setBlockInfo(response);
     } catch (err) {
+      console.log(err);
+
       toast({
         title: 'Ha habido un error inesperado, ¿Ya has canjeado tu ticket?',
       });
@@ -58,19 +77,24 @@ export default function SelectVotePage() {
   return (
     <main className="flex justify-center">
       <div className="w-[95%] mx-auto md:max-w-[800px]">
-        <div className="mb-2 space-y-1">
-          <Label>Dirección eth</Label>
-          <Input name="addr" value={inputState.addr} onChange={onChange} />
-        </div>
-        <div className="space-y-1">
-          <Label>Clave privada</Label>
-          <Input
-            name="private"
-            value={inputState.privateKey}
-            onChange={onChange}
-            autoComplete="off"
-          />
-        </div>
+        {!!ticket && (
+          <>
+            <div className="mb-2 space-y-1">
+              <Label>Dirección eth</Label>
+              <AddrViewer title="Addr" value={ticket.ticket.addr} />
+            </div>
+            <div className="space-y-1">
+              <Label>Clave privada</Label>
+              <AddrViewer title="Private" value={ticket.privateKey} />
+            </div>
+          </>
+        )}
+        {!ticket && (
+          <div className="space-y-1">
+            <Label>Adjunta tu tique para poder votar</Label>
+            <Input type="file" onChange={onUploadTicket} />
+          </div>
+        )}
         {!!blockInfo?.blockHash ? (
           <div className="bg-blue-500/60 my-4 rounded-md p-4">
             <h2 className="text-2xl text-center">
@@ -108,9 +132,7 @@ export default function SelectVotePage() {
             <SelectCandidate
               onChange={onSubmit}
               candidates={candidates}
-              submitDisabled={
-                !(inputState.addr && inputState.privateKey) || isLoading
-              }
+              submitDisabled={!ticket || isLoading}
             />
           </>
         )}

@@ -14,7 +14,7 @@ export default async function ({ params }: { params: { slug: string } }) {
 
   const vote = await getVote(session.userId, election.id);
 
-  if (!vote?.recoveryEthSecret) {
+  if (!vote?.recoveryEthPrivateKey) {
     return redirect(`/vote/${params.slug}/previous`);
   }
 

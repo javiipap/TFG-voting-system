@@ -97,15 +97,15 @@ export const startElection = async (
 export const addBallot = async ({
   userId,
   electionId,
-  encryptedEthSecret,
-  recoveryEthSecret,
+  recoveryEthPrivateKey,
+  signature,
 }: schema.InsertBallot) =>
   execQuery((db) =>
     db.insert(schema.votes).values({
       userId,
       electionId,
-      encryptedEthSecret,
-      recoveryEthSecret,
+      recoveryEthPrivateKey,
+      signature,
     })
   );
 

@@ -1,18 +1,7 @@
-/**
- * Pasos para votar:
- * 1. Generar clave pública y privada dentro de la cadena.
- * 2. Guardar clave pública en bbdd.
- * 3. Pedir ether
- * 4. Seleccionar candidato
- * 5. Cifrar voto
- * 6. Ejecutar contrato
- * 7. Devolver id del bloque
- *
- */
-
 import { publicKeyCreate } from 'secp256k1';
-import load_wasm, { ecc_encrypt } from 'client_utilities';
+import load_wasm, { ecc_encrypt, rsa_encrypt } from 'client_utilities';
 import { createEthAccount } from '@/lib/ethereum';
+import { requestUserInteraction } from '@/lib/yotefirmo';
 
 const encryptSecret = async (privateKey: string) => {
   await load_wasm();
@@ -33,9 +22,19 @@ export const createAccount = async () => {
   return {
     addr: account.address,
     sk: account.privateKey,
-    encryptedEthSecret: await encryptSecret(account.privateKey),
+    encryptedEthPrivateKey: await encryptSecret(account.privateKey),
   };
 };
 
-// TODO: Subir y usar certificados
-export function storeEncryptedSecretKey(sk: string) {}
+export async function signMetadata(fields: Array<any>) {
+  const encoder = new TextEncoder();
+  const data = new Uint8Array();
+  fields.forEach((val) => encoder.encodeInto(val, data));
+  const payload = await crypto.subtle.digest('SHA-256', data);
+
+  const response = await requestUserInteraction('sign', Buffer.from(payload));
+
+  const { result } = JSON.parse(response);
+
+  return Buffer.from(result).toString('base64');
+}

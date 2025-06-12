@@ -97,7 +97,7 @@ export async function POST() {
     throw new Error('Could not retrieve created election');
   }
 
-  const candidates = new Array(5)
+  const candidates = new Array(6)
     .fill('')
     .map(() => `${getRandomElement(names)} ${getRandomElement(surnames)}`);
 

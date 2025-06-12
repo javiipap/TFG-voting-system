@@ -6,7 +6,7 @@ import { getEthNode } from '@/lib/ethereum/get-eth-node';
 export async function calculateGas(
   publicKey: Buffer,
   ticket: Buffer,
-  iatOffset: number,
+  iat: number,
   candidateCount: number,
   contractAddr: string,
   clientAddr: string
@@ -20,8 +20,10 @@ export async function calculateGas(
   const ballot = encryptVote(publicKey, 0, candidateCount);
 
   const gas = await electionContract.methods
-    .vote(ballot, iatOffset, ticket)
+    .vote(ballot, iat, ticket)
     .estimateGas({ from: clientAddr });
+
+  console.log(`GAS: ${gas}`);
 
   const gasPrice = BigInt(Math.ceil(Number(await web3.eth.getGasPrice()) * 2));
 

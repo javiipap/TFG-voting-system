@@ -52,7 +52,7 @@ export const requestPermissionAction = unauthenticatedAction(
     const wei = await calculateGas(
       Buffer.from(election.masterPublicKey!, 'base64'),
       Buffer.from(signature),
-      ticket.iatOffset,
+      ticket.iat,
       candidates.length,
       election.contractAddr,
       ticket.addr

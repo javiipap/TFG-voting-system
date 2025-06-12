@@ -1,17 +1,17 @@
 'use client';
 
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { createAccount } from '@/app/(public)/vote/[slug]/(authorized)/previous/_lib';
-import { requestEther } from '@/app/(public)/vote/[slug]/(authorized)/previous/_lib/request-ether';
-import { AddrViewer } from '@/app/(public)/vote/[slug]/(authorized)/previous/_components/addr-viewer';
+import { requestTicket } from '@/app/(public)/vote/[slug]/(authorized)/previous/_lib/request-ticket';
+import { AddrViewer } from '@/components/addr-viewer';
 import { Context } from '@/app/(public)/vote/[slug]/context';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { usePathname } from 'next/navigation';
 import { useToast } from '@/components/ui/use-toast';
 import { DownloadButton } from '@/components/download-button';
-import { QRCodeSVG } from 'qrcode.react';
 import { User } from 'next-auth';
+import { requestEther } from '@/lib/utils/request-ether';
 
 type Account =
   | {
@@ -21,8 +21,11 @@ type Account =
       isSet: true;
       addr: string;
       sk: string;
-      ticket: string;
-      encryptedEthSecret: string;
+      ticket: {
+        ticket: { addr: string; electionId: number; iat: number };
+        signature: string;
+      };
+      encryptedEthPrivateKey: string;
       error: undefined;
     }
   | {
@@ -31,9 +34,8 @@ type Account =
       alreadyVoted?: boolean;
     };
 
-let hasRan = false;
-
 export default function PreviousStepsPage() {
+  const hasRan = useRef(false);
   const { toast } = useToast();
   const pathname = usePathname();
   const { electionId, user } = useContext(Context) as Context;
@@ -43,20 +45,23 @@ export default function PreviousStepsPage() {
   });
 
   const generateCredentials = async () => {
-    if (state.isSet || hasRan) {
+    if (state.isSet || hasRan.current) {
       return;
     }
 
-    hasRan = true;
+    hasRan.current = true;
 
     const account = await createAccount();
-    const ticket = await requestEther(
+    const ticket = await requestTicket(
       account.sk,
-      account.encryptedEthSecret,
       account.addr,
       electionId,
+      (user as User).userId,
       (user as User).pk
     );
+
+    console.log('requesting ether');
+    await requestEther(account.addr, electionId);
 
     setState({ isSet: true, error: undefined, ticket, ...account });
   };
@@ -70,7 +75,10 @@ export default function PreviousStepsPage() {
           setState({ isSet: true, error: err.message });
         }
       } else {
-        setState({ isSet: true, error: 'Unexpected error, try again later' });
+        setState({
+          isSet: true,
+          error: 'Unexpected error, try again later' + err,
+        });
       }
     });
   }, []);
@@ -83,37 +91,11 @@ export default function PreviousStepsPage() {
         <>
           <div className="w-[95%] mx-auto md:w-[400px] space-y-2">
             <AddrViewer title="Address" value={state.addr} />
-            <AddrViewer title="Secret" value={state.sk} />
-            <div className="flex justify-center">
-              <QRCodeSVG
-                size={240}
-                level="L"
-                value={`https://e3vote.iaas.ull.es/faucet?ticket=${encodeURIComponent(
-                  state.ticket
-                )}`}
-              />
-            </div>
-            <div className="bg-foreground/5 py-2 px-4 rounded border text-sm tracking-wide text-justify">
-              Escanea el QR para transferir el suficiente ether a tu cuenta y
-              así poder votar. También lo puedes hacer manualmente desde este
-              ordenador accediendo al{' '}
-              <Link
-                className="underline"
-                target="_blank"
-                href={`/faucet?ticket=${encodeURIComponent(state.ticket)}`}
-              >
-                faucet
-              </Link>
-              , o usando el ticket que puedes descargar abajo.
-            </div>
+            <AddrViewer title="Secret" value={state.sk} secret />
             <div className="flex justify-center">
               <DownloadButton
-                name="key-pair.json"
-                data={JSON.stringify({
-                  address: state.addr,
-                  privateKey: state.sk,
-                  ticket: state.ticket,
-                })}
+                name="ticket.json"
+                data={JSON.stringify({ ...state.ticket, privateKey: state.sk })}
               />
               <Link href={`${pathname.replace('previous', 'select')}`}>
                 <Button variant="secondary" className="ml-2">

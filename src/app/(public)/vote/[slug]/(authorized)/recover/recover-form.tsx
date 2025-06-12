@@ -6,7 +6,7 @@ import { ChangeEvent, useMemo, useState } from 'react';
 import wasm_init, { rsa_decrypt } from 'client_utilities';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { AddrViewer } from '@/app/(public)/vote/[slug]/(authorized)/previous/_components/addr-viewer';
+import { AddrViewer } from '@/components/addr-viewer';
 import { privateKeyToAddress } from '@/lib/ethereum';
 
 export default function RecoverForm({ vote }: { vote: any }) {

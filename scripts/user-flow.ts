@@ -8,7 +8,7 @@ import {
 import { getContractInfo } from '@/lib/ethereum/get-contract-info';
 import { retry } from '@/lib/utils';
 
-const ETH_NODE = 'http://127.0.0.1:45935';
+const ETH_NODE = 'http://10.6.130.4:8080';
 
 export async function callContract(
   senderAddr: string,
@@ -126,7 +126,7 @@ async function requestEth(
   clientAddr: string,
   publicKey: string,
   ticket: Buffer,
-  iatOffset: number,
+  iat: number,
   candidateCount: number,
   contractAddr: string
 ) {
@@ -140,7 +140,7 @@ async function requestEth(
       contractAddr,
       clientAddr,
       ticket: ticket.toString('base64'),
-      iatOffset,
+      iat,
     }),
     headers: {
       'Content-Type': 'application/json',
@@ -159,7 +159,7 @@ async function emitBallot(
   clientAddr: string,
   clientPriv: string,
   ticket: Buffer,
-  iatOffset: number
+  iat: number
 ) {
   const selected = Math.floor(Math.random() * candidateCount);
 
@@ -177,7 +177,7 @@ async function emitBallot(
     contractAddr,
     'vote',
     ballot,
-    iatOffset,
+    iat,
     ticket
   );
 
@@ -194,15 +194,15 @@ async function main() {
     return;
   }
 
-  const candidateCount = 5;
+  const candidateCount = 6;
   const publicKey = argv[2];
   const contractAddr = argv[3];
-  const iatOffset = Math.floor(Date.now() / 1000) - 10000;
+  const iat = Math.floor(Date.now() / 1000) - 10000;
 
   const { addr: clientAddr, sk: clientPriv } = createAccount();
 
   const { output: ticket, time: ticketTime } = await mp(() =>
-    requestTicket(clientAddr, Number(argv[4]), iatOffset)
+    requestTicket(clientAddr, Number(argv[4]), iat)
   );
 
   const { time: prevTime } = await mp(
@@ -211,7 +211,7 @@ async function main() {
         clientAddr,
         publicKey,
         ticket,
-        iatOffset,
+        iat,
         candidateCount,
         contractAddr
       )
@@ -226,7 +226,7 @@ async function main() {
         clientAddr,
         clientPriv,
         ticket,
-        iatOffset
+        iat
       )
   );
 

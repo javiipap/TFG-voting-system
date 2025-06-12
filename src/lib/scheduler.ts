@@ -37,7 +37,7 @@ const executeJob = async (job: Job, force = false) => {
   setJobStatus(job.id, 'executing');
   console.log(`[SCHEDULER]: Running job ${job.id}`);
 
-  await handlers[handler].handler(JSON.parse(job.arguments as any));
+  await handlers[handler].handler(job.arguments as any);
 
   setJobStatus(job.id, 'success');
   console.log(`[SCHEDULER]: Successfully ran ${job.id}`);

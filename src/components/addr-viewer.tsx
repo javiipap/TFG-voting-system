@@ -22,7 +22,7 @@ export function AddrViewer({
           <TooltipTrigger asChild>
             <p className="border rounded-md truncate py-2 px-4 font-mono">
               <span>{title}: </span>
-              <span>{secret ? '&#9679;'.repeat(value.length) : value}</span>
+              <span>{secret ? '\u2022'.repeat(value.length) : value}</span>
             </p>
           </TooltipTrigger>
           <TooltipContent>

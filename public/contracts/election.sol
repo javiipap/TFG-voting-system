@@ -71,16 +71,15 @@ contract Election {
         votes_[addr].granted = true;
     }
 
-    function vote(bytes calldata ballot , uint256 iat_offset, bytes calldata signature) external _notEndend {
+    function vote(bytes calldata ballot , uint256 iat, bytes calldata signature) external _notEndend {
         // Ya se ha emitido un voto con esta cuenta
         require(abi.encodePacked(votes_[msg.sender].ballot).length <= 0, "This account has already been used to vote");
         // Ya se ha emitido un voto con esta cuenta que ha sido borrado
         require(!votes_[msg.sender].deleted, "This account has been removed");
-        // El usuario está autorizado a votar
+        // Ha pasado el suficiente tiempo para votar
+        require(block.timestamp >= iat, "The account hasn't reached the necesary delay since creation");
 
-        require (block.timestamp > iat_offset, "The account hasn't reached the necesary delay since creation");
-
-        bytes memory ticket = abi.encode(addressToString(msg.sender), id_, iat_offset);
+        bytes memory ticket = abi.encode(addressToString(msg.sender), id_, iat);
         bytes memory verify_sig_props = abi.encode(rsa_public_key_, ticket, signature);
         uint256 verify_sig_props_len = verify_sig_props.length;
         uint[1] memory verified;
@@ -121,10 +120,6 @@ contract Election {
                 break;
             }
         }
-    }
-
-    function test() view public returns (bytes memory) {
-        return votes_[votes_address_[0]].ballot;
     }
 
     function tally() external _ownerOnly _notEndend returns (string memory) {

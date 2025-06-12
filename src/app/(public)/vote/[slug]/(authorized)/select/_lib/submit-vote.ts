@@ -4,14 +4,19 @@ export async function submitVote(
   ballot: Buffer,
   contractAddr: string,
   clientAddr: string,
-  clientPriv: string
+  clientPriv: string,
+  iat: number,
+  ticket: Buffer
 ) {
+  console.log(iat);
   const receipient = await callContract(
     clientAddr,
     clientPriv,
     contractAddr,
     'vote',
-    ballot
+    ballot,
+    iat,
+    ticket
   );
 
   return {

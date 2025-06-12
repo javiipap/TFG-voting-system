@@ -9,17 +9,22 @@ import {
   primaryKey,
   pgEnum,
   json,
+  index,
 } from 'drizzle-orm/pg-core';
 
-export const users = pgTable('users', {
-  id: serial('id').primaryKey(),
-  name: text('name'),
-  email: text('email').notNull(),
-  emailVerified: timestamp('emailVerified', { withTimezone: true }),
-  image: text('image'),
-  cert: text('cert').unique(),
-  publicKey: text('public_key'),
-});
+export const users = pgTable(
+  'users',
+  {
+    id: serial('id').primaryKey(),
+    name: text('name'),
+    email: text('email').notNull(),
+    emailVerified: timestamp('emailVerified', { withTimezone: true }),
+    image: text('image'),
+    cert: text('cert'),
+    publicKey: text('public_key'),
+  },
+  (table) => [index('cert_idx').using('hash', table.cert)]
+);
 
 export type InsertUser = typeof users.$inferInsert;
 export type User = typeof users.$inferSelect;
@@ -81,10 +86,9 @@ export const votes = pgTable(
       .references(() => elections.id, { onDelete: 'cascade' })
       .notNull(),
     recoveryEthPrivateKey: text('recovery_eth_private').notNull(),
+    signature: text('signature').notNull(),
   },
-  (table) => ({
-    pk: primaryKey({ columns: [table.userId, table.electionId] }),
-  })
+  (table) => [primaryKey({ columns: [table.userId, table.electionId] })]
 );
 
 export type InsertBallot = typeof votes.$inferInsert;
@@ -137,7 +141,7 @@ export const verificationToken = pgTable(
     expires: timestamp('expires', { withTimezone: true }).notNull(),
     token: text('token').notNull(),
   },
-  (table) => ({ pk: primaryKey({ columns: [table.identifier, table.token] }) })
+  (table) => [primaryKey({ columns: [table.identifier, table.token] })]
 );
 
 export const sessions = pgTable('sessions', {
