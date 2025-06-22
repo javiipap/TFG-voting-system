@@ -25,7 +25,7 @@ export const requestDeleteAction = authenticatedAction(
 
     const expectedSk = eccDecrypt(
       Buffer.from(sk.slice(2), 'hex'),
-      Buffer.from(ballot.encryptedEthSecret, 'base64')
+      Buffer.from(ballot.recoveryEthPrivateKey, 'base64')
     ).toString('hex');
 
     if (sk !== '0x' + expectedSk) {
