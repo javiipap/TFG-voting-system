@@ -3,6 +3,7 @@ import CredentialsProvider from 'next-auth/providers/credentials';
 import { getAdminId, isAdmin } from '@/data-access/admins';
 import { redirect } from 'next/navigation';
 import { getUserByCertOrEmail } from '@/data-access/users';
+import { JWT } from 'next-auth/jwt';
 
 type Role = 'admin' | 'user';
 

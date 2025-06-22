@@ -19,19 +19,6 @@ export const getUserByCertOrEmail = (cert: string, email: string) =>
     })
   );
 
-export const getEncryptedAddr = async (userId: number, electionId: number) => {
-  const ballot = await execQuery((db) =>
-    db.query.votes.findFirst({
-      where: and(
-        eq(schema.votes.userId, userId),
-        eq(schema.votes.electionId, electionId)
-      ),
-    })
-  );
-
-  return ballot?.recoveryEthSecret;
-};
-
 export const insertIfNotExist = async (members: { email: string }[]) =>
   execQuery((db) =>
     db
