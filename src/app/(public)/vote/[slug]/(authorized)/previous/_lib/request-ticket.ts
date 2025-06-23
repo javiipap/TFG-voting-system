@@ -7,6 +7,7 @@ import load_wasm, {
 import { Ticket } from '@/tfg-types';
 import { requestSignatureAction } from '@/app/(public)/vote/[slug]/(authorized)/previous/actions';
 import { signMetadata } from '@/app/(public)/vote/[slug]/(authorized)/previous/_lib';
+import { env } from '@/env';
 
 export async function requestTicket(
   sk: string,
@@ -25,9 +26,10 @@ export async function requestTicket(
 
   const { publicKey: _publicKey } = await publicKeyReq.json();
   const publicKey = new Uint8Array(Buffer.from(_publicKey, 'base64'));
-  const iat = Math.floor(
-    (new Date().getTime() + Math.random() * 1) / 1000 // 600000
-  );
+  const offset =
+    (env.NEXT_PUBLIC_NODE_ENV === 'development' ? 1 : 600000) * Math.random();
+
+  const iat = Math.floor((new Date().getTime() + offset) / 1000);
 
   console.log(encoded_req(addr, electionId.toString(), iat));
   const request = create_request(publicKey, addr, electionId.toString(), iat);

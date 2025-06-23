@@ -14,10 +14,12 @@ export const env = createEnv({
     NEXT_PUBLIC_ETH_HOSTS: z.string(),
     NEXT_PUBLIC_AUTH_PROXY: z.string(),
     NEXT_PUBLIC_DOMAIN: z.string(),
+    NEXT_PUBLIC_NODE_ENV: z.string(),
   },
   experimental__runtimeEnv: {
     NEXT_PUBLIC_ETH_HOSTS: process.env.NEXT_PUBLIC_ETH_HOSTS,
     NEXT_PUBLIC_AUTH_PROXY: process.env.NEXT_PUBLIC_AUTH_PROXY,
     NEXT_PUBLIC_DOMAIN: process.env.NEXT_PUBLIC_DOMAIN,
+    NEXT_PUBLIC_NODE_ENV: process.env.NEXT_PUBLIC_NODE_ENV,
   },
 });

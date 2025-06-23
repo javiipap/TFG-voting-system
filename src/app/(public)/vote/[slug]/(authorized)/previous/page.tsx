@@ -81,6 +81,7 @@ export default function PreviousStepsPage() {
         });
       }
     });
+    // @ts-ignore Empty dependency array
   }, []);
 
   return (
