@@ -22,8 +22,8 @@ def deploy_contract(candidate_count=5, max_retries=3, retry_delay=1):
 
     while retries < max_retries:
         try:
-            response = requests.post(URL, data={'candidateCount': candidate_count}, headers={
-                                     'Content-type': 'application/json'}, verify=False)
+            response = requests.post(URL, data=json.dumps({'candidateCount': candidate_count}), headers={
+                                     'Content-Type': 'application/json'}, verify=False)
 
             if response.status_code == 200:
                 try:
@@ -103,7 +103,7 @@ def main():
 
     out_dir = 'benchmarks'
     cmd = ["npx", "tsx", "scripts/user-flow.ts",
-           public_key, contract_addr, str(election_id)]
+           public_key, contract_addr, str(election_id), str(candidate_count)]
 
     if not os.path.exists(out_dir):
         os.mkdir(out_dir)

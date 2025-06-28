@@ -9,7 +9,7 @@ import { getContractInfo } from '@/lib/ethereum/get-contract-info';
 import { retry } from '@/lib/utils';
 
 const ETH_NODE = 'https://10.6.130.4';
-const WEB_ADDR = 'https://10.6.128.18';
+const WEB_ADDR = 'https://e3vote.iaas.ull.es';
 
 export async function callContract(
   senderAddr: string,
@@ -188,14 +188,16 @@ async function emitBallot(
 
 async function main() {
   const argv = process.argv;
-  if (argv.length < 5) {
-    console.error('user-flow.ts <publicKey> <contractAddr> <electionId>');
+  if (argv.length < 6) {
+    console.error(
+      'user-flow.ts <publicKey> <contractAddr> <electionId> <candidateCount>'
+    );
     return;
   }
 
   process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
 
-  const candidateCount = 6;
+  const candidateCount = Number(argv[5]);
   const publicKey = argv[2];
   const contractAddr = argv[3];
   const iat = Math.floor(Date.now() / 1000) - 10000;
