@@ -6,7 +6,7 @@ import { deployContract } from '@/lib/ethereum/deploy-contract';
 import { getRandomElement } from '@/lib/utils';
 import { addCandidate } from '@/data-access/candidates';
 
-export async function POST() {
+export async function POST(request: Request) {
   const electionNames = [
     [
       'admiring',
@@ -60,6 +60,8 @@ export async function POST() {
     'Delgado',
   ];
 
+  const { candidateCount } = await request.json();
+
   const users = await execQuery((db) => db.query.users.findMany());
 
   if (users.length === 0) {
@@ -97,7 +99,7 @@ export async function POST() {
     throw new Error('Could not retrieve created election');
   }
 
-  const candidates = new Array(6)
+  const candidates = new Array(candidateCount)
     .fill('')
     .map(() => `${getRandomElement(names)} ${getRandomElement(surnames)}`);
 
