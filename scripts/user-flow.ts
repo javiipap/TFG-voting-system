@@ -8,7 +8,8 @@ import {
 import { getContractInfo } from '@/lib/ethereum/get-contract-info';
 import { retry } from '@/lib/utils';
 
-const ETH_NODE = 'http://10.6.130.4:8080';
+const ETH_NODE = 'https://10.6.130.4';
+const WEB_ADDR = 'https://10.6.128.18';
 
 export async function callContract(
   senderAddr: string,
@@ -82,9 +83,7 @@ async function requestTicket(
   electionId: number,
   iatDelay: number
 ) {
-  const publicKeyReq = await fetch(
-    `http://localhost:3000/api/public-key/${electionId}`
-  );
+  const publicKeyReq = await fetch(`${WEB_ADDR}/api/public-key/${electionId}`);
   const response = await publicKeyReq.json();
 
   const publicKey = Buffer.from(response.publicKey, 'base64');
@@ -96,7 +95,7 @@ async function requestTicket(
     `election_${electionId}`
   );
 
-  const ticketRes = await fetch('http://localhost:3000/api/testing/sign', {
+  const ticketRes = await fetch(`${WEB_ADDR}/api/testing/sign`, {
     method: 'POST',
     body: JSON.stringify({ blindedTicket: blindMsg, electionId }),
     headers: {
@@ -132,7 +131,7 @@ async function requestEth(
 ) {
   console.error(`Client addr: ${clientAddr}`);
 
-  const result = await fetch('http://localhost:3000/api/testing/grant', {
+  const result = await fetch(`${WEB_ADDR}/api/testing/grant`, {
     method: 'POST',
     body: JSON.stringify({
       publicKey,
@@ -193,6 +192,8 @@ async function main() {
     console.error('user-flow.ts <publicKey> <contractAddr> <electionId>');
     return;
   }
+
+  process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
 
   const candidateCount = 6;
   const publicKey = argv[2];

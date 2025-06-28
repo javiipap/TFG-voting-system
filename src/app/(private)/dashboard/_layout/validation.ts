@@ -28,12 +28,11 @@ export const schema = z
   .refine(
     ({ start, from }) => {
       const startDate = new Date(from);
-      startDate.setHours(parseInt(start), 0, 0, 0);
 
       return startDate > new Date();
     },
     {
-      message: 'La fecha inicio debe ser mayor que la fecha actual',
+      message: 'La fecha de inicio debe ser mayor que la fecha actual',
       path: ['from'],
     }
   );
