@@ -6,7 +6,7 @@ import json
 import os
 
 
-def deploy_contract(max_retries=3, retry_delay=1):
+def deploy_contract(candidate_count=5, max_retries=3, retry_delay=1):
     """
     Realiza una petición POST con reintentos automáticos
 
@@ -17,12 +17,13 @@ def deploy_contract(max_retries=3, retry_delay=1):
     Returns:
         dict: Respuesta JSON parseada
     """
-    URL = 'https://10.6.128.18/api/testing/elections'
+    URL = 'https://e3vote.iaas.ull.es/api/testing/elections'
     retries = 0
 
     while retries < max_retries:
         try:
-            response = requests.post(URL, verify=False)
+            response = requests.post(URL, data={'candidateCount': candidate_count}, headers={
+                                     'Content-type': 'application/json'}, verify=False)
 
             if response.status_code == 200:
                 try:
@@ -77,17 +78,18 @@ def run_background(comando, archivo_salida):
 
 
 def main():
-    if len(sys.argv) < 2:
-        print("Uso: python script.py <num_ejecuciones>")
+    if len(sys.argv) < 3:
+        print("Uso: python script.py <num_ejecuciones> <candidate_count>")
         sys.exit(1)
 
     try:
         num_executions = int(sys.argv[1])
+        candidate_count = int(sys.argv[2])
     except ValueError:
         print("El número de ejecuciones debe ser un entero")
         sys.exit(1)
 
-    contract_info = deploy_contract()
+    contract_info = deploy_contract(candidate_count)
 
     public_key, private_key, contract_addr, election_id = contract_info
 
