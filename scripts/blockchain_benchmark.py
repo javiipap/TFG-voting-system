@@ -72,7 +72,7 @@ def run_background(comando, archivo_salida):
         p = subprocess.Popen(
             comando,
             stdout=f,
-            stderr=subprocess.DEVNUL,
+            stderr=subprocess.DEVNULL,
             stdin=subprocess.DEVNULL,
             start_new_session=True
         )

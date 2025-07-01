@@ -51,7 +51,7 @@ export async function callContract(
       signed.rawTransaction
     );
 
-    return { receipient, gas: Number(gas) * gasPrice };
+    return receipient;
   }, 10);
 }
 
@@ -117,7 +117,7 @@ async function emitBallot(
   );
 
   console.error('Cast vote');
-  const { receipient, gas } = await callContract(
+  const receipient = await callContract(
     clientAddr,
     clientPriv,
     contractAddr,
@@ -130,7 +130,7 @@ async function emitBallot(
   return {
     blockNumber: receipient.blockNumber,
     blockHash: receipient.blockHash,
-    gas,
+    gas: receipient.gasUsed,
   };
 }
 
@@ -190,7 +190,9 @@ async function main() {
       )
   );
 
-  console.log(`${prevTime}, ${castingTime}, ${castingOutput.gas}`);
+  console.log(
+    `${prevTime}, ${castingTime}, ${castingOutput.gas}, ${castingOutput.blockNumber}`
+  );
 }
 
 main().then();
