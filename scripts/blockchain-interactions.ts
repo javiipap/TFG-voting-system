@@ -3,6 +3,7 @@ import { encryptVote } from '@/lib/pkg/server_utilities';
 
 import { getContractInfo } from '@/lib/ethereum/get-contract-info';
 import { retry } from '@/lib/utils';
+import { calculateGas2 } from '@/lib/ethereum/calculate-gas_2';
 
 const ETH_NODE = 'https://10.6.130.4';
 const WEB_ADDR = 'https://e3vote.iaas.ull.es';
@@ -23,9 +24,7 @@ export async function callContract(
   return await retry(async () => {
     const gasPrice = 1000000;
 
-    const gas = await mySmartContract.methods[methodName](...args).estimateGas({
-      from: senderAddr,
-    });
+    const gas = await calculateGas2(10);
     console.error(`expected gas: ${Number(gas) * gasPrice}`);
 
     const encodedABI = mySmartContract.methods[methodName](...args).encodeABI();

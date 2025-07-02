@@ -1,4 +1,5 @@
 import { calculateGas } from '@/lib/ethereum/calculate-gas';
+import { calculateGas2 } from '@/lib/ethereum/calculate-gas_2';
 import { sendWei } from '@/lib/ethereum/send-wei';
 
 export async function POST(request: Request) {
@@ -9,14 +10,7 @@ export async function POST(request: Request) {
 
   console.time(`GRANT-${clientAddr}`);
 
-  const wei = await calculateGas(
-    Buffer.from(publicKey, 'base64'),
-    Buffer.from(ticket, 'base64'),
-    iat,
-    candidateCount,
-    contractAddr,
-    clientAddr
-  );
+  const wei = await calculateGas2(candidateCount);
 
   await sendWei(clientAddr, wei);
   console.timeEnd(`GRANT-${clientAddr}`);
