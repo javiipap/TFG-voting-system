@@ -6,7 +6,7 @@ export async function calculateGas2(candidateCount: number) {
   const basePrice = 262000;
   const candidateCost = 114115;
 
-  const gasPrice = BigInt(Math.ceil(Number(await web3.eth.getGasPrice()) * 2));
+  const gasPrice = BigInt(1000000);
 
   return gasPrice * BigInt(basePrice + candidateCost * candidateCount);
 }

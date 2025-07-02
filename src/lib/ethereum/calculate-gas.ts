@@ -25,7 +25,7 @@ export async function calculateGas(
 
   console.log(`GAS: ${gas}`);
 
-  const gasPrice = BigInt(Math.ceil(Number(await web3.eth.getGasPrice()) * 2));
+  const gasPrice = BigInt(1000000);
 
   const finalGas = gasPrice * gas;
 

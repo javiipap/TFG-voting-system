@@ -18,8 +18,8 @@ export const executeAdminTransaction = async (
   const signed = await web3.eth.accounts.signTransaction(
     {
       ...transaction,
-      maxPriorityFeePerGas: web3.utils.toWei('2', 'gwei'),
-      maxFeePerGas: web3.utils.toWei('5', 'gwei'),
+      gasPrice: 1000000,
+      gas: await web3.eth.estimateGas(transaction),
     },
     privateKey
   );

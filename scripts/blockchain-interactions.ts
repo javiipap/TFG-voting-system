@@ -21,7 +21,7 @@ export async function callContract(
   var mySmartContract = new web3.eth.Contract(abi, contractAddr);
 
   return await retry(async () => {
-    const gasPrice = Math.ceil(Number(await web3.eth.getGasPrice()) * 1.4);
+    const gasPrice = 1000000;
 
     const gas = await mySmartContract.methods[methodName](...args).estimateGas({
       from: senderAddr,
