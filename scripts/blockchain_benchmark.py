@@ -68,15 +68,16 @@ def run_background(comando, archivo_salida):
         subprocess.Popen: El objeto del proceso iniciado.
     """
     with open(archivo_salida, 'a+') as f:
-        # Almacenamos el proceso en una variable 'p' y la devolvemos
-        p = subprocess.Popen(
-            comando,
-            stdout=f,
-            stderr=subprocess.DEVNULL,
-            stdin=subprocess.DEVNULL,
-            start_new_session=True
-        )
-        return p  # <--- CAMBIO 1: Devolver el proceso
+        with open(archivo_salida + '.error', 'a+') as ef:
+            # Almacenamos el proceso en una variable 'p' y la devolvemos
+            p = subprocess.Popen(
+                comando,
+                stdout=f,
+                stderr=ef,
+                stdin=subprocess.DEVNULL,
+                start_new_session=True
+            )
+            return p  # <--- CAMBIO 1: Devolver el proceso
 
 
 def run_command(command_args, command_id):
