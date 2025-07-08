@@ -50,6 +50,7 @@ export const elections = pgTable('elections', {
   privateKey: text('private_key').notNull().unique(),
   publicKey: text('public_key').notNull().unique(),
   masterPublicKey: text('master_public_key').notNull(),
+  adminCount: integer('admin_count').notNull(),
   contractAddr: text('contract_addr'),
   encryptedResult: text('encrypted_result'),
 });
