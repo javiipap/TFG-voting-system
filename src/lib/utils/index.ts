@@ -62,3 +62,19 @@ export const generateChallenge = (length: number = 24) => {
     randomValues.reduce((acc, val) => acc + alphabet[val % alphabet.length], '')
   );
 };
+
+export const unflattenVec = <T>(vec: ArrayLike<T>, component_size: number) => {
+  const output = [];
+  let current_subarray = [];
+
+  for (let el of Array.from(vec)) {
+    current_subarray.push(el);
+
+    if (current_subarray.length == component_size) {
+      output.push(current_subarray);
+      current_subarray = [];
+    }
+  }
+
+  return output;
+};
