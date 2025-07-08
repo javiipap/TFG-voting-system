@@ -31,7 +31,6 @@ export async function requestTicket(
 
   const iat = Math.floor((new Date().getTime() + offset) / 1000);
 
-  console.log(encoded_req(addr, electionId.toString(), iat));
   const request = create_request(publicKey, addr, electionId.toString(), iat);
   const { blind_msg: blindedMsg, secret } = request;
 
@@ -42,11 +41,7 @@ export async function requestTicket(
     )
   ).toString('base64');
 
-  const pubSignature = await signMetadata([
-    userId,
-    electionId,
-    recoveryEthPrivateKey,
-  ]);
+  const pubSignature = await signMetadata([userId, electionId]);
 
   // Pedir al servidor que lo firme
   const { data, serverError } = await requestSignatureAction({
