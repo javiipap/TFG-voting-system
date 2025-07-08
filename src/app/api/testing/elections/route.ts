@@ -91,6 +91,7 @@ export async function POST(request: Request) {
     privateKey: rsaKeypair.private.toString('base64'),
     publicKey: rsaKeypair.public.toString('base64'),
     masterPublicKey: elgamalKeyPair.public.toString('base64'),
+    adminCount: 5,
   });
 
   const election = await getElectionBySlug(electionSlug);
