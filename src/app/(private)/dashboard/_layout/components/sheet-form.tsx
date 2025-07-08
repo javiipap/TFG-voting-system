@@ -35,11 +35,15 @@ import { DatePicker } from '@/components/ui/dat-picker';
 import { DownloadButton } from '@/components/download-button';
 import { Separator } from '@/components/ui/separator';
 import LoadingButton from '@/components/loading-button';
+import { unflattenVec } from '@/lib/utils';
 
 let hasRun = false;
 
 export default function SheetForm() {
-  const [keyPair, setKeyPair] = useState<{ public: string; private: string }>();
+  const [keyPair, setKeyPair] = useState<{
+    public: string;
+    private: Array<string>;
+  }>();
   const { toast } = useToast();
 
   const formRef = React.useRef<HTMLFormElement>(null);
@@ -50,6 +54,7 @@ export default function SheetForm() {
       start: '9',
       end: '9',
       isPrivate: true,
+      adminCount: 0,
     },
     resolver: zodResolver(schema),
   });
@@ -85,17 +90,24 @@ export default function SheetForm() {
     };
   });
 
+  const generateKeyPair = (adminCount: number) => {
+    const threshold = Math.ceil(adminCount * 0.6);
+
+    const _keyPair = generate_elgamal_keypair(threshold, adminCount);
+    const pk = Buffer.from(_keyPair.public).toString('base64');
+    const sk = unflattenVec(
+      _keyPair.private.data,
+      _keyPair.private.component_size
+    ).map((el) => Buffer.from(el).toString('base64'));
+
+    setKeyPair(() => ({ public: pk, private: sk }));
+    form.setValue('masterPublicKey', pk);
+  };
+
   useEffect(() => {
     if (!hasRun) {
       hasRun = true;
-      load_wasm().then(() => {
-        const _keyPair = generate_elgamal_keypair();
-        const pk = Buffer.from(_keyPair.public).toString('base64');
-        const sk = Buffer.from(_keyPair.private).toString('base64');
-
-        setKeyPair(() => ({ public: pk, private: sk }));
-        form.setValue('masterPublicKey', pk);
-      });
+      load_wasm();
     }
   }, []);
 
@@ -127,6 +139,27 @@ export default function SheetForm() {
               <FormLabel>Description</FormLabel>
               <FormControl>
                 <Textarea {...field} className="max-h-80" />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          name="adminCount"
+          control={form.control}
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Admin count</FormLabel>
+              <FormControl>
+                <Input
+                  {...field}
+                  type="number"
+                  onChange={(e) => {
+                    generateKeyPair(Number(e.target.value));
+                    return field.onChange(Number(e.target.value));
+                  }}
+                  className=""
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -250,7 +283,9 @@ export default function SheetForm() {
                   <FormLabel>Secret key</FormLabel>
                   <Textarea
                     readOnly
-                    defaultValue={'\u2022'.repeat(keyPair.private.length)}
+                    defaultValue={
+                      'Las partes privadas de la clave se pueden descargar a continuación.'
+                    }
                   />
                 </div>
                 <DownloadButton

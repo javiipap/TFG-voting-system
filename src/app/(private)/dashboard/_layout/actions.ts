@@ -11,7 +11,17 @@ import { schedule } from '@/lib/scheduler';
 export const submitElectionAction = authenticatedAction(
   schema,
   async (
-    { name, description, isPrivate, from, to, start, end, masterPublicKey },
+    {
+      name,
+      description,
+      isPrivate,
+      from,
+      to,
+      start,
+      end,
+      masterPublicKey,
+      adminCount,
+    },
     { user }
   ) => {
     const startDate = new Date(from);
@@ -32,6 +42,7 @@ export const submitElectionAction = authenticatedAction(
       privateKey: keypair.private.toString('base64'),
       publicKey: keypair.public.toString('base64'),
       masterPublicKey,
+      adminCount: Math.round(adminCount * 0.6),
     });
 
     // schedule contract creation

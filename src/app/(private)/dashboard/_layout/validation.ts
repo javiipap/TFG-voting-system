@@ -10,6 +10,7 @@ export const schema = z
     start: z.string(),
     end: z.string(),
     masterPublicKey: z.string(),
+    adminCount: z.number().gte(1),
   })
   .refine(
     ({ start, end, from, to }) => {
