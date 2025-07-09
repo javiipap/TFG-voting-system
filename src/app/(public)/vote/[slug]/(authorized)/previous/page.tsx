@@ -51,7 +51,7 @@ export default function PreviousStepsPage() {
 
     hasRan.current = true;
 
-    const account = await createAccount();
+    const account = await createAccount((user as User).pk);
     const ticket = await requestTicket(
       account.sk,
       account.addr,
@@ -60,7 +60,6 @@ export default function PreviousStepsPage() {
       (user as User).pk
     );
 
-    console.log('requesting ether');
     await requestEther(account.addr, electionId);
 
     setState({ isSet: true, error: undefined, ticket, ...account });

@@ -53,6 +53,9 @@ export const getVoters = async (slug: string) => {
           name: schema.users.name,
           email: schema.users.email,
           hasVoted: schema.votes.id,
+          signature: schema.votes.signature,
+          pk: schema.users.publicKey,
+          cert: schema.users.cert,
         })
         .from(schema.votes)
         .where(eq(schema.votes.electionId, election.id))
@@ -65,6 +68,9 @@ export const getVoters = async (slug: string) => {
         name: schema.users.name,
         email: schema.users.email,
         hasVoted: schema.votes.id,
+        signature: schema.votes.signature,
+        pk: schema.users.publicKey,
+        cert: schema.users.cert,
       })
       .from(schema.authorizedUsers)
       .innerJoin(

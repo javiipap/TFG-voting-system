@@ -11,7 +11,7 @@ const openSocket = async (socketAddr: string) => {
 };
 
 export async function requestUserInteraction(
-  action: 'encrypt' | 'sign',
+  action: 'decrypt' | 'sign' | 'verify',
   payload: Buffer,
   maxRetries: number = 5
 ) {

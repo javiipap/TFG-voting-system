@@ -1,8 +1,12 @@
-import ContextProvider from './context';
+import ContextProvider, { Voter } from './context';
 import { auth } from '@/lib/auth';
 import { isAuthorizedToVote } from '@/data-access/users';
 import { ReactNode } from 'react';
-import { getCandidates, getElectionBySlug } from '@/data-access/elections';
+import {
+  getCandidates,
+  getElectionBySlug,
+  getVoters,
+} from '@/data-access/elections';
 import { redirect } from 'next/navigation';
 import {
   Table,
@@ -12,6 +16,8 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import VerifySignature from '@/app/(public)/vote/[slug]/_components/verify-signature';
+import { encodeMetadata } from '@/app/(public)/vote/[slug]/(authorized)/previous/_lib';
 
 export default async function VoteLayout({
   children,
@@ -42,6 +48,17 @@ export default async function VoteLayout({
 
   const candidates = await getCandidates(election.id);
 
+  const voters = await Promise.all(
+    ((await getVoters(election.slug)) as unknown as Voter[]).map(
+      async (voter) => ({
+        ...voter,
+        metadata: (
+          await encodeMetadata([voter.name, election.id.toString()])
+        ).toJSON().data,
+      })
+    )
+  );
+
   return (
     <div className="min-h-screen h-full min-w-screen flex flex-col justify-center space-y-8">
       <div className="flex justify-center items-center">
@@ -61,6 +78,7 @@ export default async function VoteLayout({
           contractAddr: election.contractAddr!,
           masterPublicKey: election.masterPublicKey!,
           user: session?.user,
+          voters,
         }}
       >
         {isOpen && <>{children}</>}
@@ -88,6 +106,37 @@ export default async function VoteLayout({
           typeof candidates[0].votes !== 'number' && (
             <>
               <p className="text-center">Pendiente de recuento...</p>
+              <div className="min-w-[40%] max-w-[80%] m-auto bg-neutral-100 dark:bg-neutral-900 rounded-sm py-4 px-2">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead></TableHead>
+                      <TableHead>Name</TableHead>
+                      <TableHead>id</TableHead>
+                      <TableHead>Action</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {voters.map(
+                      ({ userId, name, signature, metadata, pk, cert }) => (
+                        <TableRow key={`voter-${userId}`}>
+                          <TableCell>{name}</TableCell>
+                          <TableCell>{userId}</TableCell>
+                          <TableCell>{election.id}</TableCell>
+                          <TableCell>
+                            <VerifySignature
+                              signature={signature}
+                              data={metadata}
+                              pk={pk}
+                              cert={cert}
+                            />
+                          </TableCell>
+                        </TableRow>
+                      )
+                    )}
+                  </TableBody>
+                </Table>
+              </div>
             </>
           )}
 
