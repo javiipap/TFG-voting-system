@@ -11,6 +11,7 @@ export const schema = z
     end: z.string(),
     masterPublicKey: z.string(),
     adminCount: z.number().gte(1),
+    threshold: z.number().gte(1).lte(100),
   })
   .refine(
     ({ start, end, from, to }) => {

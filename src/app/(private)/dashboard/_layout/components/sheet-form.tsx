@@ -55,6 +55,7 @@ export default function SheetForm() {
       end: '9',
       isPrivate: true,
       adminCount: 0,
+      threshold: 50,
     },
     resolver: zodResolver(schema),
   });
@@ -91,7 +92,9 @@ export default function SheetForm() {
   });
 
   const generateKeyPair = (adminCount: number) => {
-    const threshold = Math.ceil(adminCount * 0.6);
+    const threshold = Math.ceil(
+      (adminCount * form.getValues().threshold) / 100
+    );
 
     const _keyPair = generate_elgamal_keypair(threshold, adminCount);
     const pk = Buffer.from(_keyPair.public).toString('base64');
@@ -114,7 +117,7 @@ export default function SheetForm() {
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit(execute, console.log)}
+        onSubmit={form.handleSubmit(execute)}
         className="mt-4 space-y-2"
         ref={formRef}
       >
@@ -144,27 +147,52 @@ export default function SheetForm() {
             </FormItem>
           )}
         />
-        <FormField
-          name="adminCount"
-          control={form.control}
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Admin count</FormLabel>
-              <FormControl>
-                <Input
-                  {...field}
-                  type="number"
-                  onChange={(e) => {
-                    generateKeyPair(Number(e.target.value));
-                    return field.onChange(Number(e.target.value));
-                  }}
-                  className=""
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <div className="flex gap-4 [&>div]:w-[50%]">
+          <FormField
+            name="adminCount"
+            control={form.control}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Admin count</FormLabel>
+                <FormControl>
+                  <Input
+                    {...field}
+                    type="number"
+                    onChange={(e) => {
+                      generateKeyPair(Number(e.target.value));
+                      return field.onChange(Number(e.target.value));
+                    }}
+                    className=""
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            name="threshold"
+            control={form.control}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Threshold</FormLabel>
+                <FormControl>
+                  <Input
+                    {...field}
+                    type="number"
+                    min={1}
+                    max={100}
+                    onChange={(e) => {
+                      generateKeyPair(form.getValues().adminCount);
+                      return field.onChange(Number(e.target.value));
+                    }}
+                    className=""
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
         <FormField
           name="from"
           control={form.control}
@@ -290,7 +318,10 @@ export default function SheetForm() {
                 </div>
                 <DownloadButton
                   name={`election-keypair.json`}
-                  data={JSON.stringify(keyPair)}
+                  data={JSON.stringify({
+                    name: form.getValues().name,
+                    keyPair,
+                  })}
                 />
               </div>
             </div>

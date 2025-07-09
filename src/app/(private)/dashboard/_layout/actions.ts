@@ -21,6 +21,7 @@ export const submitElectionAction = authenticatedAction(
       end,
       masterPublicKey,
       adminCount,
+      threshold,
     },
     { user }
   ) => {
@@ -42,7 +43,7 @@ export const submitElectionAction = authenticatedAction(
       privateKey: keypair.private.toString('base64'),
       publicKey: keypair.public.toString('base64'),
       masterPublicKey,
-      adminCount: Math.round(adminCount * 0.6),
+      adminCount: Math.round((adminCount * threshold) / 100),
     });
 
     // schedule contract creation
