@@ -34,12 +34,10 @@ export async function requestTicket(
   const request = create_request(publicKey, addr, electionId.toString(), iat);
   const { blind_msg: blindedMsg, secret } = request;
 
-  const recoveryEthPrivateKey = Buffer.from(
-    rsa_encrypt(
-      new Uint8Array(Buffer.from(userPublicKey, 'base64')),
-      new Uint8Array(Buffer.from(sk, 'base64'))
-    )
-  ).toString('base64');
+  const recoveryEthPrivateKey = rsa_encrypt(
+    new Uint8Array(Buffer.from(userPublicKey, 'base64')),
+    new Uint8Array(Buffer.from(sk))
+  );
 
   const pubSignature = await signMetadata([userId, electionId]);
 
@@ -47,7 +45,9 @@ export async function requestTicket(
   const { data, serverError } = await requestSignatureAction({
     electionId,
     blinded: Buffer.from(blindedMsg).toString('base64'),
-    recoveryEthPrivateKey,
+    recoveryEthPrivateKey: Buffer.from(recoveryEthPrivateKey).toString(
+      'base64'
+    ),
     signature: pubSignature,
   });
 

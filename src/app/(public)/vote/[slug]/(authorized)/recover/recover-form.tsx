@@ -1,65 +1,46 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { ChangeEvent, useMemo, useState } from 'react';
-import wasm_init, { rsa_decrypt } from 'client_utilities';
+import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { AddrViewer } from '@/components/addr-viewer';
 import { privateKeyToAddress } from '@/lib/ethereum';
+import { requestUserInteraction } from '@/lib/yotefirmo';
+import LoadingButton from '@/components/loading-button';
 
 export default function RecoverForm({ vote }: { vote: any }) {
   const pathname = usePathname();
-  const [privateKey, setPrivateKey] = useState<string | null>();
   const [isLoading, setIsLoading] = useState(false);
   const [decrypted, setDecrypted] = useState<string>();
 
   const address = useMemo(() => {
     if (!decrypted) return '';
 
-    return privateKeyToAddress(
-      Buffer.from(decrypted.slice(2), 'hex').toString()
-    );
+    return privateKeyToAddress(decrypted);
   }, [decrypted]);
 
-  const handleUpload = (e: ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (!files || files.length < 1) return;
-
-    const reader = new FileReader();
-    reader.onload = (file) => setPrivateKey(file.target?.result?.toString());
-
-    reader.readAsText(files[0]);
-    e.target.value = '';
-    e.target.files = null;
-  };
-
   const handleDecrypt = async () => {
-    if (!privateKey) return;
     setIsLoading(true);
-    await wasm_init();
 
-    setDecrypted(
-      Buffer.from(
-        rsa_decrypt(
-          Buffer.from(privateKey) as unknown as Uint8Array,
-          Buffer.from(vote.recoveryEthSecret, 'base64') as unknown as Uint8Array
-        )
-      ).toString()
+    const response = await requestUserInteraction(
+      'decrypt',
+      Buffer.from(vote.recoveryEthPrivateKey, 'base64')
     );
+
+    const { result } = JSON.parse(response);
+
+    setDecrypted(Buffer.from(result, 'base64').toString());
 
     setIsLoading(false);
   };
 
   return (
     <div className="mt-4">
-      {!privateKey && <Input type="file" onChange={handleUpload} />}
-
-      {!decrypted && privateKey && (
-        <Button onClick={handleDecrypt} disabled={isLoading}>
+      {!decrypted && (
+        <LoadingButton onClick={handleDecrypt} disabled={isLoading}>
           Descifrar
-        </Button>
+        </LoadingButton>
       )}
 
       {decrypted && (

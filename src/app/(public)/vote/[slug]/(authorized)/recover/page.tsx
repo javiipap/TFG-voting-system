@@ -22,8 +22,8 @@ export default async function ({ params }: { params: { slug: string } }) {
     <main className="flex justify-center">
       <div className="w-[95%] mx-auto md:max-w-[600px]">
         <p>
-          Adjunte su clave privada para desencriptar y recuperar su dirección de
-          ETH.
+          Al pulsar en "Descifrar" se cargará el programa YoTeFirmo para
+          utilizar sus certificados de sistema y descifrar su dirección.
         </p>
         <RecoverForm vote={vote} />
       </div>
