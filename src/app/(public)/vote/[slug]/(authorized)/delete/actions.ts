@@ -2,15 +2,15 @@
 
 import { schema } from '@/app/(public)/vote/[slug]/(authorized)/delete/validation';
 import { ActionError, authenticatedAction } from '@/lib/safe-action';
-import { eccDecrypt } from 'server_utilities';
 import { callContractWithNonce } from '@/lib/ethereum/call-contract';
 import { deleteBallot, getBallot, getElection } from '@/data-access/elections';
-import { privateKeyToAddress } from '@/lib/ethereum';
+import { ethVerify } from '@/lib/ethereum';
 import { getAccount } from '@/data-access/accounts';
+import { encodeMetadata } from '@/app/(public)/vote/[slug]/(authorized)/previous/_lib';
 
 export const requestDeleteAction = authenticatedAction(
   schema,
-  async ({ sk, electionId }, { user }) => {
+  async ({ electionId, signature, publicKey, address }, { user }) => {
     const election = await getElection(electionId);
 
     if (!election) {
@@ -23,16 +23,13 @@ export const requestDeleteAction = authenticatedAction(
       throw new ActionError("User hasn't voted");
     }
 
-    const expectedSk = eccDecrypt(
-      Buffer.from(sk.slice(2), 'hex'),
-      Buffer.from(ballot.recoveryEthPrivateKey, 'base64')
-    ).toString('hex');
+    const msg = await encodeMetadata([]);
 
-    if (sk !== '0x' + expectedSk) {
-      throw new ActionError("Account don't match");
+    const result = ethVerify(msg, signature, Buffer.from(publicKey, 'base64'));
+
+    if (!result) {
+      throw new ActionError('Verification failed');
     }
-
-    const addr = privateKeyToAddress(sk);
 
     const account = await getAccount(false);
 
@@ -46,7 +43,7 @@ export const requestDeleteAction = authenticatedAction(
       election.contractAddr || '',
       'revoke',
       account.nonce,
-      addr
+      address
     );
 
     await deleteBallot(electionId, user.userId);
