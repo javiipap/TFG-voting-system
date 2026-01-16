@@ -10,7 +10,6 @@ This project aims to design and implement a secure voting system using blockchai
 - **Homomorphic Encryption**: Implements homomorphic encryption to perform vote tallying on encrypted ballots without decrypting them, ensuring voter privacy.
 - **Next.js Frontend**: The frontend of the application is developed using Next.js, providing a fast and efficient user interface.
 - **Dockerfile**: Includes a Dockerfile for easy deployment and containerization of the application.
-- **AWS Deployment**: Provides a Serverless Application Model (SAM) configuration file for deploying the application on AWS using AWS Lambda and API Gateway.
 
 ## Technologies Used
 
@@ -24,9 +23,15 @@ This project aims to design and implement a secure voting system using blockchai
 
 1. Clone the repository to your local machine.
 2. Navigate to the project directory.
-3. Run `npm run install` to install dependencies.
-4. Install compiled dependencies (client_utilities, server_utilities) from [github](https://github.com/javiipap/TFG-deps.git). These must be stored in `src/lib/pkg/<package_name>`
+3. Download and compile dependencies (client_utilities, server_utilities). The compiled output will be automaticaly linked to `./src/lib/pkg/`
+4. Run `npm run install` to install dependencies.
 5. Build the project using `npm run build`.
+
+## Blockchain
+
+The blockchain used must be a modified version of the Ethereum protocol. An example of the modifications which need to be done can be found on [TFG-custom-geth](https://github.com/javiipap/TFG-custom-geth). This node can be easily deployed using Kurtosis and docker, or over a Kubernetes cluster for production environments.
+
+Once configured, the funded acounts must be stored in the database. The script `./scripts/initialize_db.sql` can help with this step.
 
 ## Usage
 
@@ -38,15 +43,10 @@ This project aims to design and implement a secure voting system using blockchai
 
 ### Docker Deployment
 
-1. Build the Docker image using the provided Dockerfile.
-2. Deploy the Docker container to your preferred hosting environment.
-3. The app will be listening on port 3000 by default.
-
-### AWS Deployment
-
-1. Configure AWS credentials on your local machine.
-2. Deploy the application to AWS using the provided AWS SST configuration file: `npx sst deploy --stage prod`
-3. The cloudfront URL will be provided upon successful deployment.
+1. Download and compile dependencies (client_utilities, server_utilities). The compiled output will be automaticaly linked. The compiled output will be automaticaly linked to `./src/lib/pkg/`
+2. Build the Docker image using the provided Dockerfile.
+3. Deploy the Docker container to your preferred hosting environment.
+4. The app will be listening on port 3000 by default.
 
 ## Contribution Guidelines
 
@@ -62,7 +62,7 @@ This project is licensed under the [MIT License](LICENSE).
 
 ## Authors
 
-- Javier Padilla Pío - [alu0101410463@ull.edu.es](mailto:alu0101410463@ull.edu.es)
+- Javier Padilla Pío - [jpadillp@ull.edu.es](mailto:jpadillp@ull.edu.es)
 
 ## Acknowledgements
 

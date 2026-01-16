@@ -83,7 +83,7 @@ export default function DecryptForm() {
           onClick={decryptResult}
           disabled={status === 'executing' || isLoading}
         >
-          Desencriptar
+          Descifrar
         </LoadingButton>
       </div>
     </div>
