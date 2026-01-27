@@ -43,10 +43,44 @@ Once configured, the funded acounts must be stored in the database. The script `
 
 ### Docker Deployment
 
-1. Download and compile dependencies (client_utilities, server_utilities). The compiled output will be automaticaly linked. The compiled output will be automaticaly linked to `./src/lib/pkg/`
-2. Build the Docker image using the provided Dockerfile.
-3. Deploy the Docker container to your preferred hosting environment.
-4. The app will be listening on port 3000 by default.
+Expected folder tree:
+
+```bash
+.
+├── Dockerfile
+├── web
+└── deps
+```
+
+1. Download the dependencies and store them in a sibling folder.
+2. Move the provided Dockerfile as seen on the folder tree.
+3. Build the Docker image.
+4. Deploy the app using the docker-compose file to your preferred hosting environment.
+5. The app will be listening on port 3000 by default.
+
+NOTE: You should also deploy a modified blockchain to your infrastructure and update the `scripts/01-populate.sql` file.
+An option can be using kurtosis:
+
+```bash
+$ kurtosis run github.com/ethpandaops/ethereum-package --args-file ./network_params.yaml --image-download missing
+```
+
+network_params.yaml
+
+```yaml
+participants:
+  - el_type: geth
+    el_image: custom-geth
+    cl_type: teku
+    count: 1
+network_params:
+  network_id: '585858'
+
+additional_services:
+  - dora
+  - prometheus
+  - grafan
+```
 
 ## Contribution Guidelines
 

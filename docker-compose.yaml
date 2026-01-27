@@ -2,23 +2,40 @@
 name: e3vote
 
 services:
-  web:
-    build: .
-    container_name: web
-
-  rev_proxy:
-    container_name: reverse-proxy
-    image: nginx
-    ports:
-      - 80:80
-      - 443:443
-    volumes:
-      - /path/to/certs:/etc/certs
-
   database:
     container_name: database
     image: postgres
     volumes:
-      - pg_data:/var/lib/postgresql/data
+      - ./scripts/00-init.sql:/docker-entrypoint-initdb.d/00-init.sql
+      - ./scripts/01-populate.sql:/docker-entrypoint-initdb.d/01-populate.sql
     environment:
+      POSTGRES_USER: user
       POSTGRES_PASSWORD: password
+      POSTGRES_DB: e3vote
+    networks:
+      - local-net
+
+  web:
+    image: tfg-web-alpine
+    container_name: web
+    ports:
+      - 80:3000
+    depends_on:
+      - database
+    networks:
+      - local-net
+
+  # rev_proxy:
+  #   container_name: reverse-proxy
+  #   image: nginx
+  #   ports:
+  #     - 80:80
+  #     - 443:443
+  #   volumes:
+  #     - /path/to/certs:/etc/certs
+#     networks:
+#     - mi-red-local
+
+networks:
+  local-net:
+    driver: bridge
