@@ -14,11 +14,11 @@ RUN cargo install --version=0.12.1 --locked wasm-pack
 # RUN . "$NVM_DIR/nvm.sh" && nvm alias default v${NODE_VERSION}
 # ENV PATH="/root/.nvm/versions/node/v${NODE_VERSION}/bin/:${PATH}"
 RUN apk add --update nodejs npm
-RUN npm i --global yarn
+RUN corepack enable
 
 # Install server_lib deps
 WORKDIR /app/server_lib
-RUN npm i && yarn install
+RUN yarn install --ignore-scripts
 
 # Build dependencies
 WORKDIR /app
