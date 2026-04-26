@@ -1,6 +1,7 @@
 import { getCandidates } from '@/data-access/candidates';
 import { getElection } from '@/data-access/elections';
 import { calculateGas } from '@/lib/ethereum/calculate-gas';
+import { calculateGas2 } from '@/lib/ethereum/calculate-gas_2';
 import { sendWei } from '@/lib/ethereum/send-wei';
 
 export async function POST(request: Request) {
@@ -15,7 +16,7 @@ export async function POST(request: Request) {
     return Response.json({ status: 'Election not found' });
   }
 
-  const wei = await calculateGas(election.masterPublicKey, candidates.length);
+  const wei = await calculateGas2(candidates.length);
 
   await sendWei(clientAddr, wei);
 

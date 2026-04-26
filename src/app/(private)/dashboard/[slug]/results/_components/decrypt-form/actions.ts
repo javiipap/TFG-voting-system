@@ -9,9 +9,11 @@ export const storeClearResultsAction = authenticatedAction(
   schema,
   async ({ candidates, slug }) => {
     await Promise.all(
-      candidates.map(({ id, votes }) => updateCandidateVotes(id, votes))
+      candidates.map(({ id, votes }: { id: number; votes: number }) =>
+        updateCandidateVotes(id, votes),
+      ),
     );
 
     revalidatePath(`/dashboard/${slug}/results`);
-  }
+  },
 );

@@ -3,7 +3,11 @@ import { getElectionBySlug, getVote } from '@/data-access/elections';
 import { getSessionSSR } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 
-export default async function ({ params }: { params: { slug: string } }) {
+export default async function RecoverCredentials({
+  params,
+}: {
+  params: { slug: string };
+}) {
   const session = await getSessionSSR();
 
   const election = await getElectionBySlug(params.slug);

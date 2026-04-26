@@ -32,7 +32,7 @@ FROM node:18-alpine AS base
 FROM base AS builder
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
-COPY web .
+ADD web .
 COPY --from=rust_builder /pkg ./src/lib/pkg
 
 RUN if [ -f package-lock.json ]; then npm ci; \

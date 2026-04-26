@@ -13,7 +13,7 @@ export const requestPermissionAction = unauthenticatedAction(
   requestSchema,
   async ({ ticket: rawTicket }) => {
     const { signature, ticket } = JSON.parse(
-      Buffer.from(rawTicket, 'base64').toString()
+      Buffer.from(rawTicket, 'base64').toString(),
     ) as Ticket;
 
     const election = await getElection(ticket.electionId);
@@ -55,9 +55,9 @@ export const requestPermissionAction = unauthenticatedAction(
       ticket.iat,
       candidates.length,
       election.contractAddr,
-      ticket.addr
+      ticket.addr,
     );
     // Mandar ether
     await sendWei(ticket.addr, wei);
-  }
+  },
 );

@@ -4,11 +4,7 @@ import MakeItPrivate from '@/app/(private)/dashboard/[slug]/_components/make-it-
 import { useContext } from 'react';
 import { Context } from '@/app/(private)/dashboard/[slug]/context';
 
-export async function PublicOverlay({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export function PublicOverlay({ children }: { children: React.ReactNode }) {
   const { isPrivate } = useContext(Context) as Context;
 
   return (
