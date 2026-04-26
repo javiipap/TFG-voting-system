@@ -13,7 +13,7 @@ RUN cargo install --version=0.12.1 --locked wasm-pack
 # RUN . "$NVM_DIR/nvm.sh" && nvm use v${NODE_VERSION}
 # RUN . "$NVM_DIR/nvm.sh" && nvm alias default v${NODE_VERSION}
 # ENV PATH="/root/.nvm/versions/node/v${NODE_VERSION}/bin/:${PATH}"
-RUN apk add --update nodejs npm
+RUN apk add --update nodejs npm pnpm
 RUN npm i --global corepack && corepack enable
 
 # Install server_lib deps
@@ -35,13 +35,13 @@ WORKDIR /app
 ADD web .
 COPY --from=rust_builder /pkg ./src/lib/pkg
 
-RUN if [ -f package-lock.json ]; then npm ci; \
+RUN if [ -f pnpm-lock.yaml ]; then pnpm i; \
   else echo "Lockfile not found." && exit 1; \
   fi
 
 ENV NEXT_TELEMETRY_DISABLED=1
 
-RUN if [ -f package-lock.json ]; then npm run build; \
+RUN if [ -f pnpm-lock.yaml ]; then pnpm run build; \
 else echo "Lockfile not found." && exit 1; \
 fi
 
