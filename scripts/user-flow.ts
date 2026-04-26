@@ -8,8 +8,8 @@ import {
 import { getContractInfo } from '@/lib/ethereum/get-contract-info';
 import { retry } from '@/lib/utils';
 
-const ETH_NODE = 'https://10.6.130.4';
-const WEB_ADDR = 'https://e3vote.iaas.ull.es';
+const ETH_NODE = 'http://localhost:30545';
+const WEB_ADDR = 'http://localhost:3000';
 
 export async function callContract(
   senderAddr: string,
@@ -36,7 +36,7 @@ export async function callContract(
 
     const currentNonce = await web3.eth.getTransactionCount(
       senderAddr,
-      'pending'
+      'pending',
     );
 
     const signed = await web3.eth.accounts.signTransaction(
@@ -48,7 +48,7 @@ export async function callContract(
         gas,
         nonce: currentNonce,
       },
-      senderPriv
+      senderPriv,
     );
 
     return await web3.eth.sendSignedTransaction(signed.rawTransaction);
@@ -81,7 +81,7 @@ const mp = async <T>(callback: () => Promise<T>) => {
 async function requestTicket(
   clientAddr: string,
   electionId: number,
-  iatDelay: number
+  iatDelay: number,
 ) {
   const publicKeyReq = await fetch(`${WEB_ADDR}/api/public-key/${electionId}`);
   const response = await publicKeyReq.json();
@@ -92,7 +92,7 @@ async function requestTicket(
     publicKey,
     clientAddr.toLowerCase(),
     iatDelay,
-    `election_${electionId}`
+    `election_${electionId}`,
   );
 
   const ticketRes = await fetch(`${WEB_ADDR}/api/testing/sign`, {
@@ -115,7 +115,7 @@ async function requestTicket(
     Buffer.from(signedTicket, 'base64'),
     clientAddr.toLowerCase(),
     iatDelay,
-    `election_${electionId}`
+    `election_${electionId}`,
   );
 
   return ticket;
@@ -127,7 +127,7 @@ async function requestEth(
   ticket: Buffer,
   iat: number,
   candidateCount: number,
-  contractAddr: string
+  contractAddr: string,
 ) {
   console.error(`Client addr: ${clientAddr}`);
 
@@ -158,7 +158,7 @@ async function emitBallot(
   clientAddr: string,
   clientPriv: string,
   ticket: Buffer,
-  iat: number
+  iat: number,
 ) {
   const selected = Math.floor(Math.random() * candidateCount);
 
@@ -166,7 +166,7 @@ async function emitBallot(
   const ballot = encryptVote(
     Buffer.from(publicKey, 'base64'),
     selected,
-    candidateCount
+    candidateCount,
   );
 
   console.error('Cast vote');
@@ -177,7 +177,7 @@ async function emitBallot(
     'vote',
     ballot,
     iat,
-    ticket
+    ticket,
   );
 
   return {
@@ -190,7 +190,7 @@ async function main() {
   const argv = process.argv;
   if (argv.length < 6) {
     console.error(
-      'user-flow.ts <publicKey> <contractAddr> <electionId> <candidateCount>'
+      'user-flow.ts <publicKey> <contractAddr> <electionId> <candidateCount>',
     );
     return;
   }
@@ -205,7 +205,7 @@ async function main() {
   const { addr: clientAddr, sk: clientPriv } = createAccount();
 
   const { output: ticket, time: ticketTime } = await mp(() =>
-    requestTicket(clientAddr, Number(argv[4]), iat)
+    requestTicket(clientAddr, Number(argv[4]), iat),
   );
 
   const { time: prevTime } = await mp(
@@ -216,8 +216,8 @@ async function main() {
         ticket,
         iat,
         candidateCount,
-        contractAddr
-      )
+        contractAddr,
+      ),
   );
 
   const { time: castingTime } = await mp(
@@ -229,8 +229,8 @@ async function main() {
         clientAddr,
         clientPriv,
         ticket,
-        iat
-      )
+        iat,
+      ),
   );
 
   console.log(`${ticketTime}, ${prevTime}, ${castingTime}`);

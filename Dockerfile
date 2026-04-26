@@ -1,4 +1,4 @@
-FROM rust:1.85.1-alpine AS rust_builder
+FROM rust:1.95.0-alpine AS rust_builder
 # RUN apk add --no-cache libc6-compat
 WORKDIR /app
 COPY deps .
@@ -14,11 +14,11 @@ RUN cargo install --version=0.12.1 --locked wasm-pack
 # RUN . "$NVM_DIR/nvm.sh" && nvm alias default v${NODE_VERSION}
 # ENV PATH="/root/.nvm/versions/node/v${NODE_VERSION}/bin/:${PATH}"
 RUN apk add --update nodejs npm
-RUN corepack enable
+RUN npm i --global corepack && corepack enable
 
 # Install server_lib deps
 WORKDIR /app/server_lib
-RUN yarn install --ignore-scripts
+RUN yarn install
 
 # Build dependencies
 WORKDIR /app

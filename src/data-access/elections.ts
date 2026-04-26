@@ -3,7 +3,7 @@ import * as schema from '@/db/schema';
 import { and, eq } from 'drizzle-orm';
 
 export const createElection = async (
-  election: typeof schema.elections.$inferInsert
+  election: typeof schema.elections.$inferInsert,
 ) => {
   return execQuery(async (db) => {
     const result = await db
@@ -15,14 +15,19 @@ export const createElection = async (
   });
 };
 
+export const removeElection = async (electionSlug: string) =>
+  execQuery((db) =>
+    db.delete(schema.elections).where(eq(schema.elections.slug, electionSlug)),
+  );
+
 export const canEditElection = async (adminId: number, electionId: number) => {
   const result = await execQuery((db) =>
     db.query.elections.findFirst({
       where: and(
         eq(schema.elections.id, electionId),
-        eq(schema.elections.adminId, adminId)
+        eq(schema.elections.adminId, adminId),
       ),
-    })
+    }),
   );
 
   return !!result;
@@ -30,12 +35,12 @@ export const canEditElection = async (adminId: number, electionId: number) => {
 
 export const getElection = async (id: number) =>
   execQuery((db) =>
-    db.query.elections.findFirst({ where: eq(schema.elections.id, id) })
+    db.query.elections.findFirst({ where: eq(schema.elections.id, id) }),
   );
 
 export const getElectionBySlug = async (slug: string) =>
   execQuery((db) =>
-    db.query.elections.findFirst({ where: eq(schema.elections.slug, slug) })
+    db.query.elections.findFirst({ where: eq(schema.elections.slug, slug) }),
   );
 
 export const getVoters = async (slug: string) => {
@@ -75,14 +80,14 @@ export const getVoters = async (slug: string) => {
       .from(schema.authorizedUsers)
       .innerJoin(
         schema.users,
-        eq(schema.users.id, schema.authorizedUsers.userId)
+        eq(schema.users.id, schema.authorizedUsers.userId),
       )
       .leftJoin(
         schema.votes,
         and(
           eq(schema.votes.userId, schema.authorizedUsers.userId),
-          eq(schema.votes.electionId, schema.authorizedUsers.electionId)
-        )
+          eq(schema.votes.electionId, schema.authorizedUsers.electionId),
+        ),
       )
       .where(eq(schema.authorizedUsers.electionId, election.id));
   });
@@ -91,13 +96,13 @@ export const getVoters = async (slug: string) => {
 export const startElection = async (
   contractAddr: string,
   startDate: Date,
-  electionId: number
+  electionId: number,
 ) =>
   execQuery((db) =>
     db
       .update(schema.elections)
       .set({ contractAddr, startDate })
-      .where(eq(schema.elections.id, electionId))
+      .where(eq(schema.elections.id, electionId)),
   );
 
 export const addBallot = async ({
@@ -112,14 +117,14 @@ export const addBallot = async ({
       electionId,
       recoveryEthPrivateKey,
       signature,
-    })
+    }),
   );
 
 export const getCandidates = async (electionId: number) =>
   execQuery((db) =>
     db.query.candidates.findMany({
       where: eq(schema.candidates.electionId, electionId),
-    })
+    }),
   );
 
 export const getBallot = async (electionId: number, userId: number) =>
@@ -127,9 +132,9 @@ export const getBallot = async (electionId: number, userId: number) =>
     db.query.votes.findFirst({
       where: and(
         eq(schema.votes.electionId, electionId),
-        eq(schema.votes.userId, userId)
+        eq(schema.votes.userId, userId),
       ),
-    })
+    }),
   );
 
 export const deleteBallot = async (electionId: number, userId: number) =>
@@ -139,9 +144,9 @@ export const deleteBallot = async (electionId: number, userId: number) =>
       .where(
         and(
           eq(schema.votes.electionId, electionId),
-          eq(schema.votes.userId, userId)
-        )
-      )
+          eq(schema.votes.userId, userId),
+        ),
+      ),
   );
 
 export const getPublicElections = () => {
@@ -149,15 +154,15 @@ export const getPublicElections = () => {
     db
       .select()
       .from(schema.elections)
-      .where(eq(schema.elections.isPrivate, false))
+      .where(eq(schema.elections.isPrivate, false)),
   );
 };
 
 export const storeTicket = async (
-  ticket: typeof schema.issuedTickets.$inferInsert
+  ticket: typeof schema.issuedTickets.$inferInsert,
 ) => {
   return await execQuery((db) =>
-    db.insert(schema.issuedTickets).values(ticket)
+    db.insert(schema.issuedTickets).values(ticket),
   );
 };
 
@@ -181,7 +186,7 @@ export const authorizeUser = async (email: string, electionId: number) => {
     const isAuthorized = await db.query.authorizedUsers.findFirst({
       where: and(
         eq(schema.authorizedUsers.userId, userId),
-        eq(schema.authorizedUsers.electionId, electionId)
+        eq(schema.authorizedUsers.electionId, electionId),
       ),
     });
 
@@ -205,9 +210,9 @@ export const unAuthorizeUser = (userId: number, electionId: number) =>
       .where(
         and(
           eq(schema.authorizedUsers.electionId, electionId),
-          eq(schema.authorizedUsers.userId, userId)
-        )
-      )
+          eq(schema.authorizedUsers.userId, userId),
+        ),
+      ),
   );
 
 export const setResult = (electionId: number, result: string, endDate: Date) =>
@@ -215,7 +220,7 @@ export const setResult = (electionId: number, result: string, endDate: Date) =>
     db
       .update(schema.elections)
       .set({ encryptedResult: result, endDate })
-      .where(eq(schema.elections.id, electionId))
+      .where(eq(schema.elections.id, electionId)),
   );
 
 export const getPrivateElections = async (userId: number | undefined) => {
@@ -234,9 +239,9 @@ export const getPrivateElections = async (userId: number | undefined) => {
       .from(schema.elections)
       .innerJoin(
         schema.authorizedUsers,
-        eq(schema.elections.id, schema.authorizedUsers.electionId)
+        eq(schema.elections.id, schema.authorizedUsers.electionId),
       )
-      .where(eq(schema.authorizedUsers.userId, userId))
+      .where(eq(schema.authorizedUsers.userId, userId)),
   );
 };
 
@@ -245,7 +250,7 @@ export const getVote = (userId: number, electionId: number) =>
     db.query.votes.findFirst({
       where: and(
         eq(schema.votes.userId, userId),
-        eq(schema.votes.electionId, electionId)
+        eq(schema.votes.electionId, electionId),
       ),
-    })
+    }),
   );

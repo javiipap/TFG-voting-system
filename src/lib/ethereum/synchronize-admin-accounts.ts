@@ -11,18 +11,18 @@ export async function synchronizeAdminAccounts() {
     accounts.map(async ({ addr, nonce }) => {
       const pendingTransactions = await web3.eth.getTransactionCount(
         addr,
-        'pending'
+        'pending',
       );
 
       await updateAccountNonce(addr, Number(pendingTransactions)).catch(
         (err) => {
           console.error(`[SYNC]: ERROR ${addr} - ${err}`);
-        }
+        },
       );
 
       console.log(
-        `[SYNC]: INFO synchronized ${addr} with nonce ${pendingTransactions}`
+        `[SYNC]: INFO synchronized ${addr} with nonce ${pendingTransactions}`,
       );
-    })
+    }),
   );
 }

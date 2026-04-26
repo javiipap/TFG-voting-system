@@ -1,12 +1,10 @@
-import { getEthNode } from '@/lib/ethereum/get-eth-node';
-import { Web3 } from 'web3';
+import { PRIORITY_FEE_PER_GAS } from '@/lib/ethereum';
 
 export async function calculateGas2(candidateCount: number) {
-  const web3 = new Web3(getEthNode());
   const basePrice = 262000;
   const candidateCost = 114115;
 
-  const gasPrice = BigInt(Math.ceil(Number(await web3.eth.getGasPrice()) * 2));
-
-  return gasPrice * BigInt(basePrice + candidateCost * candidateCount);
+  return (
+    PRIORITY_FEE_PER_GAS * BigInt(basePrice + candidateCost * candidateCount)
+  );
 }

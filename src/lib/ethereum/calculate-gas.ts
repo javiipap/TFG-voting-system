@@ -2,6 +2,7 @@ import { getContractInfo } from '@/lib/ethereum/get-contract-info';
 import { Web3 } from 'web3';
 import { encryptVote } from 'server_utilities';
 import { getEthNode } from '@/lib/ethereum/get-eth-node';
+import { PRIORITY_FEE_PER_GAS } from '@/lib/ethereum';
 
 export async function calculateGas(
   publicKey: Buffer,
@@ -9,7 +10,7 @@ export async function calculateGas(
   iat: number,
   candidateCount: number,
   contractAddr: string,
-  clientAddr: string
+  clientAddr: string,
 ) {
   const web3 = new Web3(getEthNode());
 
@@ -23,11 +24,5 @@ export async function calculateGas(
     .vote(ballot, iat, ticket)
     .estimateGas({ from: clientAddr });
 
-  console.log(`GAS: ${gas}`);
-
-  const gasPrice = BigInt(Math.ceil(Number(await web3.eth.getGasPrice()) * 2));
-
-  const finalGas = gasPrice * gas;
-
-  return finalGas;
+  return gas * PRIORITY_FEE_PER_GAS;
 }

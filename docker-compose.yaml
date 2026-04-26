@@ -5,6 +5,8 @@ services:
   database:
     container_name: database
     image: postgres
+    ports:
+      - 5432:5432
     volumes:
       - ./scripts/00-init.sql:/docker-entrypoint-initdb.d/00-init.sql
       - ./scripts/01-populate.sql:/docker-entrypoint-initdb.d/01-populate.sql
@@ -15,15 +17,15 @@ services:
     networks:
       - local-net
 
-  web:
-    image: tfg-web-alpine
-    container_name: web
-    ports:
-      - 80:3000
-    depends_on:
-      - database
-    networks:
-      - local-net
+#  web:
+#    image: tfg-web-alpine
+#    container_name: web
+#    ports:
+#      - 80:3000
+#    depends_on:
+#      - database
+#    networks:
+#      - local-net
 
   # rev_proxy:
   #   container_name: reverse-proxy

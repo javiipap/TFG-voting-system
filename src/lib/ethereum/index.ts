@@ -1,6 +1,8 @@
 import { Web3 } from 'web3';
 import { ec as EC } from 'elliptic';
 
+export const PRIORITY_FEE_PER_GAS = BigInt(10000);
+
 export const privateKeyToAddress = (sk: string) =>
   new Web3().eth.accounts.privateKeyToAccount(sk).address;
 
@@ -17,7 +19,7 @@ export const ethSign = async (msg: Buffer, privateKey: Buffer | Uint8Array) => {
 export const ethVerify = (
   msg: Buffer,
   signature: string,
-  publicKey: Buffer | Uint8Array
+  publicKey: Buffer | Uint8Array,
 ) => {
   const ec = new EC('secp256k1');
   const keypair = ec.keyFromPublic(publicKey);

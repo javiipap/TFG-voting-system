@@ -1,6 +1,10 @@
 import { generateElgamalKeypair, generateRsaKeypair } from 'server_utilities';
 import { getAdminId } from '@/data-access/admins';
-import { createElection, getElectionBySlug } from '@/data-access/elections';
+import {
+  createElection,
+  getElectionBySlug,
+  removeElection,
+} from '@/data-access/elections';
 import { execQuery } from '@/db/helpers';
 import { deployContract } from '@/lib/ethereum/deploy-contract';
 import { getRandomElement } from '@/lib/utils';
@@ -75,11 +79,15 @@ export async function POST(request: Request) {
   }
 
   const electionSlug = `${getRandomElement(
-    electionNames[0]
+    electionNames[0],
   )}_${getRandomElement(electionNames[1])}`;
 
   const rsaKeypair = generateRsaKeypair();
   const elgamalKeyPair = generateElgamalKeypair();
+
+  try {
+    await removeElection(electionSlug);
+  } catch {}
 
   await createElection({
     adminId,
@@ -112,7 +120,7 @@ export async function POST(request: Request) {
     candidates,
     `election_${election.id}`,
     elgamalKeyPair.public,
-    rsaKeypair.public
+    rsaKeypair.public,
   );
 
   return Response.json({

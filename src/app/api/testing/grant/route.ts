@@ -15,7 +15,7 @@ export async function POST(request: Request) {
     iat,
     candidateCount,
     contractAddr,
-    clientAddr
+    clientAddr,
   );
 
   await sendWei(clientAddr, wei);

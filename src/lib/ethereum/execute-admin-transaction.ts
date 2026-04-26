@@ -1,3 +1,4 @@
+import { PRIORITY_FEE_PER_GAS } from '@/lib/ethereum';
 import { getEthNode } from '@/lib/ethereum/get-eth-node';
 import { Numbers, Web3 } from 'web3';
 
@@ -11,17 +12,17 @@ interface Transaction {
 
 export const executeAdminTransaction = async (
   transaction: Transaction,
-  privateKey: string
+  privateKey: string,
 ) => {
   const web3 = new Web3(getEthNode());
 
   const signed = await web3.eth.accounts.signTransaction(
     {
       ...transaction,
-      maxPriorityFeePerGas: web3.utils.toWei('2', 'gwei'),
-      maxFeePerGas: web3.utils.toWei('5', 'gwei'),
+      maxPriorityFeePerGas: PRIORITY_FEE_PER_GAS.toString(),
+      maxFeePerGas: PRIORITY_FEE_PER_GAS.toString(),
     },
-    privateKey
+    privateKey,
   );
 
   return await web3.eth.sendSignedTransaction(signed.rawTransaction);

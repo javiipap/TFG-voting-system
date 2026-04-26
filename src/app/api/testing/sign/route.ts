@@ -1,5 +1,5 @@
 import { getElection } from '@/data-access/elections';
-import { sign } from '@/lib/pkg/server_utilities';
+import { sign } from 'server_utilities';
 
 export async function POST(request: Request) {
   const body = await request.json();
@@ -10,12 +10,11 @@ export async function POST(request: Request) {
   if (!election) {
     throw new Error('Election not found');
   }
-  console.time(`SIGN-${blindedTicket}`);
+
   const signedTicket = sign(
     Buffer.from(election.privateKey, 'base64'),
-    Buffer.from(blindedTicket, 'base64')
+    Buffer.from(blindedTicket, 'base64'),
   );
-  console.timeEnd(`SIGN-${blindedTicket}`);
 
   return Response.json({ signedTicket: signedTicket.toString('base64') });
 }
