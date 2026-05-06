@@ -1,7 +1,7 @@
 import { Web3 } from 'web3';
 import { ec as EC } from 'elliptic';
 
-export const PRIORITY_FEE_PER_GAS = BigInt(10000);
+export const PRIORITY_FEE_PER_GAS = BigInt(1);
 
 export const privateKeyToAddress = (sk: string) =>
   new Web3().eth.accounts.privateKeyToAccount(sk).address;

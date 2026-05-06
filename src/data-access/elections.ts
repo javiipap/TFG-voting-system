@@ -167,7 +167,7 @@ export const storeTicket = async (
 };
 
 export const authorizeUser = async (email: string, electionId: number) => {
-  const { db, client } = getConnection();
+  const { db } = getConnection();
 
   let userId = (
     await db.query.users.findFirst({
@@ -191,7 +191,6 @@ export const authorizeUser = async (email: string, electionId: number) => {
     });
 
     if (isAuthorized) {
-      client.end();
       return;
     }
   }
@@ -199,8 +198,6 @@ export const authorizeUser = async (email: string, electionId: number) => {
   await db
     .insert(schema.authorizedUsers)
     .values({ electionId, userId: userId });
-
-  client.end();
 };
 
 export const unAuthorizeUser = (userId: number, electionId: number) =>

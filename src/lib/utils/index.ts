@@ -23,18 +23,19 @@ export const createSlug = (name: string) => {
 
 export const downloadFile = (content: string) => {
   const url = window.URL.createObjectURL(
-    new Blob([content], { type: 'text/plain' })
+    new Blob([content], { type: 'text/plain' }),
   );
 };
 
 export const retry = async <T>(
   callback: () => Promise<T>,
-  maxAttempts: number = -1
+  maxAttempts: number = -1,
 ) => {
   for (let i = 0; i < maxAttempts || maxAttempts === -1; i++) {
     try {
       return await callback();
     } catch (e) {
+      console.warn(`WARNING: retrying ${i}/${maxAttempts}`, e);
       if (i === maxAttempts - 1) {
         throw e;
       }
@@ -59,7 +60,10 @@ export const generateChallenge = (length: number = 24) => {
   crypto.getRandomValues(randomValues);
 
   return Buffer.from(
-    randomValues.reduce((acc, val) => acc + alphabet[val % alphabet.length], '')
+    randomValues.reduce(
+      (acc, val) => acc + alphabet[val % alphabet.length],
+      '',
+    ),
   );
 };
 

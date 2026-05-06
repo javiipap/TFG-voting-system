@@ -3,17 +3,10 @@ FROM rust:1.95.0-alpine AS rust_builder
 WORKDIR /app
 COPY deps .
 RUN apk add --no-cache musl-dev gcc make openssl-dev libc6-compat
-RUN cargo install --version=0.12.1 --locked wasm-pack
+RUN cargo install wasm-pack
 
 # Install node, npm and yarn
-# RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
-# ENV NVM_DIR=/root/.nvm
-# ENV NODE_VERSION=24.13.0
-# RUN . "$NVM_DIR/nvm.sh" && nvm install ${NODE_VERSION}
-# RUN . "$NVM_DIR/nvm.sh" && nvm use v${NODE_VERSION}
-# RUN . "$NVM_DIR/nvm.sh" && nvm alias default v${NODE_VERSION}
-# ENV PATH="/root/.nvm/versions/node/v${NODE_VERSION}/bin/:${PATH}"
-RUN apk add --update nodejs npm pnpm
+RUN apk add --update nodejs npm
 RUN npm i --global corepack && corepack enable
 
 # Install server_lib deps
@@ -30,7 +23,7 @@ FROM node:18-alpine AS base
 
 # Create nodejs builder container
 FROM base AS builder
-RUN apk add --no-cache libc6-compat
+RUN apk add --no-cache libc6-compat pnpm
 WORKDIR /app
 ADD web .
 COPY --from=rust_builder /pkg ./src/lib/pkg

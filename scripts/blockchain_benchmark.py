@@ -97,12 +97,15 @@ def wait_and_close(procesos):
         # Cerramos los ficheros de salida del proceso
         for f in p._bench_files:
             f.close()
-        print(f"  Worker {i + 1}/{len(procesos)} ha finalizado (exit={p.returncode}).")
+        print(
+            f"  Worker {i + 1}/{len(procesos)} ha finalizado (exit={p.returncode}).")
 
 
 def collect_json_results(out_dir, num_workers, prefix='voting_worker'):
-    """Read and merge JSON array results from worker output files."""
+    """Read and merge JSON array results from worker output files.
+    Handles Promise.allSettled output: filters fulfilled results, reports rejected."""
     results = []
+    failed = 0
     for i in range(1, num_workers + 1):
         path = f'{out_dir}/{prefix}_{i}'
         try:
@@ -110,11 +113,15 @@ def collect_json_results(out_dir, num_workers, prefix='voting_worker'):
                 content = f.read().strip()
                 if content:
                     parsed = json.loads(content)
-                    # Each worker outputs a JSON array; merge them
-                    if isinstance(parsed, list):
-                        results.extend(parsed)
-                    else:
-                        results.append(parsed)
+                    if not isinstance(parsed, list):
+                        parsed = [parsed]
+                    for entry in parsed:
+                        if isinstance(entry, dict) and entry.get('status') == 'rejected':
+                            failed += 1
+                        else:
+                            # Strip the status field for backward compat
+                            entry.pop('status', None)
+                            results.append(entry)
         except (json.JSONDecodeError, FileNotFoundError) as e:
             # Check stderr for diagnostics
             err_path = path + '.err'
@@ -127,6 +134,8 @@ def collect_json_results(out_dir, num_workers, prefix='voting_worker'):
             print(f"Warning: could not read result from {path}: {e}")
             if err_msg:
                 print(f"  stderr tail: {err_msg}")
+    if failed:
+        print(f"  Warning: {failed} ticket(s) failed during processing.")
     return results
 
 
@@ -196,7 +205,12 @@ def main():
         accounts_filename = sys.argv[3]
 
         with open(accounts_filename, 'r') as f:
-            tickets = json.load(f)
+            data = json.load(f)
+
+        public_key = data['publicKey']
+        contract_addr = data['contractAddr']
+        candidate_count = data['candidateCount']
+        tickets = data['tickets']
 
     if not os.path.exists(out_dir):
         os.mkdir(out_dir)
@@ -219,7 +233,8 @@ def main():
 
         # --- Phase 2: Generate credentials ---
         # Spawn cpu_count workers, each generating N/cpus credentials concurrently
-        print(f"\n=== Phase 2: Generate {num_executions} credentials ({num_workers} workers) ===")
+        print(
+            f"\n=== Phase 2: Generate {num_executions} credentials ({num_workers} workers) ===")
         t0 = time.time()
 
         # Split batch sizes across workers
@@ -232,23 +247,27 @@ def main():
         batch_sizes = [b for b in batch_sizes if b > 0]
         actual_cred_workers = len(batch_sizes)
 
-        cmd_base = ["npx", "tsx", "scripts/generate-credentials.ts", str(election_id)]
+        cmd_base = ["npx", "tsx",
+                    "scripts/generate-credentials.ts", str(election_id)]
 
         procesos = []
         for i, bs in enumerate(batch_sizes):
             out_file = f'{out_dir}/cred_worker_{i + 1}'
-            print(f"  Lanzando worker {i + 1}/{actual_cred_workers} (batch={bs})...")
+            print(
+                f"  Lanzando worker {i + 1}/{actual_cred_workers} (batch={bs})...")
             p = spawn_worker(cmd_base + [str(bs)], out_file)
             procesos.append(p)
 
         wait_and_close(procesos)
 
         # Collect all credential results
-        tickets = collect_json_results(out_dir, actual_cred_workers, prefix='cred_worker')
+        tickets = collect_json_results(
+            out_dir, actual_cred_workers, prefix='cred_worker')
 
         credential_time = time.time() - t0
         benchmark_timing['credentialGenTimeS'] = credential_time
-        print(f"  Credential generation: {credential_time:.2f}s ({num_executions} credentials, {credential_time/max(len(tickets),1):.2f}s avg)")
+        print(
+            f"  Credential generation: {credential_time:.2f}s ({num_executions} credentials, {credential_time/max(len(tickets),1):.2f}s avg)")
 
         if not tickets:
             print("Error: No credentials were generated.")
@@ -257,12 +276,18 @@ def main():
         # Save credentials for potential re-use
         output_filename = 'accounts.json'
         with open(output_filename, 'w') as f:
-            json.dump(tickets, f)
+            json.dump({
+                'publicKey': public_key,
+                'contractAddr': contract_addr,
+                'candidateCount': candidate_count,
+                'tickets': tickets,
+            }, f)
 
     # --- Phase 3: Voting ---
     # Spawn cpu_count workers, each processing N/cpus tickets concurrently
     actual_vote_workers = min(num_workers, len(tickets))
-    print(f"\n=== Phase 3: Submit {len(tickets)} votes ({actual_vote_workers} workers) ===")
+    print(
+        f"\n=== Phase 3: Submit {len(tickets)} votes ({actual_vote_workers} workers) ===")
     t0 = time.time()
 
     # Split tickets into batches and write each to a temp file
@@ -279,7 +304,8 @@ def main():
             json.dump(batch, f)
 
         out_file = f'{out_dir}/voting_worker_{i + 1}'
-        print(f"  Lanzando worker {i + 1}/{actual_vote_workers} (tickets={len(batch)})...")
+        print(
+            f"  Lanzando worker {i + 1}/{actual_vote_workers} (tickets={len(batch)})...")
         p = spawn_worker(cmd_base + [batch_file], out_file)
         procesos.append(p)
 
@@ -291,12 +317,14 @@ def main():
 
     voting_time = time.time() - t0
     benchmark_timing['votingTimeS'] = voting_time
-    print(f"  Voting phase: {voting_time:.2f}s ({voting_time/max(len(tickets),1):.3f}s avg)")
+    print(
+        f"  Voting phase: {voting_time:.2f}s ({voting_time/max(len(tickets),1):.3f}s avg)")
 
     # --- Summary: collect results and compute statistics ---
     print(f"\n=== Timing Summary ===")
 
-    voting_results = collect_json_results(out_dir, actual_vote_workers, prefix='voting_worker')
+    voting_results = collect_json_results(
+        out_dir, actual_vote_workers, prefix='voting_worker')
     timing_summary = compute_timing_summary(tickets, voting_results)
 
     benchmark_output = {

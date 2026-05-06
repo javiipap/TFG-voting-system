@@ -6,6 +6,7 @@ import {
 } from '@/lib/pkg/server_utilities';
 
 import { getContractInfo } from '@/lib/ethereum/get-contract-info';
+import { PRIORITY_FEE_PER_GAS } from '@/lib/ethereum';
 import { retry } from '@/lib/utils';
 
 const ETH_NODE = 'http://localhost:30545';
@@ -25,12 +26,10 @@ export async function callContract(
   var mySmartContract = new web3.eth.Contract(abi, contractAddr);
 
   return await retry(async () => {
-    const gasPrice = Math.ceil(Number(await web3.eth.getGasPrice()) * 1.4);
-
     const gas = await mySmartContract.methods[methodName](...args).estimateGas({
       from: senderAddr,
     });
-    console.error(`expected gas: ${Number(gas) * gasPrice}`);
+    console.error(`expected gas: ${gas}`);
 
     const encodedABI = mySmartContract.methods[methodName](...args).encodeABI();
 
@@ -44,7 +43,7 @@ export async function callContract(
         from: senderAddr,
         to: contractAddr,
         data: encodedABI,
-        gasPrice,
+        gasPrice: PRIORITY_FEE_PER_GAS.toString(),
         gas,
         nonce: currentNonce,
       },

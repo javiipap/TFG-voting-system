@@ -18,8 +18,8 @@ export async function POST(request: Request) {
     clientAddr,
   );
 
-  await sendWei(clientAddr, wei);
-  console.timeEnd(`GRANT-${clientAddr}`);
+  await sendWei(clientAddr, BigInt(Math.round(Number(wei) * 1.4)));
+  console.log('SEND: ', BigInt(Math.round(Number(wei) * 1.4)));
 
   return Response.json({ status: 'Account granted' });
 }

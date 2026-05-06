@@ -19,8 +19,7 @@ export const executeAdminTransaction = async (
   const signed = await web3.eth.accounts.signTransaction(
     {
       ...transaction,
-      maxPriorityFeePerGas: PRIORITY_FEE_PER_GAS.toString(),
-      maxFeePerGas: PRIORITY_FEE_PER_GAS.toString(),
+      gasPrice: PRIORITY_FEE_PER_GAS.toString(),
     },
     privateKey,
   );

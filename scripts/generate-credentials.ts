@@ -1,7 +1,10 @@
 import { Web3 } from 'web3';
 import { createRequest, unblind } from '@/lib/pkg/server_utilities';
 
-const ETH_NODE = 'http://localhost:30545';
+const ETH_NODES = [...new Array(8)].map(
+  (_, i) => `http://e3vote-worker0${i + 1}.iaas.ull.es:30545`,
+);
+const ETH_NODE = ETH_NODES[Math.floor(Math.random() * 0)];
 const WEB_ADDR = 'http://localhost:3000';
 
 const mp = async <T>(callback: () => Promise<T>) => {
@@ -52,24 +55,22 @@ async function requestTicket(
 
   const { blindMsg, secret } = requestData;
 
-  const { time: signRequestTime, output: signedTicket } = await mp(
-    async () => {
-      const ticketRes = await fetch(`${WEB_ADDR}/api/testing/sign`, {
-        method: 'POST',
-        body: JSON.stringify({ blindedTicket: blindMsg, electionId }),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+  const { time: signRequestTime, output: signedTicket } = await mp(async () => {
+    const ticketRes = await fetch(`${WEB_ADDR}/api/testing/sign`, {
+      method: 'POST',
+      body: JSON.stringify({ blindedTicket: blindMsg, electionId }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
 
-      if (!ticketRes.ok) {
-        throw new Error('Unexpected error signing ticket');
-      }
+    if (!ticketRes.ok) {
+      throw new Error('Unexpected error signing ticket');
+    }
 
-      const { signedTicket } = await ticketRes.json();
-      return Buffer.from(signedTicket, 'base64');
-    },
-  );
+    const { signedTicket } = await ticketRes.json();
+    return Buffer.from(signedTicket, 'base64');
+  });
 
   const { time: unblindTime, output: ticket } = mpSync(() =>
     unblind(
