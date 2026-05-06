@@ -129,7 +129,7 @@ async function waitForBalance(addr: string, timeoutMs = 30000) {
   const start = Date.now();
   while (Date.now() - start < timeoutMs) {
     const balance = await web3.eth.getBalance(addr);
-    if (balance > 0n) return;
+    if (balance > BigInt(0)) return;
     await new Promise((r) => setTimeout(r, 500));
   }
   throw new Error(`Timeout waiting for balance on ${addr}`);
