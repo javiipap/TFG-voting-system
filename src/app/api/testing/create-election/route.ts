@@ -123,6 +123,8 @@ export async function POST(request: Request) {
     rsaKeypair.public,
   );
 
+  console.log(`[create-election] id=${election.id} contract=${contractAddr} candidates=${candidateCount}`);
+
   return Response.json({
     ...election,
     candidates,

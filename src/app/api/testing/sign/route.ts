@@ -16,5 +16,7 @@ export async function POST(request: Request) {
     Buffer.from(blindedTicket, 'base64'),
   );
 
+  console.log(`[sign] electionId=${electionId}`);
+
   return Response.json({ signedTicket: signedTicket.toString('base64') });
 }

@@ -22,7 +22,6 @@ export async function callContractWithNonce(
     const gas = await mySmartContract.methods[methodName](...args).estimateGas({
       from: senderAddr,
     });
-    console.log(`expected gas: ${gas * PRIORITY_FEE_PER_GAS}`);
 
     const encodedABI = mySmartContract.methods[methodName](...args).encodeABI();
 

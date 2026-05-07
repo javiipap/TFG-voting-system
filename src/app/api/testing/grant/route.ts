@@ -7,7 +7,7 @@ export async function POST(request: Request) {
   const { clientAddr, contractAddr, publicKey, candidateCount, ticket, iat } =
     body;
 
-  console.time(`GRANT-${clientAddr}`);
+  const t0 = Date.now();
 
   const wei = await calculateGas(
     Buffer.from(publicKey, 'base64'),
@@ -19,7 +19,8 @@ export async function POST(request: Request) {
   );
 
   await sendWei(clientAddr, BigInt(Math.round(Number(wei) * 1.4)));
-  console.log('SEND: ', BigInt(Math.round(Number(wei) * 1.4)));
+
+  console.log(`[grant] ${clientAddr} funded ${wei} wei in ${Date.now() - t0}ms`);
 
   return Response.json({ status: 'Account granted' });
 }
