@@ -1,0 +1,10 @@
+{
+  "rpcEndpoints": ["http://e3vote-worker02.iaas.ull.es:30545"],
+  "webAddr": "http://localhost:3000",
+  "scalePoints": [100, 500, 1000],
+  "repetitions": 5,
+  "candidateCount": 10,
+  "numWorkers": 8,
+  "tallyAdminKey": "0xf6299cb9ba7c7168a00286d341f381a312d46964ad961d67ebe5426767357c51",
+  "outputDir": "benchmarks"
+}

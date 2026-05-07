@@ -4,12 +4,13 @@ import { encryptVote } from '@/lib/pkg/server_utilities';
 import { getContractInfo } from '@/lib/ethereum/get-contract-info';
 import { PRIORITY_FEE_PER_GAS } from '@/lib/ethereum';
 import { readFileSync } from 'fs';
+import { resolve } from 'path';
 
-const ETH_NODES = [...new Array(8)].map(
-  (_, i) => `http://e3vote-worker0${i + 1}.iaas.ull.es:30545`,
+const config = JSON.parse(
+  readFileSync(resolve(__dirname, 'benchmark.config.json'), 'utf-8'),
 );
-const ETH_NODE = ETH_NODES[Math.floor(Math.random() * 0)];
-const WEB_ADDR = 'http://localhost:3000';
+const ETH_NODE = process.argv[6] || config.rpcEndpoints[0];
+const WEB_ADDR = config.webAddr;
 
 const mp = async <T>(callback: () => Promise<T>) => {
   const init = performance.now();
@@ -79,12 +80,17 @@ export async function callContract(
     ),
   );
 
+  const submitTimestamp = Date.now();
   const { time: sendTime, output: receipt } = await mp(async () =>
     web3.eth.sendSignedTransaction(signed.rawTransaction),
   );
 
+  const block = await web3.eth.getBlock(receipt.blockNumber);
+  const inclusionDelayMs = (Number(block.timestamp) * 1000) - submitTimestamp;
+
   return {
     receipt,
+    inclusionDelayMs,
     txTiming: {
       gasEstimateTime,
       nonceTime,
@@ -103,8 +109,6 @@ async function requestEth(
   candidateCount: number,
   contractAddr: string,
 ) {
-  console.error(`Client addr: ${clientAddr}`);
-
   const result = await fetch(`${WEB_ADDR}/api/testing/grant`, {
     method: 'POST',
     body: JSON.stringify({
@@ -153,7 +157,7 @@ async function emitBallot(
   );
 
   try {
-    const { receipt, txTiming } = await callContract(
+    const { receipt, txTiming, inclusionDelayMs } = await callContract(
       clientAddr,
       clientPriv,
       contractAddr,
@@ -167,6 +171,7 @@ async function emitBallot(
       blockNumber: receipt.blockNumber,
       blockHash: receipt.blockHash,
       gas: receipt.gasUsed,
+      inclusionDelayMs,
       timing: { encryptTime, ...txTiming },
     };
   } catch (e) {
@@ -196,8 +201,6 @@ async function processTicket(
     requestEth(addr, publicKey, signature, iat, candidateCount, contractAddr),
   );
 
-  console.error('DONE REQUESTING');
-
   const { output: castingOutput, time: castingTime } = await mp(() =>
     emitBallot(
       publicKey,
@@ -209,15 +212,27 @@ async function processTicket(
       iat,
     ),
   );
-  console.error('DONE CASTING');
 
   return {
-    // grantTime,
+    voterAddress: addr,
+    grantTime,
     castingTime,
     gas: castingOutput.gas?.toString(),
     blockNumber: castingOutput.blockNumber?.toString(),
+    inclusionDelayMs: castingOutput.inclusionDelayMs,
     timing: castingOutput.timing,
   };
+}
+
+function determinePhase(err: any): string {
+  const msg = (err?.message ?? '') + (err?.stack ?? '');
+  if (msg.includes('grant') || msg.includes('granting')) return 'grant';
+  if (msg.includes('balance') || msg.includes('Timeout waiting')) return 'balanceWait';
+  if (msg.includes('encrypt')) return 'encrypt';
+  if (msg.includes('estimateGas') || msg.includes('gas required exceeds')) return 'gasEstimate';
+  if (msg.includes('signTransaction')) return 'sign';
+  if (msg.includes('sendSignedTransaction') || msg.includes('Transaction has been reverted') || msg.includes('reverted by the EVM')) return 'send';
+  return 'unknown';
 }
 
 // Usage: blockchain-interactions.ts <publicKey> <contractAddr> <candidateCount> <ticketsFile>
@@ -240,9 +255,7 @@ async function main() {
 
   const tickets: any[] = JSON.parse(readFileSync(ticketsFile, 'utf-8'));
 
-  console.error(
-    `Processing ${tickets.length} tickets concurrently in this worker...`,
-  );
+  console.error(`Processing ${tickets.length} tickets concurrently in this worker...`);
 
   // Launch all ticket processing concurrently via Promise.allSettled
   const settled = await Promise.allSettled(
@@ -263,7 +276,13 @@ async function main() {
     if (err?.cause) console.error('Cause:', err.cause);
     if (err?.innerError) console.error('InnerError:', err.innerError);
     if (err?.data) console.error('Data:', JSON.stringify(err.data));
-    return { status: 'rejected', reason: err?.message ?? String(err) };
+    return {
+      status: 'rejected',
+      voterAddress: tickets[i]?.ticket?.addr || 'unknown',
+      failedPhase: determinePhase(err),
+      error: err?.message ?? String(err),
+      revertReason: err?.data || err?.cause?.data || err?.innerError?.data || null,
+    };
   });
 
   // Output the full array as a single JSON line to stdout
