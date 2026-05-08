@@ -49,6 +49,8 @@ target
 **/node_modules
 *.node
 /src/lib/pkg/*
-benchmarks/*
+**/benchmarks/*
 
 .kiro/*
+
+**/poc

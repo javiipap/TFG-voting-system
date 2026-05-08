@@ -34,7 +34,7 @@ function createAccount() {
 }
 
 /** Generate a single credential and return the full result object. */
-async function generateOne(electionId: number, index: number) {
+async function generateOne(electionId: number, index: number, publicKey: Buffer) {
   let currentPhase = 'accountCreation';
   try {
     const iat = Math.floor(Date.now() / 1000) - 10000;
@@ -44,25 +44,9 @@ async function generateOne(electionId: number, index: number) {
     );
     const { addr: clientAddr, sk: clientPriv } = account;
 
-    currentPhase = 'fetchPubKey';
+    currentPhase = 'createRequest';
     const { time: totalTicketTime, output: ticketResult } = await mp(
       async () => {
-        const { time: fetchPubKeyTime, output: publicKey } = await mp(
-          async () => {
-            const publicKeyReq = await fetch(
-              `${WEB_ADDR}/api/public-key/${electionId}`,
-            );
-            if (!publicKeyReq.ok)
-              throw Object.assign(
-                new Error(`HTTP ${publicKeyReq.status}`),
-                { httpStatus: publicKeyReq.status },
-              );
-            const response = await publicKeyReq.json();
-            return Buffer.from(response.publicKey, 'base64');
-          },
-        );
-
-        currentPhase = 'createRequest';
         const { time: createRequestTime, output: requestData } = mpSync(() =>
           createRequest(
             publicKey,
@@ -107,7 +91,6 @@ async function generateOne(electionId: number, index: number) {
         return {
           ticket,
           timing: {
-            fetchPubKeyTime,
             createRequestTime,
             signRequestTime,
             unblindTime,
@@ -151,8 +134,15 @@ async function main() {
   const electionId = Number(argv[2]);
   const batchSize = Number(argv[3]);
 
+  // Fetch public key once for the entire batch
+  const publicKeyReq = await fetch(`${WEB_ADDR}/api/public-key/${electionId}`);
+  if (!publicKeyReq.ok)
+    throw new Error(`Failed to fetch public key: HTTP ${publicKeyReq.status}`);
+  const { publicKey: pubKeyB64 } = await publicKeyReq.json();
+  const publicKey = Buffer.from(pubKeyB64, 'base64');
+
   const results = await Promise.allSettled(
-    Array.from({ length: batchSize }, (_, i) => generateOne(electionId, i)),
+    Array.from({ length: batchSize }, (_, i) => generateOne(electionId, i, publicKey)),
   );
 
   // Normalize: fulfilled results unwrap value, rejected get error marker

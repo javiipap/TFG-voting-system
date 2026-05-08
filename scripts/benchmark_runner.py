@@ -37,7 +37,8 @@ def deploy_contract(config, max_retries=3):
                     'contractAddr': data['contractAddr'],
                     'electionId': data['id'],
                 }
-            print(f"  Deploy attempt {attempt+1} failed: HTTP {resp.status_code}")
+            print(
+                f"  Deploy attempt {attempt+1} failed: HTTP {resp.status_code}")
         except Exception as e:
             print(f"  Deploy attempt {attempt+1} error: {e}")
         time.sleep(1)
@@ -86,16 +87,19 @@ def collect_json_results(out_dir, num_workers, prefix):
                     else:
                         results.append(entry)
         except (json.JSONDecodeError, FileNotFoundError) as e:
-            failures.append({'status': 'error', 'failedPhase': 'parse', 'error': str(e), 'worker': i})
+            failures.append(
+                {'status': 'error', 'failedPhase': 'parse', 'error': str(e), 'worker': i})
     return results, failures
 
 
 def run_tally(contract_addr, config, script_dir):
     """Invoke tally() and measure gas + wall-clock time."""
-    cmd = ['npx', 'tsx', os.path.join(script_dir, 'invoke-tally.ts'), contract_addr]
+    cmd = ['npx', 'tsx', os.path.join(
+        script_dir, 'invoke-tally.ts'), contract_addr]
     t0 = time.time()
     try:
-        result = subprocess.run(cmd, capture_output=True, text=True, timeout=120)
+        result = subprocess.run(
+            cmd, capture_output=True, text=True, timeout=120)
         wall_time = time.time() - t0
         if result.returncode != 0:
             print(f"    Tally failed: {result.stderr.strip()[:200]}")
@@ -111,7 +115,8 @@ def run_tally(contract_addr, config, script_dir):
 
 def query_block_range(vote_results, rpc_endpoint):
     """Query chain for block-level data in the vote window."""
-    block_numbers = [int(r['blockNumber']) for r in vote_results if r.get('blockNumber')]
+    block_numbers = [int(r['blockNumber'])
+                     for r in vote_results if r.get('blockNumber')]
     if not block_numbers:
         return None
 
@@ -148,7 +153,8 @@ def query_block_range(vote_results, rpc_endpoint):
     successful_votes = len(block_numbers)
     tps = successful_votes / time_span if time_span > 0 else 0
     avg_votes_per_block = successful_votes / len(blocks)
-    avg_gas_util = sum(b['gasUsed'] / b['gasLimit'] for b in blocks) / len(blocks)
+    avg_gas_util = sum(b['gasUsed'] / b['gasLimit']
+                       for b in blocks) / len(blocks)
 
     return {
         'blocks': blocks,
@@ -171,7 +177,8 @@ def run_single_iteration(scale_point, rep_index, config, output_dir, endpoints):
     t0 = time.time()
     contract = deploy_contract(config)
     deploy_time = time.time() - t0
-    print(f"    Deploy: {deploy_time:.2f}s (contract={contract['contractAddr']})")
+    print(
+        f"    Deploy: {deploy_time:.2f}s (contract={contract['contractAddr']})")
 
     # 2. Generate credentials
     t0 = time.time()
@@ -192,65 +199,129 @@ def run_single_iteration(scale_point, rep_index, config, output_dir, endpoints):
         procs.append(spawn_worker(cmd, out_file))
     wait_and_close(procs)
 
-    cred_results, cred_failures = collect_json_results(iter_dir, actual_cred_workers, 'cred_worker')
+    cred_results, cred_failures = collect_json_results(
+        iter_dir, actual_cred_workers, 'cred_worker')
     cred_time = time.time() - t0
-    print(f"    Credentials: {cred_time:.2f}s ({len(cred_results)} ok, {len(cred_failures)} failed)")
+    print(
+        f"    Credentials: {cred_time:.2f}s ({len(cred_results)} ok, {len(cred_failures)} failed)")
 
     if not cred_results:
         return {
-            'deployTimeS': deploy_time, 'credTimeS': cred_time, 'voteTimeS': 0,
+            'deployTimeS': deploy_time, 'credTimeS': cred_time, 'prepTimeS': 0, 'voteTimeS': 0,
             'credResults': cred_results, 'credFailures': cred_failures,
+            'presignResults': [], 'presignFailures': [],
             'voteResults': [], 'voteFailures': [],
         }
 
-    # 3. Submit votes
+    # 3. Presign votes (preparation phase: grant + encrypt + sign)
     t0 = time.time()
-    actual_vote_workers = min(num_workers, len(cred_results))
-    batches = split_into_batches(cred_results, actual_vote_workers)
+    actual_presign_workers = min(num_workers, len(cred_results))
+    batches = split_into_batches(cred_results, actual_presign_workers)
 
     procs = []
     for i, batch in enumerate(batches):
-        batch_file = f'{iter_dir}/batch_{i+1}.json'
+        batch_file = f'{iter_dir}/presign_batch_{i+1}.json'
         with open(batch_file, 'w') as f:
             json.dump(batch, f)
         endpoint = endpoints[i % len(endpoints)]
-        cmd = ['npx', 'tsx', os.path.join(script_dir, 'blockchain-interactions.ts'),
+        cmd = ['npx', 'tsx', os.path.join(script_dir, 'presign-votes.ts'),
                contract['publicKey'], contract['contractAddr'],
                str(config['candidateCount']), batch_file, endpoint]
-        out_file = f'{iter_dir}/voting_worker_{i+1}'
+        out_file = f'{iter_dir}/presign_worker_{i+1}'
         procs.append(spawn_worker(cmd, out_file))
     wait_and_close(procs)
 
-    vote_results, vote_failures = collect_json_results(iter_dir, actual_vote_workers, 'voting_worker')
-    vote_time = time.time() - t0
-    print(f"    Voting: {vote_time:.2f}s ({len(vote_results)} ok, {len(vote_failures)} failed)")
+    presign_results, presign_failures = collect_json_results(
+        iter_dir, actual_presign_workers, 'presign_worker')
+    prep_time = time.time() - t0
+    print(
+        f"    Presign: {prep_time:.2f}s ({len(presign_results)} ok, {len(presign_failures)} failed)")
 
-    # 4. Query block-level data
+    if not presign_results:
+        return {
+            'contract': contract,
+            'deployTimeS': deploy_time, 'credTimeS': cred_time, 'prepTimeS': prep_time, 'voteTimeS': 0,
+            'credResults': cred_results, 'credFailures': cred_failures,
+            'presignResults': presign_results, 'presignFailures': presign_failures,
+            'voteResults': [], 'voteFailures': [],
+        }
+
+    # 4. Emit votes (emission phase: submit pre-signed transactions)
+    t0 = time.time()
+    signed_txs = [{'rawTx': r['rawTx'], 'voterAddress': r['voterAddress']}
+                  for r in presign_results if r.get('rawTx')]
+    actual_emit_workers = min(num_workers, len(signed_txs))
+    emit_batches = split_into_batches(signed_txs, actual_emit_workers)
+
+    procs = []
+    for i, batch in enumerate(emit_batches):
+        batch_file = f'{iter_dir}/emit_batch_{i+1}.json'
+        with open(batch_file, 'w') as f:
+            json.dump(batch, f)
+        endpoint = endpoints[i % len(endpoints)]
+        cmd = ['npx', 'tsx', os.path.join(script_dir, 'emit-votes.ts'),
+               batch_file, endpoint]
+        out_file = f'{iter_dir}/emit_worker_{i+1}'
+        procs.append(spawn_worker(cmd, out_file))
+    wait_and_close(procs)
+
+    vote_results, vote_failures = collect_json_results(
+        iter_dir, actual_emit_workers, 'emit_worker')
+    vote_time = time.time() - t0
+    print(
+        f"    Emit: {vote_time:.2f}s ({len(vote_results)} ok, {len(vote_failures)} failed)")
+
+    # 5. Query block-level data
     block_data = query_block_range(vote_results, endpoints[0])
     if block_data and block_data.get('tps'):
-        print(f"    Throughput: {block_data['tps']:.2f} TPS, {block_data['avgVotesPerBlock']:.1f} votes/block, {block_data['avgGasUtil']:.1%} gas util")
+        print(
+            f"    Throughput: {block_data['tps']:.2f} TPS, {block_data['avgVotesPerBlock']:.1f} votes/block, {block_data['avgGasUtil']:.1%} gas util")
 
-    # 5. Invoke tally
+    # 6. Invoke tally
     tally_result = run_tally(contract['contractAddr'], config, script_dir)
     if tally_result and tally_result.get('gasUsed') and not tally_result.get('error'):
         num_votes = len(vote_results)
         tally_result['ballotCount'] = num_votes
         if num_votes > 0:
             tally_result['perBallotGas'] = tally_result['gasUsed'] / num_votes
-            block_gas_limit = block_data['blocks'][0]['gasLimit'] if block_data and block_data.get('blocks') else 30000000
-            tally_result['maxBallotsPerTx'] = int(block_gas_limit / tally_result['perBallotGas'])
-        print(f"    Tally: {tally_result['wallTimeS']:.2f}s, {tally_result['gasUsed']} gas")
+            block_gas_limit = block_data['blocks'][0]['gasLimit'] if block_data and block_data.get(
+                'blocks') else 30000000
+            tally_result['maxBallotsPerTx'] = int(
+                block_gas_limit / tally_result['perBallotGas'])
+        print(
+            f"    Tally: {tally_result['wallTimeS']:.2f}s, {tally_result['gasUsed']} gas")
     elif tally_result:
-        print(f"    Tally failed: {tally_result.get('error', 'unknown')[:100]}")
+        print(
+            f"    Tally failed: {tally_result.get('error', 'unknown')[:100]}")
+
+    # 7. Merge presign and emit results by voterAddress
+    presign_by_addr = {r['voterAddress']                       : r for r in presign_results if r.get('voterAddress')}
+    merged_results = []
+    for v in vote_results:
+        addr = v.get('voterAddress', '')
+        p = presign_by_addr.get(addr, {})
+        merged_results.append({
+            'voterAddress': addr,
+            'grantTime': p.get('grantTime'),
+            'encryptTime': p.get('encryptTime'),
+            'latencyMs': v.get('latencyMs'),
+            'inclusionDelayMs': v.get('inclusionDelayMs'),
+            'gas': v.get('gas'),
+            'blockNumber': v.get('blockNumber'),
+            'status': v.get('status', 'fulfilled'),
+        })
 
     return {
         'contract': contract,
         'deployTimeS': deploy_time,
         'credTimeS': cred_time,
+        'prepTimeS': prep_time,
         'voteTimeS': vote_time,
         'credResults': cred_results,
         'credFailures': cred_failures,
-        'voteResults': vote_results,
+        'presignResults': presign_results,
+        'presignFailures': presign_failures,
+        'voteResults': merged_results,
         'voteFailures': vote_failures,
         'blockData': block_data,
         'tally': tally_result,
@@ -259,10 +330,14 @@ def run_single_iteration(scale_point, rep_index, config, output_dir, endpoints):
 
 def parse_args():
     parser = argparse.ArgumentParser(description='e3vote Benchmark Runner')
-    parser.add_argument('--scale-points', type=int, nargs='+', help='Override scale points from config')
-    parser.add_argument('--repetitions', type=int, help='Override repetitions from config')
-    parser.add_argument('--output-dir', type=str, help='Override output directory from config')
-    parser.add_argument('--config', type=str, default=None, help='Path to config file')
+    parser.add_argument('--scale-points', type=int, nargs='+',
+                        help='Override scale points from config')
+    parser.add_argument('--repetitions', type=int,
+                        help='Override repetitions from config')
+    parser.add_argument('--output-dir', type=str,
+                        help='Override output directory from config')
+    parser.add_argument('--config', type=str, default=None,
+                        help='Path to config file')
     return parser.parse_args()
 
 
@@ -270,7 +345,8 @@ def main():
     script_dir = os.path.dirname(os.path.abspath(__file__))
     args = parse_args()
 
-    config_path = args.config or os.path.join(script_dir, 'benchmark.config.json')
+    config_path = args.config or os.path.join(
+        script_dir, 'benchmark.config.json')
     config = load_config(config_path)
 
     # Apply CLI overrides
@@ -283,7 +359,8 @@ def main():
 
     # Create timestamped output directory
     timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-    output_dir = os.path.join(script_dir, config['outputDir'], f'run_{timestamp}')
+    output_dir = os.path.join(
+        script_dir, config['outputDir'], f'run_{timestamp}')
     os.makedirs(output_dir, exist_ok=True)
 
     # Copy config for reproducibility
@@ -309,7 +386,8 @@ def main():
         scale_reps = []
         for rep in range(config['repetitions']):
             print(f"\n  --- Repetition {rep+1}/{config['repetitions']} ---")
-            result = run_single_iteration(scale_point, rep, config, output_dir, endpoints)
+            result = run_single_iteration(
+                scale_point, rep, config, output_dir, endpoints)
             scale_reps.append(result)
 
         aggregated = compute_aggregated_stats(scale_reps)
@@ -318,7 +396,8 @@ def main():
             'repetitions': scale_reps,
             'aggregated': aggregated,
         })
-        print(f"\n  Aggregated TPS: {aggregated.get('tps', {}).get('mean', 0):.2f} ± {aggregated.get('tps', {}).get('ci95', 0):.2f}")
+        print(
+            f"\n  Aggregated TPS: {aggregated.get('tps', {}).get('mean', 0):.2f} ± {aggregated.get('tps', {}).get('ci95', 0):.2f}")
 
     # Write outputs
     write_outputs(all_scale_results, config, output_dir)
@@ -343,52 +422,76 @@ def compute_aggregated_stats(scale_reps):
     agg = {}
 
     # TPS from block data
-    tps_values = [r['blockData']['tps'] for r in scale_reps if r.get('blockData') and r['blockData'].get('tps')]
+    tps_values = [r['blockData']['tps'] for r in scale_reps if r.get(
+        'blockData') and r['blockData'].get('tps')]
     if tps_values:
         agg['tps'] = compute_stats(tps_values)
 
-    # Casting time (mean per rep)
-    casting_means = []
+    # Latency (emission time per vote, mean per rep)
+    latency_means = []
     for r in scale_reps:
-        times = [v.get('castingTime', 0) for v in r.get('voteResults', []) if v.get('castingTime')]
+        times = [v.get('latencyMs', 0)
+                 for v in r.get('voteResults', []) if v.get('latencyMs')]
         if times:
-            casting_means.append(sum(times) / len(times))
-    if casting_means:
-        agg['castingTime'] = compute_stats(casting_means)
+            latency_means.append(sum(times) / len(times))
+    if latency_means:
+        agg['latencyMs'] = compute_stats(latency_means)
 
     # Grant time (mean per rep)
     grant_means = []
     for r in scale_reps:
-        times = [v.get('grantTime', 0) for v in r.get('voteResults', []) if v.get('grantTime')]
+        times = [v.get('grantTime', 0)
+                 for v in r.get('voteResults', []) if v.get('grantTime')]
         if times:
             grant_means.append(sum(times) / len(times))
     if grant_means:
         agg['grantTime'] = compute_stats(grant_means)
 
+    # Encrypt time (mean per rep)
+    encrypt_means = []
+    for r in scale_reps:
+        times = [v.get('encryptTime', 0)
+                 for v in r.get('voteResults', []) if v.get('encryptTime')]
+        if times:
+            encrypt_means.append(sum(times) / len(times))
+    if encrypt_means:
+        agg['encryptTime'] = compute_stats(encrypt_means)
+
     # Inclusion delay (mean per rep)
     delay_means = []
     for r in scale_reps:
-        times = [v.get('inclusionDelayMs', 0) for v in r.get('voteResults', []) if v.get('inclusionDelayMs')]
+        times = [v.get('inclusionDelayMs', 0) for v in r.get(
+            'voteResults', []) if v.get('inclusionDelayMs')]
         if times:
             delay_means.append(sum(times) / len(times))
     if delay_means:
         agg['inclusionDelay'] = compute_stats(delay_means)
 
+    # Prep time (wall clock per rep)
+    prep_times = [r['prepTimeS'] for r in scale_reps if r.get('prepTimeS')]
+    if prep_times:
+        agg['prepTime'] = compute_stats(prep_times)
+
     # Tally wall time
-    tally_times = [r['tally']['wallTimeS'] for r in scale_reps if r.get('tally') and r['tally'].get('wallTimeS') and not r['tally'].get('error')]
+    tally_times = [r['tally']['wallTimeS'] for r in scale_reps if r.get(
+        'tally') and r['tally'].get('wallTimeS') and not r['tally'].get('error')]
     if tally_times:
         agg['tallyWallTime'] = compute_stats(tally_times)
 
     # Failure summary
-    total = sum(len(r.get('voteResults', [])) + len(r.get('voteFailures', [])) for r in scale_reps)
+    total = sum(len(r.get('voteResults', [])) +
+                len(r.get('voteFailures', [])) for r in scale_reps)
     successes = sum(len(r.get('voteResults', [])) for r in scale_reps)
     failures = sum(len(r.get('voteFailures', [])) for r in scale_reps)
+    presign_failures = sum(len(r.get('presignFailures', []))
+                           for r in scale_reps)
     by_phase = {}
     for r in scale_reps:
         for f in r.get('voteFailures', []):
-            phase = f.get('failedPhase', 'unknown')
+            phase = f.get('errorType', f.get('failedPhase', 'unknown'))
             by_phase[phase] = by_phase.get(phase, 0) + 1
-    agg['failures'] = {'total': total, 'successes': successes, 'failures': failures, 'byPhase': by_phase}
+    agg['failures'] = {'total': total, 'successes': successes, 'failures': failures,
+                       'presignFailures': presign_failures, 'byPhase': by_phase}
 
     return agg
 
@@ -397,7 +500,8 @@ def write_outputs(all_scale_results, config, output_dir):
     """Write results.json and votes.csv."""
     # Get git commit
     try:
-        git_result = subprocess.run(['git', 'rev-parse', 'HEAD'], capture_output=True, text=True, timeout=5)
+        git_result = subprocess.run(
+            ['git', 'rev-parse', 'HEAD'], capture_output=True, text=True, timeout=5)
         git_commit = git_result.stdout.strip() if git_result.returncode == 0 else 'unknown'
     except Exception:
         git_commit = 'unknown'
@@ -423,7 +527,8 @@ def write_outputs(all_scale_results, config, output_dir):
                 gas_model['perBallotTallyGas'] = t['perBallotGas']
                 gas_model['maxBallotsPerTallyTx'] = t['maxBallotsPerTx']
                 # Also get per-vote tx gas from results
-                vote_gas = [int(v['gas']) for v in rep.get('voteResults', []) if v.get('gas')]
+                vote_gas = [int(v['gas']) for v in rep.get(
+                    'voteResults', []) if v.get('gas')]
                 if vote_gas:
                     gas_model['perVoteTxGas'] = sum(vote_gas) // len(vote_gas)
                 break
@@ -450,9 +555,11 @@ def write_outputs(all_scale_results, config, output_dir):
                 'rep': i,
                 'deployTimeS': rep['deployTimeS'],
                 'credTimeS': rep['credTimeS'],
+                'prepTimeS': rep.get('prepTimeS', 0),
                 'voteTimeS': rep['voteTimeS'],
                 'successes': len(rep.get('voteResults', [])),
                 'failures': len(rep.get('voteFailures', [])),
+                'presignFailures': len(rep.get('presignFailures', [])),
                 'tally': rep.get('tally'),
                 'throughput': {
                     'tps': rep.get('blockData', {}).get('tps', 0),
@@ -475,13 +582,12 @@ def write_outputs(all_scale_results, config, output_dir):
         for sp in all_scale_results:
             for rep_idx, rep in enumerate(sp['repetitions']):
                 for vid, v in enumerate(rep.get('voteResults', [])):
-                    timing = v.get('timing', {})
                     f.write(f"{sp['voters']},{rep_idx},{vid},"
                             f"{v.get('voterAddress', '')},"
-                            f"{timing.get('encryptTime', '')},"
+                            f"{v.get('encryptTime', '')},"
                             f"{v.get('grantTime', '')},"
                             f"{v.get('inclusionDelayMs', '')},"
-                            f"{v.get('castingTime', '')},"
+                            f"{v.get('latencyMs', '')},"
                             f"{v.get('gas', '')},"
                             f"{v.get('blockNumber', '')},"
                             f"success,,\n")
@@ -489,7 +595,7 @@ def write_outputs(all_scale_results, config, output_dir):
                     f.write(f"{sp['voters']},{rep_idx},{vid},"
                             f"{v.get('voterAddress', '')},"
                             f",,,,,,failed,"
-                            f"{v.get('failedPhase', '')},"
+                            f"{v.get('failedPhase', v.get('errorType', ''))},"
                             f"\"{v.get('error', '').replace(chr(34), chr(34)+chr(34))}\"\n")
 
     print(f"  Written: {os.path.join(output_dir, 'results.json')}")
