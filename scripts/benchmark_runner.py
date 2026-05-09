@@ -116,7 +116,6 @@ def collect_json_results(out_dir, num_workers, prefix):
     return results, failures
 
 
-
 def query_block_range(vote_results, rpc_endpoint, slot_time=2):
     """Query chain for block-level data in the vote window."""
     block_numbers = [int(r['blockNumber'])
@@ -282,7 +281,8 @@ def run_single_iteration(scale_point, rep_index, config, output_dir, endpoints, 
             f"    Throughput: {block_data['tps']:.2f} TPS, {block_data['avgVotesPerBlock']:.1f} votes/block, {block_data['avgGasUtil']:.1%} gas util")
 
     # 6. Merge presign and emit results by voterAddress
-    presign_by_addr = {r['voterAddress']                       : r for r in presign_results if r.get('voterAddress')}
+    presign_by_addr = {r['voterAddress']
+        : r for r in presign_results if r.get('voterAddress')}
     merged_results = []
     for v in vote_results:
         addr = v.get('voterAddress', '')
@@ -375,6 +375,11 @@ def main():
         print(f"{'='*60}")
         scale_reps = []
         for rep in range(config['repetitions']):
+            if rep > 0:
+                print(
+                    f'Graceful wait for chain stabilization ({slot_time * 2} sec)')
+                time.sleep(slot_time * 2)
+
             print(f"\n  --- Repetition {rep+1}/{config['repetitions']} ---")
             result = run_single_iteration(
                 scale_point, rep, config, output_dir, endpoints, slot_time)
