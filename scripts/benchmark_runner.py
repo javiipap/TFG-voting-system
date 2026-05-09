@@ -22,6 +22,30 @@ def load_config(config_path):
         return json.load(f)
 
 
+def detect_slot_time(rpc_endpoint):
+    """Detect block slot time by comparing timestamps of two consecutive blocks."""
+    try:
+        resp = requests.post(rpc_endpoint, json={
+            "jsonrpc": "2.0", "method": "eth_blockNumber", "params": [], "id": 1
+        }, timeout=10)
+        latest = int(resp.json()['result'], 16)
+
+        timestamps = []
+        for block_num in [latest - 1, latest]:
+            resp = requests.post(rpc_endpoint, json={
+                "jsonrpc": "2.0", "method": "eth_getBlockByNumber",
+                "params": [hex(block_num), False], "id": 1
+            }, timeout=10)
+            timestamps.append(int(resp.json()['result']['timestamp'], 16))
+
+        slot_time = timestamps[1] - timestamps[0]
+        if slot_time > 0:
+            return slot_time
+    except Exception as e:
+        print(f"  Warning: could not detect slot time: {e}")
+    return 2  # fallback
+
+
 def deploy_contract(config, max_retries=3):
     """Deploy a fresh election contract via the web API."""
     url = f"{config['webAddr']}/api/testing/create-election"
@@ -93,7 +117,7 @@ def collect_json_results(out_dir, num_workers, prefix):
 
 
 
-def query_block_range(vote_results, rpc_endpoint):
+def query_block_range(vote_results, rpc_endpoint, slot_time=2):
     """Query chain for block-level data in the vote window."""
     block_numbers = [int(r['blockNumber'])
                      for r in vote_results if r.get('blockNumber')]
@@ -125,9 +149,9 @@ def query_block_range(vote_results, rpc_endpoint):
             print(f"    Warning: failed to fetch block {block_num}: {e}")
 
     if len(blocks) < 2:
-        # All votes in a single block — use slot time (2s) as the time span
-        tps = len(block_numbers) / 2.0 if block_numbers else 0
-        return {'blocks': blocks, 'tps': tps, 'avgVotesPerBlock': len(block_numbers), 'avgGasUtil': blocks[0]['gasUsed'] / blocks[0]['gasLimit'] if blocks else 0, 'blockRange': [min_block, max_block], 'timeSpanS': 2}
+        # All votes in a single block — use slot time as the time span
+        tps = len(block_numbers) / slot_time if block_numbers else 0
+        return {'blocks': blocks, 'tps': tps, 'avgVotesPerBlock': len(block_numbers), 'avgGasUtil': blocks[0]['gasUsed'] / blocks[0]['gasLimit'] if blocks else 0, 'blockRange': [min_block, max_block], 'timeSpanS': slot_time}
 
     time_span = blocks[-1]['timestamp'] - blocks[0]['timestamp']
     successful_votes = len(block_numbers)
@@ -146,7 +170,7 @@ def query_block_range(vote_results, rpc_endpoint):
     }
 
 
-def run_single_iteration(scale_point, rep_index, config, output_dir, endpoints):
+def run_single_iteration(scale_point, rep_index, config, output_dir, endpoints, slot_time=2):
     """Execute one full iteration: deploy → credentials → voting. Returns result dict."""
     iter_dir = os.path.join(output_dir, f'sp{scale_point}_rep{rep_index}')
     os.makedirs(iter_dir, exist_ok=True)
@@ -252,7 +276,7 @@ def run_single_iteration(scale_point, rep_index, config, output_dir, endpoints):
         f"    Emit: {vote_time:.2f}s ({len(vote_results)} ok, {len(vote_failures)} failed)")
 
     # 5. Query block-level data
-    block_data = query_block_range(vote_results, endpoints[0])
+    block_data = query_block_range(vote_results, endpoints[0], slot_time)
     if block_data and block_data.get('tps'):
         print(
             f"    Throughput: {block_data['tps']:.2f} TPS, {block_data['avgVotesPerBlock']:.1f} votes/block, {block_data['avgGasUtil']:.1%} gas util")
@@ -339,6 +363,10 @@ def main():
 
     endpoints = config['rpcEndpoints']
 
+    # Detect chain slot time
+    slot_time = detect_slot_time(endpoints[0])
+    print(f"  Slot time:    {slot_time}s (detected from chain)")
+
     # Main execution loop
     all_scale_results = []
     for scale_point in config['scalePoints']:
@@ -349,7 +377,7 @@ def main():
         for rep in range(config['repetitions']):
             print(f"\n  --- Repetition {rep+1}/{config['repetitions']} ---")
             result = run_single_iteration(
-                scale_point, rep, config, output_dir, endpoints)
+                scale_point, rep, config, output_dir, endpoints, slot_time)
             scale_reps.append(result)
 
         aggregated = compute_aggregated_stats(scale_reps)
@@ -362,7 +390,7 @@ def main():
             f"\n  Aggregated TPS: {aggregated.get('tps', {}).get('mean', 0):.2f} ± {aggregated.get('tps', {}).get('ci95', 0):.2f}")
 
     # Write outputs
-    write_outputs(all_scale_results, config, output_dir)
+    write_outputs(all_scale_results, config, output_dir, slot_time)
     print(f"\n=== Benchmark complete. Results in {output_dir} ===")
 
 
@@ -452,7 +480,7 @@ def compute_aggregated_stats(scale_reps):
     return agg
 
 
-def write_outputs(all_scale_results, config, output_dir):
+def write_outputs(all_scale_results, config, output_dir, slot_time):
     """Write results.json and votes.csv."""
     # Get git commit
     try:
@@ -492,7 +520,7 @@ def write_outputs(all_scale_results, config, output_dir):
         'metadata': {
             'timestamp': datetime.now().isoformat(),
             'gitCommit': git_commit,
-            'slotTimeS': 2,
+            'slotTimeS': slot_time,
             'blockGasLimit': block_gas_limit,
             'nodeCount': len(config['rpcEndpoints']),
             'rpcEndpoints': config['rpcEndpoints'],
