@@ -12,5 +12,6 @@
   "numWorkers": 4,
   "tallyAdminKey": "0xf6299cb9ba7c7168a00286d341f381a312d46964ad961d67ebe5426767357c51",
   "outputDir": "benchmarks",
-  "concurrency": 200
+  "concurrency": 200,
+  "webConcurrency": 1000
 }

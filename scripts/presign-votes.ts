@@ -16,7 +16,7 @@ import { resolve } from 'path';
 const config = JSON.parse(
   readFileSync(resolve(__dirname, 'benchmark.config.json'), 'utf-8'),
 );
-const CONCURRENCY: number = config.concurrency ?? 200;
+const CONCURRENCY: number = config.webConcurrency ?? config.concurrency ?? 1000;
 const ETH_NODE = process.argv[6] || config.rpcEndpoints[0];
 const WEB_ADDR = config.webAddr;
 

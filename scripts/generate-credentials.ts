@@ -6,6 +6,7 @@ import { resolve } from 'path';
 const config = JSON.parse(
   readFileSync(resolve(__dirname, 'benchmark.config.json'), 'utf-8'),
 );
+const CONCURRENCY: number = config.webConcurrency ?? config.concurrency ?? 1000;
 const ETH_NODE = process.argv[4] || config.rpcEndpoints[0];
 const WEB_ADDR = config.webAddr;
 
@@ -141,21 +142,22 @@ async function main() {
   const { publicKey: pubKeyB64 } = await publicKeyReq.json();
   const publicKey = Buffer.from(pubKeyB64, 'base64');
 
-  const results = await Promise.allSettled(
-    Array.from({ length: batchSize }, (_, i) => generateOne(electionId, i, publicKey)),
+  const results: any[] = new Array(batchSize);
+  let idx = 0;
+
+  async function runNext(): Promise<void> {
+    while (idx < batchSize) {
+      const i = idx++;
+      results[i] = await generateOne(electionId, i, publicKey);
+    }
+  }
+
+  await Promise.all(
+    Array.from({ length: Math.min(CONCURRENCY, batchSize) }, () => runNext()),
   );
 
   // Normalize: fulfilled results unwrap value, rejected get error marker
-  const output = results.map((r, i) => {
-    if (r.status === 'fulfilled') return r.value;
-    return {
-      status: 'error' as const,
-      voterIndex: i,
-      failedPhase: 'unknown',
-      error: r.reason?.message ?? String(r.reason),
-      httpStatus: null,
-    };
-  });
+  const output = results;
 
   console.log(JSON.stringify(output));
 }
