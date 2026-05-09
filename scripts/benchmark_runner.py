@@ -92,26 +92,6 @@ def collect_json_results(out_dir, num_workers, prefix):
     return results, failures
 
 
-def run_tally(contract_addr, config, script_dir):
-    """Invoke tally() and measure gas + wall-clock time."""
-    cmd = ['npx', 'tsx', os.path.join(
-        script_dir, 'invoke-tally.ts'), contract_addr]
-    t0 = time.time()
-    try:
-        result = subprocess.run(
-            cmd, capture_output=True, text=True, timeout=120)
-        wall_time = time.time() - t0
-        if result.returncode != 0:
-            print(f"    Tally failed: {result.stderr.strip()[:200]}")
-            return {'error': result.stderr.strip()[:500], 'wallTimeS': wall_time, 'gasUsed': 0}
-        data = json.loads(result.stdout.strip())
-        data['wallTimeS'] = wall_time
-        return data
-    except subprocess.TimeoutExpired:
-        return {'error': 'timeout', 'wallTimeS': time.time() - t0, 'gasUsed': 0}
-    except Exception as e:
-        return {'error': str(e), 'wallTimeS': time.time() - t0, 'gasUsed': 0}
-
 
 def query_block_range(vote_results, rpc_endpoint):
     """Query chain for block-level data in the vote window."""
@@ -277,24 +257,7 @@ def run_single_iteration(scale_point, rep_index, config, output_dir, endpoints):
         print(
             f"    Throughput: {block_data['tps']:.2f} TPS, {block_data['avgVotesPerBlock']:.1f} votes/block, {block_data['avgGasUtil']:.1%} gas util")
 
-    # 6. Invoke tally
-    tally_result = run_tally(contract['contractAddr'], config, script_dir)
-    if tally_result and tally_result.get('gasUsed') and not tally_result.get('error'):
-        num_votes = len(vote_results)
-        tally_result['ballotCount'] = num_votes
-        if num_votes > 0:
-            tally_result['perBallotGas'] = tally_result['gasUsed'] / num_votes
-            block_gas_limit = block_data['blocks'][0]['gasLimit'] if block_data and block_data.get(
-                'blocks') else 30000000
-            tally_result['maxBallotsPerTx'] = int(
-                block_gas_limit / tally_result['perBallotGas'])
-        print(
-            f"    Tally: {tally_result['wallTimeS']:.2f}s, {tally_result['gasUsed']} gas")
-    elif tally_result:
-        print(
-            f"    Tally failed: {tally_result.get('error', 'unknown')[:100]}")
-
-    # 7. Merge presign and emit results by voterAddress
+    # 6. Merge presign and emit results by voterAddress
     presign_by_addr = {r['voterAddress']                       : r for r in presign_results if r.get('voterAddress')}
     merged_results = []
     for v in vote_results:
@@ -324,7 +287,6 @@ def run_single_iteration(scale_point, rep_index, config, output_dir, endpoints):
         'voteResults': merged_results,
         'voteFailures': vote_failures,
         'blockData': block_data,
-        'tally': tally_result,
     }
 
 
@@ -472,12 +434,6 @@ def compute_aggregated_stats(scale_reps):
     if prep_times:
         agg['prepTime'] = compute_stats(prep_times)
 
-    # Tally wall time
-    tally_times = [r['tally']['wallTimeS'] for r in scale_reps if r.get(
-        'tally') and r['tally'].get('wallTimeS') and not r['tally'].get('error')]
-    if tally_times:
-        agg['tallyWallTime'] = compute_stats(tally_times)
-
     # Failure summary
     total = sum(len(r.get('voteResults', [])) +
                 len(r.get('voteFailures', [])) for r in scale_reps)
@@ -518,19 +474,14 @@ def write_outputs(all_scale_results, config, output_dir):
             continue
         break
 
-    # Gas model from tally results
+    # Gas model
     gas_model = {'blockGasLimit': block_gas_limit}
     for sp in all_scale_results:
         for rep in sp.get('repetitions', []):
-            t = rep.get('tally')
-            if t and t.get('perBallotGas') and not t.get('error'):
-                gas_model['perBallotTallyGas'] = t['perBallotGas']
-                gas_model['maxBallotsPerTallyTx'] = t['maxBallotsPerTx']
-                # Also get per-vote tx gas from results
-                vote_gas = [int(v['gas']) for v in rep.get(
-                    'voteResults', []) if v.get('gas')]
-                if vote_gas:
-                    gas_model['perVoteTxGas'] = sum(vote_gas) // len(vote_gas)
+            vote_gas = [int(v['gas']) for v in rep.get(
+                'voteResults', []) if v.get('gas')]
+            if vote_gas:
+                gas_model['perVoteTxGas'] = sum(vote_gas) // len(vote_gas)
                 break
         else:
             continue
@@ -560,7 +511,6 @@ def write_outputs(all_scale_results, config, output_dir):
                 'successes': len(rep.get('voteResults', [])),
                 'failures': len(rep.get('voteFailures', [])),
                 'presignFailures': len(rep.get('presignFailures', [])),
-                'tally': rep.get('tally'),
                 'throughput': {
                     'tps': rep.get('blockData', {}).get('tps', 0),
                     'avgVotesPerBlock': rep.get('blockData', {}).get('avgVotesPerBlock', 0),
