@@ -18,7 +18,7 @@ from datetime import datetime
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 ETHEREUM_DIR = os.path.abspath(os.path.join(
-    SCRIPT_DIR, '../../infra/deployment/ethereum'))
+    SCRIPT_DIR, '../../infra/ethereum'))
 CONFIG_PRYSM = os.path.join(ETHEREUM_DIR, 'config-prysm.yml')
 GENESIS_IN = os.path.join(ETHEREUM_DIR, 'genesis-in.json')
 REDEPLOY_SH = os.path.join(ETHEREUM_DIR, 'redeploy.sh')

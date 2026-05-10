@@ -4,7 +4,7 @@
  * For each credential: grants ETH, waits for balance, encrypts ballot,
  * and signs the vote transaction. Outputs pre-signed raw transactions.
  *
- * Usage: npx tsx presign-votes.ts <publicKey> <contractAddr> <candidateCount> <credentialsFile> [rpcEndpoint]
+ * Usage: npx tsx presign-votes.ts <publicKey> <contractAddr> <candidateCount> <credentialsFile> <primaryEndpoint> [fallbackEndpointsJson]
  */
 import { HttpProvider, Web3 } from 'web3';
 import { encryptVote } from '@/lib/pkg/server_utilities';
@@ -17,11 +17,19 @@ const config = JSON.parse(
   readFileSync(resolve(__dirname, 'benchmark.config.json'), 'utf-8'),
 );
 const CONCURRENCY: number = config.webConcurrency ?? config.concurrency ?? 1000;
-const ETH_NODE = process.argv[6] || config.rpcEndpoints[0];
+const PRIMARY_ENDPOINT = process.argv[6] || config.rpcEndpoints[0];
+const FALLBACK_ENDPOINTS: string[] = process.argv[7]
+  ? JSON.parse(process.argv[7])
+  : config.rpcEndpoints.filter((e: string) => e !== PRIMARY_ENDPOINT);
 const WEB_ADDR = config.webAddr;
 
-const web3 = new Web3(new HttpProvider(ETH_NODE));
-web3.eth.transactionBlockTimeout = 250;
+function createWeb3(endpoint: string): Web3 {
+  const web3 = new Web3(new HttpProvider(endpoint));
+  web3.eth.transactionBlockTimeout = 250;
+  return web3;
+}
+
+let web3 = createWeb3(PRIMARY_ENDPOINT);
 
 const mp = async <T>(callback: () => Promise<T>) => {
   const init = performance.now();
@@ -62,9 +70,20 @@ async function requestEth(
 
 async function waitForBalance(addr: string, timeoutMs = 60000) {
   const start = Date.now();
+  const endpoints = [PRIMARY_ENDPOINT, ...FALLBACK_ENDPOINTS];
+  let endpointIdx = 0;
+  
   while (Date.now() - start < timeoutMs) {
-    const balance = await web3.eth.getBalance(addr);
-    if (balance > BigInt(0)) return;
+    try {
+      const balance = await web3.eth.getBalance(addr);
+      if (balance > BigInt(0)) return;
+    } catch (e: any) {
+      // On error, try next endpoint
+      endpointIdx = (endpointIdx + 1) % endpoints.length;
+      if (endpoints[endpointIdx] !== PRIMARY_ENDPOINT) {
+        web3 = createWeb3(endpoints[endpointIdx]);
+      }
+    }
     await new Promise((r) => setTimeout(r, 500));
   }
   throw new Error(`Timeout waiting for balance on ${addr}`);
@@ -144,7 +163,7 @@ async function main() {
   const credentials: any[] = JSON.parse(readFileSync(credentialsFile, 'utf-8'));
 
   console.error(
-    `Presigning ${credentials.length} votes (concurrency=${CONCURRENCY})...`,
+    `Presigning ${credentials.length} votes (concurrency=${CONCURRENCY}, primary=${PRIMARY_ENDPOINT}, fallbacks=${FALLBACK_ENDPOINTS.length})...`,
   );
 
   const results: any[] = new Array(credentials.length);

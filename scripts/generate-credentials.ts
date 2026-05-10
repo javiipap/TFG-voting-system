@@ -7,7 +7,10 @@ const config = JSON.parse(
   readFileSync(resolve(__dirname, 'benchmark.config.json'), 'utf-8'),
 );
 const CONCURRENCY: number = config.webConcurrency ?? config.concurrency ?? 1000;
-const ETH_NODE = process.argv[4] || config.rpcEndpoints[0];
+const PRIMARY_ENDPOINT = process.argv[4] || config.rpcEndpoints[0];
+const FALLBACK_ENDPOINTS: string[] = process.argv[5]
+  ? JSON.parse(process.argv[5])
+  : config.rpcEndpoints.filter((e: string) => e !== PRIMARY_ENDPOINT);
 const WEB_ADDR = config.webAddr;
 
 const mp = async <T>(callback: () => Promise<T>) => {
@@ -25,7 +28,7 @@ const mpSync = <T>(callback: () => T) => {
 };
 
 function createAccount() {
-  const web3 = new Web3(ETH_NODE);
+  const web3 = new Web3(PRIMARY_ENDPOINT);
   const account = web3.eth.accounts.create();
 
   return {

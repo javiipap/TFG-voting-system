@@ -196,8 +196,9 @@ def run_single_iteration(scale_point, rep_index, config, output_dir, endpoints, 
     procs = []
     for i, bs in enumerate(batch_sizes):
         endpoint = endpoints[i % len(endpoints)]
+        fallbacks = [e for e in endpoints if e != endpoint]
         cmd = ['npx', 'tsx', os.path.join(script_dir, 'generate-credentials.ts'),
-               str(contract['electionId']), str(bs), endpoint]
+               str(contract['electionId']), str(bs), endpoint, json.dumps(fallbacks)]
         out_file = f'{iter_dir}/cred_worker_{i+1}'
         procs.append(spawn_worker(cmd, out_file))
     wait_and_close(procs)
@@ -227,9 +228,10 @@ def run_single_iteration(scale_point, rep_index, config, output_dir, endpoints, 
         with open(batch_file, 'w') as f:
             json.dump(batch, f)
         endpoint = endpoints[i % len(endpoints)]
+        fallbacks = [e for e in endpoints if e != endpoint]
         cmd = ['npx', 'tsx', os.path.join(script_dir, 'presign-votes.ts'),
                contract['publicKey'], contract['contractAddr'],
-               str(config['candidateCount']), batch_file, endpoint]
+               str(config['candidateCount']), batch_file, endpoint, json.dumps(fallbacks)]
         out_file = f'{iter_dir}/presign_worker_{i+1}'
         procs.append(spawn_worker(cmd, out_file))
     wait_and_close(procs)
@@ -262,8 +264,9 @@ def run_single_iteration(scale_point, rep_index, config, output_dir, endpoints, 
         with open(batch_file, 'w') as f:
             json.dump(batch, f)
         endpoint = endpoints[i % len(endpoints)]
+        fallbacks = [e for e in endpoints if e != endpoint]
         cmd = ['npx', 'tsx', os.path.join(script_dir, 'emit-votes.ts'),
-               batch_file, endpoint]
+               batch_file, endpoint, json.dumps(fallbacks)]
         out_file = f'{iter_dir}/emit_worker_{i+1}'
         procs.append(spawn_worker(cmd, out_file))
     wait_and_close(procs)

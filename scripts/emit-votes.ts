@@ -4,7 +4,7 @@
  * Submits pre-signed vote transactions and measures per-vote latency
  * and inclusion delay.
  *
- * Usage: npx tsx emit-votes.ts <inputFile> [rpcEndpoint]
+ * Usage: npx tsx emit-votes.ts <inputFile> <primaryEndpoint> [fallbackEndpointsJson]
  */
 import { HttpProvider, Web3 } from 'web3';
 import { readFileSync } from 'fs';
@@ -14,10 +14,18 @@ const config = JSON.parse(
   readFileSync(resolve(__dirname, 'benchmark.config.json'), 'utf-8'),
 );
 const CONCURRENCY: number = config.concurrency ?? 200;
-const ETH_NODE = process.argv[3] || config.rpcEndpoints[0];
+const PRIMARY_ENDPOINT = process.argv[3] || config.rpcEndpoints[0];
+const FALLBACK_ENDPOINTS: string[] = process.argv[4] 
+  ? JSON.parse(process.argv[4])
+  : config.rpcEndpoints.filter((e: string) => e !== PRIMARY_ENDPOINT);
 
-const web3 = new Web3(new HttpProvider(ETH_NODE));
-web3.eth.transactionBlockTimeout = 250;
+function createWeb3(endpoint: string): Web3 {
+  const web3 = new Web3(new HttpProvider(endpoint));
+  web3.eth.transactionBlockTimeout = 250;
+  return web3;
+}
+
+let web3 = createWeb3(PRIMARY_ENDPOINT);
 
 interface TxEntry {
   rawTx: string;
@@ -36,29 +44,40 @@ function classifyError(msg: string): string {
 async function emitOne(entry: TxEntry) {
   const submitTimestamp = Date.now();
   const t0 = performance.now();
-  try {
-    const receipt = await web3.eth.sendSignedTransaction(entry.rawTx);
-    const latencyMs = performance.now() - t0;
+  
+  const endpoints = [PRIMARY_ENDPOINT, ...FALLBACK_ENDPOINTS];
+  let lastError: any;
+  
+  for (const endpoint of endpoints) {
+    try {
+      if (endpoint !== PRIMARY_ENDPOINT) {
+        web3 = createWeb3(endpoint);
+      }
+      const receipt = await web3.eth.sendSignedTransaction(entry.rawTx);
+      const latencyMs = performance.now() - t0;
 
-    const block = await web3.eth.getBlock(receipt.blockNumber);
-    const inclusionDelayMs = Number(block.timestamp) * 1000 - submitTimestamp;
+      const block = await web3.eth.getBlock(receipt.blockNumber);
+      const inclusionDelayMs = Number(block.timestamp) * 1000 - submitTimestamp;
 
-    return {
-      status: 'fulfilled',
-      voterAddress: entry.voterAddress,
-      latencyMs,
-      inclusionDelayMs,
-      gas: receipt.gasUsed.toString(),
-      blockNumber: receipt.blockNumber.toString(),
-    };
-  } catch (e: any) {
-    return {
-      status: 'rejected',
-      voterAddress: entry.voterAddress,
-      error: e?.message ?? String(e),
-      errorType: classifyError(e?.message ?? ''),
-    };
+      return {
+        status: 'fulfilled',
+        voterAddress: entry.voterAddress,
+        latencyMs,
+        inclusionDelayMs,
+        gas: receipt.gasUsed.toString(),
+        blockNumber: receipt.blockNumber.toString(),
+      };
+    } catch (e: any) {
+      lastError = e;
+    }
   }
+  
+  return {
+    status: 'rejected',
+    voterAddress: entry.voterAddress,
+    error: lastError?.message ?? String(lastError),
+    errorType: classifyError(lastError?.message ?? ''),
+  };
 }
 
 async function main() {
@@ -72,7 +91,7 @@ async function main() {
   const txs: TxEntry[] = JSON.parse(readFileSync(inputFile, 'utf-8'));
 
   console.error(
-    `Emitting ${txs.length} votes (concurrency=${CONCURRENCY}, rpc=${ETH_NODE})...`,
+    `Emitting ${txs.length} votes (concurrency=${CONCURRENCY}, primary=${PRIMARY_ENDPOINT}, fallbacks=${FALLBACK_ENDPOINTS.length})...`,
   );
 
   const results: any[] = new Array(txs.length);
