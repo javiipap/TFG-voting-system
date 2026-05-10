@@ -25,10 +25,11 @@ REDEPLOY_SH = os.path.join(ETHEREUM_DIR, 'redeploy.sh')
 BENCHMARK_RUNNER = os.path.join(SCRIPT_DIR, 'benchmark_runner.py')
 
 DEFAULT_CONFIG = {
-    "slotTimes": [15, ],
+    "slotTimes": [12, 10, 8, 4, 4],
     "gasLimits": [600_000_000, 300_000_000, 100_000_000, 60_000_000, 30_000_000],
     "chainReadyTimeout": 180,
     "rpcEndpoint": "http://e3vote-worker02.iaas.ull.es:30545",
+    "webAddr": "http://localhost:3000",
     "benchmarkArgs": []
 }
 
@@ -87,6 +88,21 @@ def wait_for_chain(rpc_endpoint, timeout):
             pass
         time.sleep(5)
     print("  ERROR: Chain did not become ready in time")
+    return False
+
+
+def sync_nonces(web_addr):
+    """Call the web API to synchronize DB nonces with on-chain state."""
+    print("  Syncing DB nonces...")
+    try:
+        resp = requests.post(
+            f"{web_addr}/api/testing/sync-nonces", timeout=30, verify=False)
+        if resp.status_code == 200:
+            print("  Nonces synchronized")
+            return True
+        print(f"  ERROR: sync-nonces returned HTTP {resp.status_code}")
+    except Exception as e:
+        print(f"  ERROR: sync-nonces failed: {e}")
     return False
 
 
@@ -152,7 +168,13 @@ def main():
                            'gas_limit': gas_limit, 'status': 'chain_timeout'})
             continue
 
-        # 4. Run benchmark
+        # 4. Sync DB nonces with on-chain state
+        if not sync_nonces(config.get('webAddr', 'http://localhost:3000')):
+            results.append({'label': label, 'slot_time': slot_time,
+                           'gas_limit': gas_limit, 'status': 'sync_nonces_failed'})
+            continue
+
+        # 5. Run benchmark
         run_output = os.path.join(base_output, label)
         success = run_benchmark(run_output, config['benchmarkArgs'])
         results.append({
