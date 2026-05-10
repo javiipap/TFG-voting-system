@@ -35,7 +35,11 @@ function createAccount() {
 }
 
 /** Generate a single credential and return the full result object. */
-async function generateOne(electionId: number, index: number, publicKey: Buffer) {
+async function generateOne(
+  electionId: number,
+  index: number,
+  publicKey: Buffer,
+) {
   let currentPhase = 'accountCreation';
   try {
     const iat = Math.floor(Date.now() / 1000) - 10000;
@@ -68,10 +72,9 @@ async function generateOne(electionId: number, index: number, publicKey: Buffer)
               headers: { 'Content-Type': 'application/json' },
             });
             if (!ticketRes.ok)
-              throw Object.assign(
-                new Error(`HTTP ${ticketRes.status}`),
-                { httpStatus: ticketRes.status },
-              );
+              throw Object.assign(new Error(`HTTP ${ticketRes.status}`), {
+                httpStatus: ticketRes.status,
+              });
             const { signedTicket } = await ticketRes.json();
             return Buffer.from(signedTicket, 'base64');
           },
@@ -129,8 +132,6 @@ async function main() {
     console.error('generate-credentials.ts <electionId> <batchSize>');
     return;
   }
-
-  process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
 
   const electionId = Number(argv[2]);
   const batchSize = Number(argv[3]);

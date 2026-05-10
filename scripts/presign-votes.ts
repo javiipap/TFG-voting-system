@@ -136,8 +136,6 @@ async function main() {
     return;
   }
 
-  process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
-
   const publicKey = argv[2];
   const contractAddr = argv[3];
   const candidateCount = Number(argv[4]);
