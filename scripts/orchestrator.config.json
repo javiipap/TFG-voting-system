@@ -1,0 +1,50 @@
+{
+  "rpcEndpoint": "http://e3vote-worker02.iaas.ull.es:30545",
+  "webAddr": "http://localhost:3000",
+  "chains": [
+    { "slotTime": 14, "gasLimit": 600000000, "iterations": 5, "scalePoint": 10000 },
+    { "slotTime": 14, "gasLimit": 600000000, "iterations": 5, "scalePoint": 5000 },
+    { "slotTime": 14, "gasLimit": 600000000, "iterations": 5, "scalePoint": 2000 },
+    { "slotTime": 14, "gasLimit": 600000000, "iterations": 5, "scalePoint": 1000 },
+
+    { "slotTime": 12, "gasLimit": 600000000, "iterations": 5, "scalePoint": 10000 },
+    { "slotTime": 12, "gasLimit": 300000000, "iterations": 5, "scalePoint": 5000 },
+    { "slotTime": 12, "gasLimit": 300000000, "iterations": 5, "scalePoint": 2000 },
+    { "slotTime": 12, "gasLimit": 300000000, "iterations": 5, "scalePoint": 1000 },
+   
+    { "slotTime": 12, "gasLimit": 300000000, "iterations": 5, "scalePoint": 10000 },
+    { "slotTime": 12, "gasLimit": 300000000, "iterations": 5, "scalePoint": 5000 },
+    { "slotTime": 12, "gasLimit": 300000000, "iterations": 5, "scalePoint": 2000 },
+    { "slotTime": 12, "gasLimit": 300000000, "iterations": 5, "scalePoint": 1000 },
+
+    { "slotTime": 10, "gasLimit": 300000000, "iterations": 5, "scalePoint": 10000 },
+    { "slotTime": 10, "gasLimit": 300000000, "iterations": 5, "scalePoint": 5000 },
+    { "slotTime": 10, "gasLimit": 300000000, "iterations": 5, "scalePoint": 2000 },
+    { "slotTime": 10, "gasLimit": 300000000, "iterations": 5, "scalePoint": 1000 },
+   
+    { "slotTime":  8, "gasLimit": 300000000, "iterations": 5, "scalePoint": 10000 },
+    { "slotTime":  8, "gasLimit": 300000000, "iterations": 5, "scalePoint": 5000 },
+    { "slotTime":  8, "gasLimit": 300000000, "iterations": 5, "scalePoint": 2000 },
+    { "slotTime":  8, "gasLimit": 300000000, "iterations": 5, "scalePoint": 1000 },
+   
+    { "slotTime":  8, "gasLimit": 100000000, "iterations": 5, "scalePoint": 10000 },
+    { "slotTime":  8, "gasLimit": 100000000, "iterations": 5, "scalePoint": 5000 },
+    { "slotTime":  8, "gasLimit": 100000000, "iterations": 5, "scalePoint": 2000 },
+    { "slotTime":  8, "gasLimit": 100000000, "iterations": 5, "scalePoint": 1000 },
+   
+    { "slotTime":  6, "gasLimit": 100000000, "iterations": 5, "scalePoint": 10000 },
+    { "slotTime":  6, "gasLimit": 100000000, "iterations": 5, "scalePoint": 5000 },
+    { "slotTime":  6, "gasLimit": 100000000, "iterations": 5, "scalePoint": 2000 },
+    { "slotTime":  6, "gasLimit": 100000000, "iterations": 5, "scalePoint": 1000 },
+   
+    { "slotTime":  6, "gasLimit": 30000000, "iterations": 5, "scalePoint": 10000 },
+    { "slotTime":  6, "gasLimit": 30000000, "iterations": 5, "scalePoint": 5000 },
+    { "slotTime":  6, "gasLimit": 30000000, "iterations": 5, "scalePoint": 2000 },
+    { "slotTime":  6, "gasLimit": 30000000, "iterations": 5, "scalePoint": 1000 },
+   
+    { "slotTime":  4, "gasLimit": 30000000, "iterations": 5, "scalePoint": 10000 },
+    { "slotTime":  4, "gasLimit": 30000000, "iterations": 5, "scalePoint": 5000 },
+    { "slotTime":  4, "gasLimit": 30000000, "iterations": 5, "scalePoint": 2000 },
+    { "slotTime":  4, "gasLimit": 30000000, "iterations": 5, "scalePoint": 1000 }
+  ]
+}

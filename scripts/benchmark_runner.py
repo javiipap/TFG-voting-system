@@ -325,6 +325,8 @@ def parse_args():
                         help='Override repetitions from config')
     parser.add_argument('--output-dir', type=str,
                         help='Override output directory from config')
+    parser.add_argument('--no-timestamp-dir', action='store_true',
+                        help='Write directly to output-dir without run_TIMESTAMP subdirectory')
     parser.add_argument('--config', type=str, default=None,
                         help='Path to config file')
     return parser.parse_args()
@@ -348,8 +350,11 @@ def main():
 
     # Create timestamped output directory
     timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-    output_dir = os.path.join(
-        script_dir, config['outputDir'], f'run_{timestamp}')
+    if args.no_timestamp_dir and args.output_dir:
+        output_dir = args.output_dir if os.path.isabs(args.output_dir) else os.path.join(script_dir, args.output_dir)
+    else:
+        output_dir = os.path.join(
+            script_dir, config['outputDir'], f'run_{timestamp}')
     os.makedirs(output_dir, exist_ok=True)
 
     # Copy config for reproducibility
