@@ -16,7 +16,7 @@ import { resolve } from 'path';
 const config = JSON.parse(
   readFileSync(resolve(__dirname, 'benchmark.config.json'), 'utf-8'),
 );
-const CONCURRENCY: number = config.webConcurrency ?? config.concurrency ?? 1000;
+const CONCURRENCY: number = config.webConcurrency ?? config.concurrency ?? 200;
 const PRIMARY_ENDPOINT = process.argv[6] || config.rpcEndpoints[0];
 const FALLBACK_ENDPOINTS: string[] = process.argv[7]
   ? JSON.parse(process.argv[7])
@@ -72,7 +72,7 @@ async function waitForBalance(addr: string, timeoutMs = 60000) {
   const start = Date.now();
   const endpoints = [PRIMARY_ENDPOINT, ...FALLBACK_ENDPOINTS];
   let endpointIdx = 0;
-  
+
   while (Date.now() - start < timeoutMs) {
     try {
       const balance = await web3.eth.getBalance(addr);

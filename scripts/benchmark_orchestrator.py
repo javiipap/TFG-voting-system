@@ -27,6 +27,8 @@ SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 ETHEREUM_DIR = os.path.abspath(os.path.join(SCRIPT_DIR, '../../infra/ethereum'))
 CONFIG_PRYSM = os.path.join(ETHEREUM_DIR, 'config-prysm.yml')
 GENESIS_IN = os.path.join(ETHEREUM_DIR, 'genesis-in.json')
+NODES_YAML = os.path.join(ETHEREUM_DIR, 'nodes.yaml')
+BOOTNODE_YAML = os.path.join(ETHEREUM_DIR, 'bootnode.yaml')
 REDEPLOY_SH = os.path.join(ETHEREUM_DIR, 'redeploy.sh')
 BENCHMARK_RUNNER = os.path.join(SCRIPT_DIR, 'benchmark_runner.py')
 
@@ -62,6 +64,14 @@ def set_gas_limit(gas_limit):
     genesis['gasLimit'] = hex(gas_limit)
     with open(GENESIS_IN, 'w') as f:
         json.dump(genesis, f, indent=2)
+    # Also update --miner.gaslimit in geth args
+    for yaml_path in (NODES_YAML, BOOTNODE_YAML):
+        with open(yaml_path) as f:
+            content = f.read()
+        content = re.sub(r'--miner\.gaslimit=\d+',
+                         f'--miner.gaslimit={gas_limit}', content)
+        with open(yaml_path, 'w') as f:
+            f.write(content)
 
 
 def redeploy():

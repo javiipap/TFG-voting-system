@@ -1,17 +1,21 @@
 {
   "rpcEndpoints": [
+    "http://e3vote-worker01.iaas.ull.es:30545",
     "http://e3vote-worker02.iaas.ull.es:30545",
     "http://e3vote-worker03.iaas.ull.es:30545",
     "http://e3vote-worker04.iaas.ull.es:30545",
-    "http://e3vote-worker05.iaas.ull.es:30545"
+    "http://e3vote-worker05.iaas.ull.es:30545",
+    "http://e3vote-worker06.iaas.ull.es:30545",
+    "http://e3vote-worker07.iaas.ull.es:30545",
+    "http://e3vote-worker08.iaas.ull.es:30545"
   ],
   "webAddr": "http://localhost:3000",
-  "scalePoints": [20, 40, 50, 100, 200, 500],
+  "scalePoints": [1000, 2000, 5000, 10000],
   "repetitions": 5,
   "candidateCount": 10,
-  "numWorkers": 4,
+  "numWorkers": 8,
   "tallyAdminKey": "0xf6299cb9ba7c7168a00286d341f381a312d46964ad961d67ebe5426767357c51",
   "outputDir": "benchmarks",
-  "concurrency": 200,
-  "webConcurrency": 1000
+  "concurrency": 1000,
+  "webConcurrency": 200
 }
