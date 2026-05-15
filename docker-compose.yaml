@@ -8,8 +8,8 @@ services:
     ports:
       - 5432:5432
     volumes:
-      - ./scripts/00-init.sql:/docker-entrypoint-initdb.d/00-init.sql
-      - ./scripts/01-populate.sql:/docker-entrypoint-initdb.d/01-populate.sql
+      - ./scripts/sql/00-init.sql:/docker-entrypoint-initdb.d/00-init.sql
+      - ./scripts/sql/01-populate.sql:/docker-entrypoint-initdb.d/01-populate.sql
     environment:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
@@ -27,14 +27,14 @@ services:
 #    networks:
 #      - local-net
 
-  # rev_proxy:
-  #   container_name: reverse-proxy
-  #   image: nginx
-  #   ports:
-  #     - 80:80
-  #     - 443:443
-  #   volumes:
-  #     - /path/to/certs:/etc/certs
+# rev_proxy:
+#   container_name: reverse-proxy
+#   image: nginx
+#   ports:
+#     - 80:80
+#     - 443:443
+#   volumes:
+#     - /path/to/certs:/etc/certs
 #     networks:
 #     - mi-red-local
 
