@@ -24,7 +24,8 @@ from datetime import datetime
 
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-ETHEREUM_DIR = os.path.abspath(os.path.join(SCRIPT_DIR, '../../infra/ethereum'))
+ETHEREUM_DIR = os.path.abspath(
+    os.path.join(SCRIPT_DIR, '../../infra/ethereum'))
 CONFIG_PRYSM = os.path.join(ETHEREUM_DIR, 'config-prysm.yml')
 GENESIS_IN = os.path.join(ETHEREUM_DIR, 'genesis-in.json')
 NODES_YAML = os.path.join(ETHEREUM_DIR, 'nodes.yaml')
@@ -117,7 +118,7 @@ def run_benchmark(output_dir, extra_args):
     cmd = [sys.executable, BENCHMARK_RUNNER,
            '--output-dir', output_dir, '--no-timestamp-dir'] + extra_args
     print(f"    Running: {' '.join(cmd)}")
-    result = subprocess.run(cmd, cwd=SCRIPT_DIR)
+    result = subprocess.run(cmd, cwd='/'.join(SCRIPT_DIR.split('/')[:-1]))
     return result.returncode == 0
 
 
@@ -141,7 +142,8 @@ def main():
     config = load_config(args.config)
     chains = config['chains']
     timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-    base_output = os.path.join(SCRIPT_DIR, 'benchmarks', f'orchestrator_{timestamp}')
+    base_output = os.path.join(
+        SCRIPT_DIR, 'benchmarks', f'orchestrator_{timestamp}')
     os.makedirs(base_output, exist_ok=True)
 
     # Persist orchestrator config for reproducibility
@@ -161,13 +163,16 @@ def main():
         chain_ready_timeout = chain.get('chainReadyTimeout', 180)
         rpc_endpoint = chain.get('rpcEndpoint', config.get(
             'rpcEndpoint', 'http://e3vote-worker02.iaas.ull.es:30545'))
-        web_addr = chain.get('webAddr', config.get('webAddr', 'http://localhost:3000'))
-        benchmark_args = ['--scale-points', str(scale_point), '--repetitions', '1']
+        web_addr = chain.get('webAddr', config.get(
+            'webAddr', 'http://localhost:3000'))
+        benchmark_args = ['--scale-points',
+                          str(scale_point), '--repetitions', '1']
         label = f"slot{slot_time}s_gas{gas_limit // 1_000_000}M_sp{scale_point}"
         run_dir = os.path.join(base_output, label)
         os.makedirs(run_dir, exist_ok=True)
 
-        print(f"[{chain_idx+1}/{len(chains)}] Chain: {label} — {iterations} iterations")
+        print(
+            f"[{chain_idx+1}/{len(chains)}] Chain: {label} — {iterations} iterations")
 
         # Apply chain config once (slot time + gas limit)
         set_slot_time(slot_time)
@@ -221,7 +226,8 @@ def main():
             if os.path.exists(path):
                 with open(path) as f:
                     iter_results.append(json.load(f))
-        summary['chains'].append({'label': label, 'config': chain, 'iterations': iter_results})
+        summary['chains'].append(
+            {'label': label, 'config': chain, 'iterations': iter_results})
 
     with open(os.path.join(base_output, 'summary.json'), 'w') as f:
         json.dump(summary, f, indent=2)
