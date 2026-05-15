@@ -15,6 +15,6 @@ export async function sendWei(clientAddr: string, wei: bigint) {
       value: wei,
       nonce: account.nonce,
     },
-    account.privateKey
+    account.privateKey,
   );
 }

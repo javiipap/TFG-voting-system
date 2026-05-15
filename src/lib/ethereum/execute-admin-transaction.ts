@@ -24,5 +24,17 @@ export const executeAdminTransaction = async (
     privateKey,
   );
 
-  return await web3.eth.sendSignedTransaction(signed.rawTransaction);
+  for (let attempt = 0; attempt < 10; attempt++) {
+    try {
+      return await web3.eth.sendSignedTransaction(signed.rawTransaction);
+    } catch (err: any) {
+      const msg = err?.cause?.message ?? err?.data ?? err?.message ?? '';
+      if (msg.includes('transaction indexing is in progress')) {
+        await new Promise((r) => setTimeout(r, 2000));
+        continue;
+      }
+      throw err;
+    }
+  }
+  throw new Error('Transaction indexing did not complete after retries');
 };
