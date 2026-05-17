@@ -15,6 +15,7 @@ export const executeAdminTransaction = async (
   privateKey: string,
 ) => {
   const web3 = new Web3(getEthNode());
+  web3.eth.transactionBlockTimeout = 250;
   const { maxFeePerGas, maxPriorityFeePerGas } = await getEip1559Fees();
 
   const signed = await web3.eth.accounts.signTransaction(

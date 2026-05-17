@@ -119,7 +119,7 @@ async function presignOne(
 
   const block = await web3.eth.getBlock('latest');
   const baseFee = BigInt(block.baseFeePerGas ?? 0);
-  const maxFeePerGas = baseFee * 2n + PRIORITY_FEE_PER_GAS;
+  const maxFeePerGas = baseFee * BigInt(10) + PRIORITY_FEE_PER_GAS;
 
   const signed = await web3.eth.accounts.signTransaction(
     {
