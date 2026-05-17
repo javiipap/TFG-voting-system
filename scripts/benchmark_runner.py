@@ -116,6 +116,46 @@ def collect_json_results(out_dir, num_workers, prefix):
     return results, failures
 
 
+def fetch_block(rpc_endpoint, block_num):
+    """Fetch a single block and return normalized data dict, or None on failure."""
+    payload = {
+        "jsonrpc": "2.0",
+        "method": "eth_getBlockByNumber",
+        "params": [hex(block_num) if isinstance(block_num, int) else block_num, False],
+        "id": 1,
+    }
+    try:
+        resp = requests.post(rpc_endpoint, json=payload, timeout=10)
+        block = resp.json().get('result')
+        if block:
+            return {
+                'number': int(block['number'], 16),
+                'gasUsed': int(block['gasUsed'], 16),
+                'gasLimit': int(block['gasLimit'], 16),
+                'timestamp': int(block['timestamp'], 16),
+                'txCount': len(block.get('transactions', [])),
+                'baseFeePerGas': int(block['baseFeePerGas'], 16) if block.get('baseFeePerGas') else None,
+            }
+    except Exception as e:
+        print(f"    Warning: failed to fetch block {block_num}: {e}")
+    return None
+
+
+def fetch_post_casting_blocks(rpc_endpoint, last_block, slot_time, num_blocks=20):
+    """Fetch blocks after casting ends to observe fee cooldown."""
+    blocks = []
+    # Wait for enough blocks to be produced
+    wait_time = slot_time * (num_blocks + 2)
+    print(f"    Waiting {wait_time}s for post-casting blocks...")
+    time.sleep(wait_time)
+
+    for block_num in range(last_block + 1, last_block + 1 + num_blocks):
+        b = fetch_block(rpc_endpoint, block_num)
+        if b:
+            blocks.append(b)
+    return blocks
+
+
 def query_block_range(vote_results, rpc_endpoint, slot_time=2):
     """Query chain for block-level data in the vote window."""
     block_numbers = [int(r['blockNumber'])
@@ -127,30 +167,16 @@ def query_block_range(vote_results, rpc_endpoint, slot_time=2):
     blocks = []
 
     for block_num in range(min_block, max_block + 1):
-        payload = {
-            "jsonrpc": "2.0",
-            "method": "eth_getBlockByNumber",
-            "params": [hex(block_num), False],
-            "id": 1,
-        }
-        try:
-            resp = requests.post(rpc_endpoint, json=payload, timeout=10)
-            block = resp.json().get('result')
-            if block:
-                blocks.append({
-                    'number': block_num,
-                    'gasUsed': int(block['gasUsed'], 16),
-                    'gasLimit': int(block['gasLimit'], 16),
-                    'timestamp': int(block['timestamp'], 16),
-                    'txCount': len(block.get('transactions', [])),
-                })
-        except Exception as e:
-            print(f"    Warning: failed to fetch block {block_num}: {e}")
+        b = fetch_block(rpc_endpoint, block_num)
+        if b:
+            blocks.append(b)
+
+    # Fetch post-casting blocks to observe fee cooldown
+    post_blocks = fetch_post_casting_blocks(rpc_endpoint, max_block, slot_time)
 
     if len(blocks) < 2:
-        # All votes in a single block — use slot time as the time span
         tps = len(block_numbers) / slot_time if block_numbers else 0
-        return {'blocks': blocks, 'tps': tps, 'avgVotesPerBlock': len(block_numbers), 'avgGasUtil': blocks[0]['gasUsed'] / blocks[0]['gasLimit'] if blocks else 0, 'blockRange': [min_block, max_block], 'timeSpanS': slot_time}
+        return {'blocks': blocks, 'postCastingBlocks': post_blocks, 'tps': tps, 'avgVotesPerBlock': len(block_numbers), 'avgGasUtil': blocks[0]['gasUsed'] / blocks[0]['gasLimit'] if blocks else 0, 'blockRange': [min_block, max_block], 'timeSpanS': slot_time}
 
     time_span = blocks[-1]['timestamp'] - blocks[0]['timestamp']
     successful_votes = len(block_numbers)
@@ -161,6 +187,7 @@ def query_block_range(vote_results, rpc_endpoint, slot_time=2):
 
     return {
         'blocks': blocks,
+        'postCastingBlocks': post_blocks,
         'tps': tps,
         'avgVotesPerBlock': avg_votes_per_block,
         'avgGasUtil': avg_gas_util,
@@ -557,6 +584,10 @@ def write_outputs(all_scale_results, config, output_dir, slot_time):
                     'avgVotesPerBlock': rep.get('blockData', {}).get('avgVotesPerBlock', 0),
                     'avgGasUtil': rep.get('blockData', {}).get('avgGasUtil', 0),
                 } if rep.get('blockData') else None,
+                'blockData': {
+                    'blocks': rep['blockData']['blocks'],
+                    'postCastingBlocks': rep['blockData'].get('postCastingBlocks', []),
+                } if rep.get('blockData') else None,
                 'failureDetails': rep.get('voteFailures', []),
             } for i, rep in enumerate(sp['repetitions'])]
         } for sp in all_scale_results],
@@ -589,8 +620,27 @@ def write_outputs(all_scale_results, config, output_dir, slot_time):
                             f"{v.get('failedPhase', v.get('errorType', ''))},"
                             f"\"{v.get('error', '').replace(chr(34), chr(34)+chr(34))}\"\n")
 
+    # Write blocks CSV with fee data
+    blocks_csv_path = os.path.join(output_dir, 'blocks.csv')
+    with open(blocks_csv_path, 'w') as f:
+        f.write('scale_point,repetition,block_number,timestamp,gas_used,gas_limit,tx_count,base_fee_per_gas,phase\n')
+        for sp in all_scale_results:
+            for rep_idx, rep in enumerate(sp['repetitions']):
+                bd = rep.get('blockData')
+                if not bd:
+                    continue
+                for b in bd.get('blocks', []):
+                    f.write(f"{sp['voters']},{rep_idx},{b['number']},{b['timestamp']},"
+                            f"{b['gasUsed']},{b['gasLimit']},{b['txCount']},"
+                            f"{b.get('baseFeePerGas', '')},casting\n")
+                for b in bd.get('postCastingBlocks', []):
+                    f.write(f"{sp['voters']},{rep_idx},{b['number']},{b['timestamp']},"
+                            f"{b['gasUsed']},{b['gasLimit']},{b['txCount']},"
+                            f"{b.get('baseFeePerGas', '')},post_casting\n")
+
     print(f"  Written: {os.path.join(output_dir, 'results.json')}")
     print(f"  Written: {csv_path}")
+    print(f"  Written: {blocks_csv_path}")
 
 
 if __name__ == '__main__':

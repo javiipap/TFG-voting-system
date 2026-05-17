@@ -6,6 +6,7 @@
  *
  * Usage: npx tsx presign-votes.ts <publicKey> <contractAddr> <candidateCount> <credentialsFile> <primaryEndpoint> [fallbackEndpointsJson]
  */
+import 'dotenv/config';
 import { HttpProvider, Web3 } from 'web3';
 import { encryptVote } from '@/lib/pkg/server_utilities';
 import { getContractInfo } from '@/lib/ethereum/get-contract-info';

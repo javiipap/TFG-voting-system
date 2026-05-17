@@ -9,7 +9,7 @@ export async function getEip1559Fees() {
   const block = await web3.eth.getBlock('latest');
   const baseFee = BigInt(block.baseFeePerGas ?? 0);
   const maxPriorityFeePerGas = PRIORITY_FEE_PER_GAS;
-  const maxFeePerGas = baseFee * BigInt(20) + maxPriorityFeePerGas;
+  const maxFeePerGas = baseFee * BigInt(4) + maxPriorityFeePerGas;
 
   return { maxFeePerGas, maxPriorityFeePerGas };
 }
