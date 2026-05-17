@@ -1,4 +1,4 @@
-import { PRIORITY_FEE_PER_GAS } from '@/lib/ethereum';
+import { getEip1559Fees } from '@/lib/ethereum';
 import { getEthNode } from '@/lib/ethereum/get-eth-node';
 import { Numbers, Web3 } from 'web3';
 
@@ -15,11 +15,13 @@ export const executeAdminTransaction = async (
   privateKey: string,
 ) => {
   const web3 = new Web3(getEthNode());
+  const { maxFeePerGas, maxPriorityFeePerGas } = await getEip1559Fees();
 
   const signed = await web3.eth.accounts.signTransaction(
     {
       ...transaction,
-      gasPrice: PRIORITY_FEE_PER_GAS.toString(),
+      maxFeePerGas: maxFeePerGas.toString(),
+      maxPriorityFeePerGas: maxPriorityFeePerGas.toString(),
     },
     privateKey,
   );

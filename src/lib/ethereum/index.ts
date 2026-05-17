@@ -1,7 +1,17 @@
 import { Web3 } from 'web3';
 import { ec as EC } from 'elliptic';
+import { getEthNode } from '@/lib/ethereum/get-eth-node';
 
 export const PRIORITY_FEE_PER_GAS = BigInt(1);
+
+export async function getEip1559Fees() {
+  const web3 = new Web3(getEthNode());
+  const block = await web3.eth.getBlock('latest');
+  const baseFee = BigInt(block.baseFeePerGas ?? 0);
+  const maxPriorityFeePerGas = PRIORITY_FEE_PER_GAS;
+  const maxFeePerGas = baseFee * 2n + maxPriorityFeePerGas;
+  return { maxFeePerGas, maxPriorityFeePerGas };
+}
 
 export const privateKeyToAddress = (sk: string) =>
   new Web3().eth.accounts.privateKeyToAccount(sk).address;

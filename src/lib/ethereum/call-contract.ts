@@ -2,7 +2,7 @@ import { getContractInfo } from '@/lib/ethereum/get-contract-info';
 import { Web3 } from 'web3';
 import { getEthNode } from '@/lib/ethereum/get-eth-node';
 import { retry } from '@/lib/utils';
-import { PRIORITY_FEE_PER_GAS } from '@/lib/ethereum';
+import { getEip1559Fees } from '@/lib/ethereum';
 
 export async function callContractWithNonce(
   senderAddr: string,
@@ -30,12 +30,15 @@ export async function callContractWithNonce(
         ? await web3.eth.getTransactionCount(senderAddr, 'pending')
         : nonce;
 
+    const { maxFeePerGas, maxPriorityFeePerGas } = await getEip1559Fees();
+
     const signed = await web3.eth.accounts.signTransaction(
       {
         from: senderAddr,
         to: contractAddr,
         data: encodedABI,
-        gasPrice: PRIORITY_FEE_PER_GAS.toString(),
+        maxFeePerGas: maxFeePerGas.toString(),
+        maxPriorityFeePerGas: maxPriorityFeePerGas.toString(),
         gas,
         nonce: currentNonce,
       },

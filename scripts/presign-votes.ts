@@ -117,12 +117,17 @@ async function presignOne(
   const contract = new web3.eth.Contract(abi, contractAddr);
   const encodedABI = contract.methods.vote(ballot, iat, signature).encodeABI();
 
+  const block = await web3.eth.getBlock('latest');
+  const baseFee = BigInt(block.baseFeePerGas ?? 0);
+  const maxFeePerGas = baseFee * 2n + PRIORITY_FEE_PER_GAS;
+
   const signed = await web3.eth.accounts.signTransaction(
     {
       from: addr,
       to: contractAddr,
       data: encodedABI,
-      gasPrice: PRIORITY_FEE_PER_GAS.toString(),
+      maxFeePerGas: maxFeePerGas.toString(),
+      maxPriorityFeePerGas: PRIORITY_FEE_PER_GAS.toString(),
     },
     privateKey,
   );

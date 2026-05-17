@@ -1,10 +1,9 @@
-import { PRIORITY_FEE_PER_GAS } from '@/lib/ethereum';
+import { getEip1559Fees } from '@/lib/ethereum';
 
 export async function calculateGas2(candidateCount: number) {
   const basePrice = 279336;
   const candidateCost = 91600;
+  const { maxFeePerGas } = await getEip1559Fees();
 
-  return (
-    PRIORITY_FEE_PER_GAS * BigInt(basePrice + candidateCost * candidateCount)
-  );
+  return maxFeePerGas * BigInt(basePrice + candidateCost * candidateCount);
 }
